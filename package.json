@@ -1,0 +1,25 @@
+{
+  "name": "second-opinion",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Hold-and-approve payment guard for Alexa+ (MCP server, risk engine, family approval).",
+  "license": "MIT",
+  "engines": { "node": ">=22" },
+  "workspaces": ["packages/*", "apps/*"],
+  "scripts": {
+    "dev": "tsx watch apps/mcp-server/src/index.ts",
+    "start": "tsx apps/mcp-server/src/index.ts",
+    "test": "node --import tsx --test \"packages/*/test/**/*.test.ts\" \"apps/*/test/**/*.test.ts\"",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "seed": "tsx scripts/seed.ts",
+    "reset": "tsx scripts/reset.ts"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.0",
+    "tsx": "^4.23.0",
+    "typescript": "^5.7.0"
+  }
+}
