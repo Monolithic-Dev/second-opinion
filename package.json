@@ -18,7 +18,10 @@
     "test": "node --import tsx --test \"packages/*/test/**/*.test.ts\" \"apps/*/test/**/*.test.ts\"",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "seed": "tsx scripts/seed.ts",
-    "reset": "tsx scripts/reset.ts"
+    "reset": "tsx scripts/reset.ts",
+    "demo": "tsx scripts/demo.ts",
+    "start:sim": "tsx apps/simulator/src/index.ts",
+    "dev:sim": "tsx watch apps/simulator/src/index.ts"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",
