@@ -27,3 +27,6 @@ Log later changes below with date and impact on other docs.
 | 2026-10-09 | `resolve_approval` is not idempotent (second call is `CONFLICT`); approve ends in status `released`. Rate-limit default is 600 requests/min. |
 
 | 2026-10-09 | D16: adopt the production decisioning patterns in `backend-architecture.md` (versioned rule sets, append-only decision log, idempotency keys, shadow/backtest, outbox, hexagonal layering). Build order B1 -> B2 -> B4 -> simulator -> B3 -> B5 -> B6. |
+
+| 2026-10-09 | D17: published `rules-2026.10.3` (new rule pack v2 + playbook pack p2), tuned on the benchmark **dev** split only. Old versions stay byte-for-byte reproducible (golden test). Held-out test split scored once: 46.7% held / 80.0% flagged / 0% false holds, versus 86.7% held on dev. Reported as is in `docs/eval-report.md`; the test split is now frozen and must not be tuned on. |
+| 2026-10-09 | D18: CI checks out `scam-script-bench` pinned to commit `c2f7b1c` and runs a regression gate (dev recall at hold >= 80%, false holds <= 10%, each layer must beat the previous one). |

@@ -26,6 +26,7 @@
     "apps/mcp-server/test",
     "apps/simulator/src",
     "apps/simulator/test",
-    "scripts"
+    "scripts",
+    "eval"
   ]
 }

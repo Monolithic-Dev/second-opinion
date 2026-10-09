@@ -1,20 +1,23 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { evaluate, topMatches, PLAYBOOKS, MIN_SIMILARITY, playbookWeight, tokens } from '../src';
+import { evaluate, topMatches, PLAYBOOK_PACKS, MIN_SIMILARITY, playbookWeight, tokens } from '../src';
 import { FIXTURES } from './fixtures';
 
-test('T-PB-1 every playbook is recalled from its own phrases (self-recall)', () => {
-  assert.ok(PLAYBOOKS.length >= 20);
-  for (const p of PLAYBOOKS) {
-    const top = topMatches(p.phrases.join(' '), 1)[0]!;
-    assert.equal(top.playbook.id, p.id, p.id);
-    assert.ok(top.similarity >= 0.8, `${p.id} ${top.similarity}`);
-  }
-});
+for (const pack of ['p1', 'p2'] as const) {
+  test(`T-PB-1 every playbook in pack ${pack} is recalled from its own phrases (self-recall)`, () => {
+    assert.ok(PLAYBOOK_PACKS[pack].length >= 20);
+    for (const p of PLAYBOOK_PACKS[pack]) {
+      const top = topMatches(p.phrases.join(' '), 1, pack)[0]!;
+      assert.equal(top.playbook.id, p.id, p.id);
+      assert.ok(top.similarity >= 0.8, `${p.id} ${top.similarity}`);
+    }
+  });
+}
 
 test('playbook ids are unique and every playbook has advice and phrases', () => {
-  assert.equal(new Set(PLAYBOOKS.map((p) => p.id)).size, PLAYBOOKS.length);
-  for (const p of PLAYBOOKS) {
+  const all = PLAYBOOK_PACKS.p2;
+  assert.equal(new Set(all.map((p) => p.id)).size, all.length);
+  for (const p of all) {
     assert.ok(p.advice.length > 10 && p.phrases.length >= 3, p.id);
     for (const ph of p.phrases) assert.ok(!/\d{3}[-. ]\d{3}[-. ]\d{4}|https?:\/\//.test(ph), `${p.id} has a phone number or URL`);
   }

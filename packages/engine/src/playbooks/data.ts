@@ -10,6 +10,7 @@ export interface Playbook {
   advice: string;
 }
 
+/** Pack 'p1': the original 20 playbooks (frozen: rule sets 2026.10.2 and earlier). */
 export const PLAYBOOKS: Playbook[] = [
   { id: 'gift-card-bank', name: 'Bank fraud-department gift card scam',
     summary: 'Caller posing as the bank says the account is at risk and tells you to buy gift cards to secure it.',
@@ -92,3 +93,25 @@ export const PLAYBOOKS: Playbook[] = [
     phrases: ['hi mom this is my new number I lost my phone', 'can you send money urgently I will explain later', 'please do not call just text me'],
     advice: 'Call your relative on the number you already have before sending anything.' },
 ];
+
+export type PlaybookPack = 'p1' | 'p2';
+
+/**
+ * Pack 'p2' adds more ways real delivery-fee scams are worded ("parcel could not be delivered", "redelivery fee at the link"),
+ * a gap found by measuring 'p1' on the benchmark's dev split.
+ */
+export const PLAYBOOKS_P2: Playbook[] = PLAYBOOKS.map((p) =>
+  p.id === 'package-fee'
+    ? {
+        ...p,
+        phrases: [
+          ...p.phrases,
+          'your parcel could not be delivered',
+          'pay a redelivery fee at the link to avoid return',
+          'the item will be returned to sender unless you pay the delivery fee',
+        ],
+      }
+    : p,
+);
+
+export const PLAYBOOK_PACKS: Record<PlaybookPack, Playbook[]> = { p1: PLAYBOOKS, p2: PLAYBOOKS_P2 };

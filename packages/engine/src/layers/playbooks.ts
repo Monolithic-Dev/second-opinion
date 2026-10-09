@@ -1,6 +1,6 @@
 import type { Signal } from '@second-opinion/shared';
 import { normalize } from '../normalize';
-import { PLAYBOOKS, type Playbook } from '../playbooks/data';
+import { PLAYBOOK_PACKS, PLAYBOOKS, type Playbook, type PlaybookPack } from '../playbooks/data';
 
 /** Layer 2: lexical, deterministic similarity to known scam playbooks (idf-weighted keyword coverage). No models. */
 export const MIN_SIMILARITY = 0.3;
@@ -42,7 +42,7 @@ function buildIndex(playbooks: Playbook[]): { docs: Indexed[]; idf: Map<string, 
   return { docs, idf };
 }
 
-const INDEX = buildIndex(PLAYBOOKS);
+const INDEXES: Record<PlaybookPack, ReturnType<typeof buildIndex>> = { p1: buildIndex(PLAYBOOK_PACKS.p1), p2: buildIndex(PLAYBOOK_PACKS.p2) };
 
 export interface PlaybookMatch {
   playbook: Playbook;
@@ -51,7 +51,8 @@ export interface PlaybookMatch {
 }
 
 /** Best matches first. Ties break by playbook id so results are deterministic. */
-export function topMatches(text: string, k = 3): PlaybookMatch[] {
+export function topMatches(text: string, k = 3, pack: PlaybookPack = 'p2'): PlaybookMatch[] {
+  const INDEX = INDEXES[pack];
   const q = new Set(tokens(text));
   const out: PlaybookMatch[] = [];
   for (const d of INDEX.docs) {
@@ -69,8 +70,8 @@ export function playbookWeight(similarity: number): number {
   return Math.min(MAX_PLAYBOOK_WEIGHT, Math.round(60 * similarity));
 }
 
-export function detectPlaybookSignals(text: string): { signals: Signal[]; match: PlaybookMatch | null } {
-  const best = topMatches(text, 1)[0];
+export function detectPlaybookSignals(text: string, pack: PlaybookPack = 'p2'): { signals: Signal[]; match: PlaybookMatch | null } {
+  const best = topMatches(text, 1, pack)[0];
   if (!best || best.similarity < MIN_SIMILARITY || best.matched.length < MIN_MATCHED_TERMS) return { signals: [], match: null };
   return {
     signals: [{ id: 'PLAYBOOK_MATCH', weight: playbookWeight(best.similarity), evidence: best.playbook.name }],
@@ -78,4 +79,4 @@ export function detectPlaybookSignals(text: string): { signals: Signal[]; match:
   };
 }
 
-export { PLAYBOOKS };
+export { PLAYBOOKS, PLAYBOOK_PACKS, type PlaybookPack };

@@ -1,0 +1,1642 @@
+[
+ {
+  "id": "d-001",
+  "text": "The bank says I have to buy five $200 gift cards today or my account is frozen.",
+  "ctx": {
+   "channel": "voice",
+   "actionType": "purchase",
+   "amountCents": 100000,
+   "payee": "gift cards",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "hold",
+   "score": 100,
+   "signals": [
+    "AUTHORITY_IMPERSONATION",
+    "GIFT_CARD",
+    "HIGH_AMOUNT",
+    "NEW_PAYEE",
+    "URGENCY"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "hold",
+   "score": 100,
+   "signals": [
+    "AUTHORITY_IMPERSONATION",
+    "GIFT_CARD",
+    "HIGH_AMOUNT",
+    "NEW_PAYEE",
+    "PLAYBOOK_MATCH",
+    "URGENCY"
+   ]
+  }
+ },
+ {
+  "id": "d-002",
+  "text": "Hello, this is Mark from the Social Security office. Your benefits are suspended. To reactivate, purchase Google Play cards worth $500 and read me the codes.",
+  "ctx": {
+   "channel": "sms",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "hold",
+   "score": 80,
+   "signals": [
+    "GIFT_CARD",
+    "HIGH_AMOUNT",
+    "URGENCY"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "hold",
+   "score": 100,
+   "signals": [
+    "GIFT_CARD",
+    "HIGH_AMOUNT",
+    "PLAYBOOK_MATCH",
+    "URGENCY"
+   ]
+  }
+ },
+ {
+  "id": "d-003",
+  "text": "Your account has been compromised. Move all your savings to this secure Bitcoin wallet right now before the hackers drain it.",
+  "ctx": {
+   "channel": "call",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "hold",
+   "score": 70,
+   "signals": [
+    "UNSOLICITED_CONTACT",
+    "URGENCY",
+    "WIRE_OR_CRYPTO"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "hold",
+   "score": 93,
+   "signals": [
+    "PLAYBOOK_MATCH",
+    "UNSOLICITED_CONTACT",
+    "URGENCY",
+    "WIRE_OR_CRYPTO"
+   ]
+  }
+ },
+ {
+  "id": "d-004",
+  "text": "This is the fraud department. We detected a suspicious charge of $890. To cancel it, I need the six digit code we just sent to your phone.",
+  "ctx": {
+   "channel": "call",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 25,
+   "signals": [
+    "HIGH_AMOUNT",
+    "UNSOLICITED_CONTACT"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "caution",
+   "score": 53,
+   "signals": [
+    "HIGH_AMOUNT",
+    "PLAYBOOK_MATCH",
+    "UNSOLICITED_CONTACT"
+   ]
+  }
+ },
+ {
+  "id": "d-005",
+  "text": "A pop-up says my computer has a virus. The man said to install AnyDesk so he can remove it and I should pay $299 by gift card.",
+  "ctx": {
+   "channel": "call",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "hold",
+   "score": 85,
+   "signals": [
+    "GIFT_CARD",
+    "REMOTE_ACCESS"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "hold",
+   "score": 100,
+   "signals": [
+    "GIFT_CARD",
+    "PLAYBOOK_MATCH",
+    "REMOTE_ACCESS"
+   ]
+  }
+ },
+ {
+  "id": "d-006",
+  "text": "Grandma, it's me. I'm in jail after an accident and need $2,000 for bail. Please don't tell Mom and Dad.",
+  "ctx": {
+   "channel": "voice",
+   "actionType": "transfer",
+   "amountCents": 200000,
+   "payee": "bail",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "hold",
+   "score": 60,
+   "signals": [
+    "FAMILY_EMERGENCY",
+    "HIGH_AMOUNT",
+    "NEW_PAYEE"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "hold",
+   "score": 90,
+   "signals": [
+    "FAMILY_EMERGENCY",
+    "HIGH_AMOUNT",
+    "NEW_PAYEE",
+    "PLAYBOOK_MATCH"
+   ]
+  }
+ },
+ {
+  "id": "d-007",
+  "text": "Congratulations! You won the national sweepstakes jackpot. To claim your prize, pay the $150 processing fee today.",
+  "ctx": {
+   "channel": "sms",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "caution",
+   "score": 50,
+   "signals": [
+    "PRIZE_OR_LOTTERY",
+    "URGENCY"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "hold",
+   "score": 80,
+   "signals": [
+    "PLAYBOOK_MATCH",
+    "PRIZE_OR_LOTTERY",
+    "URGENCY"
+   ]
+  }
+ },
+ {
+  "id": "d-008",
+  "text": "Your parcel could not be delivered. Pay a $2.99 redelivery fee at the link to avoid return.",
+  "ctx": {
+   "channel": "sms",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  }
+ },
+ {
+  "id": "d-009",
+  "text": "I've made so much on this crypto platform, my love. Deposit just $1,000 and I'll show you how to double it by Friday. Keep this between us.",
+  "ctx": {
+   "channel": "email",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "hold",
+   "score": 80,
+   "signals": [
+    "HIGH_AMOUNT",
+    "SECRECY",
+    "WIRE_OR_CRYPTO"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "hold",
+   "score": 80,
+   "signals": [
+    "HIGH_AMOUNT",
+    "SECRECY",
+    "WIRE_OR_CRYPTO"
+   ]
+  }
+ },
+ {
+  "id": "d-010",
+  "text": "This is the IRS. You owe $3,400 in back taxes and a warrant will be issued unless you pay immediately with a prepaid card.",
+  "ctx": {
+   "channel": "call",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "hold",
+   "score": 100,
+   "signals": [
+    "AUTHORITY_IMPERSONATION",
+    "GIFT_CARD",
+    "HIGH_AMOUNT",
+    "URGENCY"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "hold",
+   "score": 100,
+   "signals": [
+    "AUTHORITY_IMPERSONATION",
+    "GIFT_CARD",
+    "HIGH_AMOUNT",
+    "PLAYBOOK_MATCH",
+    "URGENCY"
+   ]
+  }
+ },
+ {
+  "id": "d-011",
+  "text": "Hi Grandma, I'm travelling and my card got blocked. Could you wire me $400 to this account? I'll pay you back, love you.",
+  "ctx": {
+   "channel": "sms",
+   "actionType": "transfer",
+   "amountCents": 40000,
+   "payee": "unknown account",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 15,
+   "signals": [
+    "NEW_PAYEE"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 15,
+   "signals": [
+    "NEW_PAYEE"
+   ]
+  }
+ },
+ {
+  "id": "d-012",
+  "text": "I'm a lawyer representing your grandson. He needs $5,000 for bail today. He is embarrassed and asked that we not call his parents.",
+  "ctx": {
+   "channel": "call",
+   "actionType": "transfer",
+   "amountCents": 500000,
+   "payee": "lawyer",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "caution",
+   "score": 50,
+   "signals": [
+    "HIGH_AMOUNT",
+    "NEW_PAYEE",
+    "URGENCY"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "hold",
+   "score": 75,
+   "signals": [
+    "HIGH_AMOUNT",
+    "NEW_PAYEE",
+    "PLAYBOOK_MATCH",
+    "URGENCY"
+   ]
+  }
+ },
+ {
+  "id": "d-013",
+  "text": "Microsoft support here. We see errors on your PC. Please give me remote access so I can fix it.",
+  "ctx": {
+   "channel": "call",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "caution",
+   "score": 40,
+   "signals": [
+    "REMOTE_ACCESS"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "hold",
+   "score": 63,
+   "signals": [
+    "PLAYBOOK_MATCH",
+    "REMOTE_ACCESS"
+   ]
+  }
+ },
+ {
+  "id": "d-014",
+  "text": "Your account is locked. Verify your identity within 24 hours by sending a photo of your debit card and PIN.",
+  "ctx": {
+   "channel": "email",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "caution",
+   "score": 30,
+   "signals": [
+    "UNSOLICITED_CONTACT",
+    "URGENCY"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "caution",
+   "score": 30,
+   "signals": [
+    "UNSOLICITED_CONTACT",
+    "URGENCY"
+   ]
+  }
+ },
+ {
+  "id": "d-015",
+  "text": "The investment manager says to wire $8,000 to the new account number today or I lose the guaranteed returns.",
+  "ctx": {
+   "channel": "voice",
+   "actionType": "transfer",
+   "amountCents": 800000,
+   "payee": "investment manager",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "caution",
+   "score": 50,
+   "signals": [
+    "HIGH_AMOUNT",
+    "NEW_PAYEE",
+    "URGENCY"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "caution",
+   "score": 50,
+   "signals": [
+    "HIGH_AMOUNT",
+    "NEW_PAYEE",
+    "URGENCY"
+   ]
+  }
+ },
+ {
+  "id": "d-016",
+  "text": "Your prescription is ready for pickup at Greenleaf Pharmacy.",
+  "ctx": {
+   "channel": "sms",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  }
+ },
+ {
+  "id": "d-017",
+  "text": "Your bank noticed a suspicious charge on your card. If this wasn't you, call the number on the back of your card. We will never ask for your PIN or a code.",
+  "ctx": {
+   "channel": "sms",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": [
+    "OFFICIAL_CHANNEL_ADVICE",
+    "UNSOLICITED_CONTACT"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": [
+    "OFFICIAL_CHANNEL_ADVICE",
+    "UNSOLICITED_CONTACT"
+   ]
+  }
+ },
+ {
+  "id": "d-018",
+  "text": "Pay City Power & Light $86.40 for the October bill.",
+  "ctx": {
+   "channel": "voice",
+   "actionType": "payment",
+   "amountCents": 8640,
+   "payee": "City Power & Light",
+   "trustedPayees": [
+    "City Power & Light"
+   ]
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": [
+    "TRUSTED_PAYEE"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": [
+    "TRUSTED_PAYEE"
+   ]
+  }
+ },
+ {
+  "id": "d-019",
+  "text": "Your package will arrive today between 2 and 4 PM.",
+  "ctx": {
+   "channel": "sms",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 20,
+   "signals": [
+    "URGENCY"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 20,
+   "signals": [
+    "URGENCY"
+   ]
+  }
+ },
+ {
+  "id": "d-020",
+  "text": "Can you send me the soup recipe you made on Sunday?",
+  "ctx": {
+   "channel": "voice",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  }
+ },
+ {
+  "id": "d-021",
+  "text": "Thanks for your payment of $9.99 to Daily News. Your next renewal is on November 3.",
+  "ctx": {
+   "channel": "email",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  }
+ },
+ {
+  "id": "d-022",
+  "text": "Reminder: your appointment with Dr. Lee is Thursday at 10 AM.",
+  "ctx": {
+   "channel": "sms",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  }
+ },
+ {
+  "id": "d-023",
+  "text": "Alert: a $450 payment to Acme Hardware was approved. If you don't recognise it, contact us through the app or the number on your statement.",
+  "ctx": {
+   "channel": "sms",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  }
+ },
+ {
+  "id": "d-024",
+  "text": "Mom, I'm at the shop. Do you want me to buy some gift wrap or just ribbon for Aunt Rita's present?",
+  "ctx": {
+   "channel": "voice",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  }
+ },
+ {
+  "id": "d-025",
+  "text": "Reminder from your credit union: we will never ask you to pay with gift cards. Stay alert for scams.",
+  "ctx": {
+   "channel": "email",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": [
+    "OFFICIAL_CHANNEL_ADVICE"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": [
+    "OFFICIAL_CHANNEL_ADVICE"
+   ]
+  }
+ },
+ {
+  "id": "d-026",
+  "text": "Pay Greenleaf Pharmacy $24 for my refill.",
+  "ctx": {
+   "channel": "voice",
+   "actionType": "payment",
+   "amountCents": 2400,
+   "payee": "Greenleaf Pharmacy",
+   "trustedPayees": [
+    "Greenleaf Pharmacy"
+   ]
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": [
+    "TRUSTED_PAYEE"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": [
+    "TRUSTED_PAYEE"
+   ]
+  }
+ },
+ {
+  "id": "d-027",
+  "text": "Your order has shipped and arrives Friday. You do not need to do anything.",
+  "ctx": {
+   "channel": "email",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  }
+ },
+ {
+  "id": "d-028",
+  "text": "Dad says he'll wire the money for the deck repair after the contractor sends the invoice, no rush.",
+  "ctx": {
+   "channel": "voice",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "caution",
+   "score": 40,
+   "signals": [
+    "WIRE_OR_CRYPTO"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "caution",
+   "score": 40,
+   "signals": [
+    "WIRE_OR_CRYPTO"
+   ]
+  }
+ },
+ {
+  "id": "d-029",
+  "text": "Your water bill of $42.10 is due on the 20th. You can pay online or by check.",
+  "ctx": {
+   "channel": "email",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  }
+ },
+ {
+  "id": "d-030",
+  "text": "This is the dental office calling to confirm your cleaning today at 3 PM. Please call us back if you need to reschedule.",
+  "ctx": {
+   "channel": "call",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 20,
+   "signals": [
+    "URGENCY"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 20,
+   "signals": [
+    "URGENCY"
+   ]
+  }
+ },
+ {
+  "id": "t-001",
+  "text": "Six Walmart gift cards at $100 each. The officer said my son will be released as soon as I read him the numbers.",
+  "ctx": {
+   "channel": "call",
+   "actionType": "purchase",
+   "amountCents": 60000,
+   "payee": "gift cards",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "hold",
+   "score": 75,
+   "signals": [
+    "GIFT_CARD",
+    "HIGH_AMOUNT",
+    "NEW_PAYEE"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "hold",
+   "score": 75,
+   "signals": [
+    "GIFT_CARD",
+    "HIGH_AMOUNT",
+    "NEW_PAYEE"
+   ]
+  }
+ },
+ {
+  "id": "t-002",
+  "text": "Hello ma'am, I'm calling from your bank's security team. Someone is trying to take $2,300 from your account. Stay on the line and do not tell any of the staff at your branch.",
+  "ctx": {
+   "channel": "call",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 25,
+   "signals": [
+    "HIGH_AMOUNT",
+    "UNSOLICITED_CONTACT"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 25,
+   "signals": [
+    "HIGH_AMOUNT",
+    "UNSOLICITED_CONTACT"
+   ]
+  }
+ },
+ {
+  "id": "t-003",
+  "text": "We texted you a one time passcode. Please read it back to me so I can stop the transfer.",
+  "ctx": {
+   "channel": "call",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  }
+ },
+ {
+  "id": "t-004",
+  "text": "Your router has been hacked. Download TeamViewer so our technician can secure your network today.",
+  "ctx": {
+   "channel": "call",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "hold",
+   "score": 60,
+   "signals": [
+    "REMOTE_ACCESS",
+    "URGENCY"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "hold",
+   "score": 60,
+   "signals": [
+    "REMOTE_ACCESS",
+    "URGENCY"
+   ]
+  }
+ },
+ {
+  "id": "t-005",
+  "text": "Medicare is issuing new cards. To avoid losing your coverage, confirm your number and pay the $25 activation fee now.",
+  "ctx": {
+   "channel": "call",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 25,
+   "signals": [
+    "AUTHORITY_IMPERSONATION"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "caution",
+   "score": 50,
+   "signals": [
+    "AUTHORITY_IMPERSONATION",
+    "PLAYBOOK_MATCH"
+   ]
+  }
+ },
+ {
+  "id": "t-006",
+  "text": "You've been selected for a $10,000 grocery giveaway. Pay $60 in taxes with an Apple card to receive it.",
+  "ctx": {
+   "channel": "email",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "hold",
+   "score": 60,
+   "signals": [
+    "GIFT_CARD",
+    "HIGH_AMOUNT"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "hold",
+   "score": 60,
+   "signals": [
+    "GIFT_CARD",
+    "HIGH_AMOUNT"
+   ]
+  }
+ },
+ {
+  "id": "t-007",
+  "text": "Darling, the gold shipment is stuck in customs. I just need $3,500 sent to my agent via Western Union and then we can finally meet.",
+  "ctx": {
+   "channel": "email",
+   "actionType": "transfer",
+   "amountCents": 350000,
+   "payee": "agent",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "hold",
+   "score": 70,
+   "signals": [
+    "HIGH_AMOUNT",
+    "NEW_PAYEE",
+    "WIRE_OR_CRYPTO"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "hold",
+   "score": 70,
+   "signals": [
+    "HIGH_AMOUNT",
+    "NEW_PAYEE",
+    "WIRE_OR_CRYPTO"
+   ]
+  }
+ },
+ {
+  "id": "t-008",
+  "text": "Take cash out of your account and put it in the bitcoin machine at the gas station. The code on screen is how we protect your money.",
+  "ctx": {
+   "channel": "call",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "caution",
+   "score": 40,
+   "signals": [
+    "WIRE_OR_CRYPTO"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "hold",
+   "score": 65,
+   "signals": [
+    "PLAYBOOK_MATCH",
+    "WIRE_OR_CRYPTO"
+   ]
+  }
+ },
+ {
+  "id": "t-009",
+  "text": "We tried to deliver your parcel but the address is incomplete. Update it and pay the small fee of $1.95 to schedule redelivery.",
+  "ctx": {
+   "channel": "sms",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 24,
+   "signals": [
+    "PLAYBOOK_MATCH"
+   ]
+  }
+ },
+ {
+  "id": "t-010",
+  "text": "Gran, I'm so sorry to call late. I had a car accident and I'm at the hospital. The doctor needs a deposit of $900 right away. Please don't worry Mom.",
+  "ctx": {
+   "channel": "voice",
+   "actionType": "transfer",
+   "amountCents": 90000,
+   "payee": "hospital",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "caution",
+   "score": 30,
+   "signals": [
+    "HIGH_AMOUNT",
+    "NEW_PAYEE"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "caution",
+   "score": 30,
+   "signals": [
+    "HIGH_AMOUNT",
+    "NEW_PAYEE"
+   ]
+  }
+ },
+ {
+  "id": "t-011",
+  "text": "Hello, this is Priya's landlord. She asked me to collect the deposit for the apartment by tomorrow. Could you send $1,200 to me directly? I can give you my account number.",
+  "ctx": {
+   "channel": "email",
+   "actionType": "transfer",
+   "amountCents": 120000,
+   "payee": "landlord",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "caution",
+   "score": 30,
+   "signals": [
+    "HIGH_AMOUNT",
+    "NEW_PAYEE"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "caution",
+   "score": 30,
+   "signals": [
+    "HIGH_AMOUNT",
+    "NEW_PAYEE"
+   ]
+  }
+ },
+ {
+  "id": "t-012",
+  "text": "Your electricity will be disconnected within the hour due to an unpaid balance. Pay now with a prepaid card to keep your service.",
+  "ctx": {
+   "channel": "call",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "hold",
+   "score": 65,
+   "signals": [
+    "GIFT_CARD",
+    "URGENCY"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "hold",
+   "score": 86,
+   "signals": [
+    "GIFT_CARD",
+    "PLAYBOOK_MATCH",
+    "URGENCY"
+   ]
+  }
+ },
+ {
+  "id": "t-013",
+  "text": "I'm your boss Alan. I'm in a meeting and need you to quietly pick up some iTunes cards for a client, I'll reimburse you. Send me the card numbers when you have them.",
+  "ctx": {
+   "channel": "email",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "caution",
+   "score": 45,
+   "signals": [
+    "GIFT_CARD"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "caution",
+   "score": 45,
+   "signals": [
+    "GIFT_CARD"
+   ]
+  }
+ },
+ {
+  "id": "t-014",
+  "text": "You missed jury duty and the sheriff has issued a warrant. You can settle the fine today by phone.",
+  "ctx": {
+   "channel": "call",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "caution",
+   "score": 45,
+   "signals": [
+    "AUTHORITY_IMPERSONATION",
+    "URGENCY"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "hold",
+   "score": 75,
+   "signals": [
+    "AUTHORITY_IMPERSONATION",
+    "PLAYBOOK_MATCH",
+    "URGENCY"
+   ]
+  }
+ },
+ {
+  "id": "t-015",
+  "text": "Our system refunded you $400 too much. Please send $350 back by wire and keep the rest for your trouble.",
+  "ctx": {
+   "channel": "sms",
+   "actionType": "transfer",
+   "amountCents": 35000,
+   "payee": "refund desk",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 15,
+   "signals": [
+    "NEW_PAYEE"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 15,
+   "signals": [
+    "NEW_PAYEE"
+   ]
+  }
+ },
+ {
+  "id": "t-016",
+  "text": "Your card ending 4821 was used at a gas station for $62.14. Not you? Call the number printed on your card.",
+  "ctx": {
+   "channel": "sms",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": [
+    "OFFICIAL_CHANNEL_ADVICE"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": [
+    "OFFICIAL_CHANNEL_ADVICE"
+   ]
+  }
+ },
+ {
+  "id": "t-017",
+  "text": "Hi, it's Greenleaf Pharmacy. Your blood pressure refill is ready. Pickup is open until 6 PM today.",
+  "ctx": {
+   "channel": "call",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 20,
+   "signals": [
+    "URGENCY"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 20,
+   "signals": [
+    "URGENCY"
+   ]
+  }
+ },
+ {
+  "id": "t-018",
+  "text": "Can you pay Mr. Evans next door $20 for mowing the lawn when you see him? I'll transfer it to you tonight.",
+  "ctx": {
+   "channel": "voice",
+   "actionType": "payment",
+   "amountCents": 2000,
+   "payee": "Mr. Evans",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 15,
+   "signals": [
+    "NEW_PAYEE"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 15,
+   "signals": [
+    "NEW_PAYEE"
+   ]
+  }
+ },
+ {
+  "id": "t-019",
+  "text": "Your gas bill statement for October is now available in your online account.",
+  "ctx": {
+   "channel": "email",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  }
+ },
+ {
+  "id": "t-020",
+  "text": "This is your clinic. Your lab results are ready. Please call today between 9 and 5 to schedule a visit.",
+  "ctx": {
+   "channel": "call",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 20,
+   "signals": [
+    "URGENCY"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 20,
+   "signals": [
+    "URGENCY"
+   ]
+  }
+ },
+ {
+  "id": "t-021",
+  "text": "Receipt: $12.99 monthly plan renewed. To cancel, open the app and go to account settings.",
+  "ctx": {
+   "channel": "email",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  }
+ },
+ {
+  "id": "t-022",
+  "text": "Out for delivery: your order arrives today. Signature not required.",
+  "ctx": {
+   "channel": "sms",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 20,
+   "signals": [
+    "URGENCY"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 20,
+   "signals": [
+    "URGENCY"
+   ]
+  }
+ },
+ {
+  "id": "t-023",
+  "text": "We will never call you to ask for your password or a security code. If someone does, hang up and call us.",
+  "ctx": {
+   "channel": "email",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": [
+    "OFFICIAL_CHANNEL_ADVICE"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": [
+    "OFFICIAL_CHANNEL_ADVICE"
+   ]
+  }
+ },
+ {
+  "id": "t-024",
+  "text": "Bought a $50 gift card for Aunt Rita's birthday. Do you think she'd like the bookstore one?",
+  "ctx": {
+   "channel": "voice",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "caution",
+   "score": 45,
+   "signals": [
+    "GIFT_CARD"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "caution",
+   "score": 45,
+   "signals": [
+    "GIFT_CARD"
+   ]
+  }
+ },
+ {
+  "id": "t-025",
+  "text": "Your brother called, he wants to know if Sunday lunch is still on.",
+  "ctx": {
+   "channel": "voice",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  }
+ },
+ {
+  "id": "t-026",
+  "text": "Pay Greenleaf Pharmacy $31 for the vitamins.",
+  "ctx": {
+   "channel": "voice",
+   "actionType": "payment",
+   "amountCents": 3100,
+   "payee": "Greenleaf Pharmacy",
+   "trustedPayees": [
+    "Greenleaf Pharmacy"
+   ]
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": [
+    "TRUSTED_PAYEE"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": [
+    "TRUSTED_PAYEE"
+   ]
+  }
+ },
+ {
+  "id": "t-027",
+  "text": "Package held at the front desk. Pick it up with ID before Friday.",
+  "ctx": {
+   "channel": "sms",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  }
+ },
+ {
+  "id": "t-028",
+  "text": "Your car inspection is due today. Book a slot online or visit any station.",
+  "ctx": {
+   "channel": "email",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 20,
+   "signals": [
+    "URGENCY"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 20,
+   "signals": [
+    "URGENCY"
+   ]
+  }
+ },
+ {
+  "id": "t-029",
+  "text": "Your transfer of $200 to Daniel Reyes was completed. If you did not make this transfer, call our fraud line on the back of your card.",
+  "ctx": {
+   "channel": "sms",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  }
+ },
+ {
+  "id": "t-030",
+  "text": "Grandpa, the plumber said the fix would be $240. I'll pay him myself, don't worry about it.",
+  "ctx": {
+   "channel": "voice",
+   "trustedPayees": []
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  }
+ },
+ {
+  "id": "f-scam-1",
+  "text": "The bank says I have to buy five $200 gift cards today or my account is frozen.",
+  "ctx": {
+   "actionType": "purchase",
+   "payee": "gift cards"
+  },
+  "rules-2026.10.1": {
+   "verdict": "hold",
+   "score": 100,
+   "signals": [
+    "AUTHORITY_IMPERSONATION",
+    "GIFT_CARD",
+    "HIGH_AMOUNT",
+    "NEW_PAYEE",
+    "URGENCY"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "hold",
+   "score": 100,
+   "signals": [
+    "AUTHORITY_IMPERSONATION",
+    "GIFT_CARD",
+    "HIGH_AMOUNT",
+    "NEW_PAYEE",
+    "PLAYBOOK_MATCH",
+    "URGENCY"
+   ]
+  }
+ },
+ {
+  "id": "f-scam-2",
+  "text": "A man from Microsoft support said to install AnyDesk so he can fix my computer, he needs to connect to your computer right now.",
+  "ctx": {},
+  "rules-2026.10.1": {
+   "verdict": "hold",
+   "score": 85,
+   "signals": [
+    "AUTHORITY_IMPERSONATION",
+    "REMOTE_ACCESS",
+    "URGENCY"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "hold",
+   "score": 100,
+   "signals": [
+    "AUTHORITY_IMPERSONATION",
+    "PLAYBOOK_MATCH",
+    "REMOTE_ACCESS",
+    "URGENCY"
+   ]
+  }
+ },
+ {
+  "id": "f-scam-3",
+  "text": "This is the fraud department calling about your account. Please read me the 6 digit code we just texted you.",
+  "ctx": {},
+  "rules-2026.10.1": {
+   "verdict": "hold",
+   "score": 45,
+   "signals": [
+    "UNSOLICITED_CONTACT",
+    "VERIFICATION_CODE"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "hold",
+   "score": 63,
+   "signals": [
+    "PLAYBOOK_MATCH",
+    "UNSOLICITED_CONTACT",
+    "VERIFICATION_CODE"
+   ]
+  }
+ },
+ {
+  "id": "f-scam-4",
+  "text": "Grandma it's me, your grandson. I was in an accident and need bail money by wire transfer today. Please don't tell mom.",
+  "ctx": {},
+  "rules-2026.10.1": {
+   "verdict": "hold",
+   "score": 90,
+   "signals": [
+    "FAMILY_EMERGENCY",
+    "URGENCY",
+    "WIRE_OR_CRYPTO"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "hold",
+   "score": 100,
+   "signals": [
+    "FAMILY_EMERGENCY",
+    "PLAYBOOK_MATCH",
+    "URGENCY",
+    "WIRE_OR_CRYPTO"
+   ]
+  }
+ },
+ {
+  "id": "f-ok-1",
+  "text": "Your prescription is ready for pickup at Greenleaf Pharmacy. Reply STOP to opt out.",
+  "ctx": {},
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  }
+ },
+ {
+  "id": "f-ok-2",
+  "text": "Pay City Power & Light $86.40 for the October bill.",
+  "ctx": {
+   "actionType": "payment",
+   "payee": "City Power & Light",
+   "trustedPayees": [
+    "city power & light"
+   ]
+  },
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": [
+    "TRUSTED_PAYEE"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": [
+    "TRUSTED_PAYEE"
+   ]
+  }
+ },
+ {
+  "id": "f-ok-3",
+  "text": "Can you send me the recipe for the soup you made on Sunday?",
+  "ctx": {},
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  }
+ },
+ {
+  "id": "f-ok-4",
+  "text": "Reminder: your appointment with Dr. Lee is Thursday at 10 AM.",
+  "ctx": {},
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": []
+  }
+ },
+ {
+  "id": "f-tricky-1",
+  "text": "Your bank noticed a suspicious charge on your card. If this wasn't you, call the number on the back of your card. We will never ask for your PIN or a code.",
+  "ctx": {},
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": [
+    "OFFICIAL_CHANNEL_ADVICE",
+    "UNSOLICITED_CONTACT"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": [
+    "OFFICIAL_CHANNEL_ADVICE",
+    "UNSOLICITED_CONTACT"
+   ]
+  }
+ },
+ {
+  "id": "f-tricky-2",
+  "text": "Reminder from your credit union: we will never ask you to pay with gift cards.",
+  "ctx": {},
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": [
+    "OFFICIAL_CHANNEL_ADVICE"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 0,
+   "signals": [
+    "OFFICIAL_CHANNEL_ADVICE"
+   ]
+  }
+ },
+ {
+  "id": "f-tricky-3",
+  "text": "Please send $900 to my cousin Daniel for the car repair.",
+  "ctx": {
+   "actionType": "transfer",
+   "payee": "Daniel"
+  },
+  "rules-2026.10.1": {
+   "verdict": "caution",
+   "score": 30,
+   "signals": [
+    "HIGH_AMOUNT",
+    "NEW_PAYEE"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "caution",
+   "score": 30,
+   "signals": [
+    "HIGH_AMOUNT",
+    "NEW_PAYEE"
+   ]
+  }
+ },
+ {
+  "id": "f-tricky-4",
+  "text": "Your package will arrive today between 2 and 4 PM.",
+  "ctx": {},
+  "rules-2026.10.1": {
+   "verdict": "allow",
+   "score": 20,
+   "signals": [
+    "URGENCY"
+   ]
+  },
+  "rules-2026.10.2": {
+   "verdict": "allow",
+   "score": 20,
+   "signals": [
+    "URGENCY"
+   ]
+  }
+ }
+]
