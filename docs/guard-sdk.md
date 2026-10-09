@@ -1,4 +1,6 @@
-# Guard SDK (Tier 1) — `packages/guard-sdk`
+# Guard SDK (shipped) — `packages/guard-sdk`
+
+**Status:** implemented with 10 contract tests (`packages/guard-sdk/test/guard.test.ts`) and a working merchant example (`examples/freshmart-mcp`, 3 tests). Differences from the plan below: `createGuard` also accepts a `caller` (so other transports and tests can plug in), `GuardClient` and npm publishing are not done, and `protect` returns a tool result with `isError` for blocked/unverified. See [packages/guard-sdk/README.md](../packages/guard-sdk/README.md).
 
 **Idea:** Alexa+ integrations are MCP servers. Any brand with a money-moving tool (`place_order`, `send_payment`) can add Second Opinion in a few lines. This turns the project from "an app" into an **ecosystem component** — strong for Quality of the Idea ("understanding of the developer ecosystem") and a natural Open Source artifact.
 

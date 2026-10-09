@@ -47,6 +47,8 @@ npm run typecheck && npm test    # 205 server tests + 33 web tests
 npm run e2e                      # 17 real-browser tests (Playwright), incl. the two-approver flow and accessibility scans of every page
 ```
 
+**Guard SDK:** [packages/guard-sdk](packages/guard-sdk/README.md) lets any merchant MCP server add the check in a few lines ([FreshMart example](examples/freshmart-mcp)).
+
 **Agent Skill:** [skills/second-opinion/SKILL.md](skills/second-opinion/SKILL.md) tells an agent when to check, hold and ask family.
 
 ## Docs index (`docs/`)
