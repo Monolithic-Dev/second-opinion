@@ -25,7 +25,8 @@ Researched Oct 9 2026 from the official spec ([2025-11-25 changelog](https://mod
 | Input validation errors and business errors are **tool execution errors** (`isError:true`), not protocol errors, so the model can self-correct (SEP-1303) | `ToolError` codes `INVALID_INPUT|NOT_FOUND|FORBIDDEN|CONFLICT|INTERNAL` returned as `isError:true` with text + `structuredContent {code,message}`; protocol errors only for unknown tool/malformed JSON-RPC |
 | Annotations are **hints, untrusted by clients**; do not use them as enforcement | Set accurately (table below); enforcement lives in handlers (roles, fail-closed) |
 | Cap tool output size (rule of thumb: 256 KiB) | `capOutput()` truncates lists (max 200 items) and sets `truncated:true` |
-| Rate-limit tool invocations; sanitize outputs (spec MUST) | per-token token-bucket (60/min default); outputs contain only fictional data and escaped text |
+| Rate-limit tool invocations; sanitize outputs (spec MUST) | fixed-window limiter per bearer token (600 HTTP requests/min default, because one tool call is several requests); outputs contain only fictional data |
+| SDK input validation | Verified on SDK 1.32.1: schema violations come back as `isError:true` tool results (not protocol errors), matching SEP-1303 |
 | Pin/diff tool definitions (OWASP draft idea) | Contract snapshot test of `tools/list` including annotations and schemas (hash recorded in CI) |
 | Human in the loop for sensitive operations (spec SHOULD) | This *is* the product: `place_hold` + `request_family_approval` |
 
@@ -35,7 +36,7 @@ Researched Oct 9 2026 from the official spec ([2025-11-25 changelog](https://mod
 | `check_message` | false | false | false | false | writes a check row, audit |
 | `place_hold` | false | false | false | false | creates a hold (blocks an action) |
 | `request_family_approval` | false | false | true | false | deduped per hold+approver |
-| `resolve_approval` | false | **true** | true | false | releases or cancels a financial action; same vote is a no-op |
+| `resolve_approval` | false | **true** | false | false | releases or cancels a financial action; a second call returns `CONFLICT`, so it is not idempotent |
 | `trusted_payees` | false | false | true | false | list/add/remove are idempotent |
 | `list_holds` | **true** | false | true | false | |
 | `get_policy` | **true** | false | true | false | |
