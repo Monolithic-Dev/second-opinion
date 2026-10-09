@@ -46,6 +46,7 @@ npm run demo          # http://localhost:3000  (no AWS needed)
 | [rules-digest.md](docs/rules-digest.md) · [submission-checklist.md](docs/submission-checklist.md) | Rules and what to submit |
 | [friction-log.md](docs/friction-log.md) · [decisions.md](docs/decisions.md) | Bonus log; decision records |
 | [expansion-scope.md](docs/expansion-scope.md) | **Start here:** tiers, gates, what judges see |
+| [backend-architecture.md](docs/backend-architecture.md) | Production decisioning blueprint: versioned rules, decision log, idempotency, shadow mode, outbox, hexagonal layers |
 | [policy-and-approvals.md](docs/policy-and-approvals.md) | Household policy, quorum, escalation, notification outbox |
 | [family-console.md](docs/family-console.md) | React web app and Family Console |
 | [guard-sdk.md](docs/guard-sdk.md) | Reusable gate for any MCP server |
