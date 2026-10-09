@@ -15,10 +15,10 @@ async function heroCheck(client: Awaited<ReturnType<typeof t.connect>>['client']
   });
 }
 
-test('tools/list exposes the ten tools with titles, output schemas and accurate annotations', async () => {
+test('tools/list exposes the eleven tools with titles, output schemas and accurate annotations', async () => {
   const { client } = await t.connect();
   const { tools } = await client.listTools();
-  assert.deepEqual(tools.map((x) => x.name).sort(), ['check_message', 'get_policy', 'household_insights', 'list_holds', 'list_notifications', 'place_hold', 'request_family_approval', 'resolve_approval', 'set_policy', 'trusted_payees']);
+  assert.deepEqual(tools.map((x) => x.name).sort(), ['check_message', 'get_household', 'get_policy', 'household_insights', 'list_holds', 'list_notifications', 'place_hold', 'request_family_approval', 'resolve_approval', 'set_policy', 'trusted_payees']);
   for (const tool of tools) {
     assert.ok(tool.title, `${tool.name} title`);
     assert.ok(tool.outputSchema, `${tool.name} outputSchema`);

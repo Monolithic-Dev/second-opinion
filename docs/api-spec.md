@@ -93,6 +93,10 @@ Notification is simulated (SSE event + audit row). Errors: `NOT_FOUND`, `FORBIDD
 - Jobs (`apps/mcp-server/src/jobs`, every `JOBS_INTERVAL_MS`, off in tests): **escalation** (one level per policy `escalateAfterMin`, next approver rank notified exactly once), **expiry** (approvers told once; the hold stays blocked, also when a read expired it first) and **outbox delivery** (retries after 5s, 20s, 80s; failed after the 4th attempt).
 - Delivery is simulated: the `email_html` adapter writes escaped HTML to `OUTBOX_DIR/<id>.html`; nothing is sent.
 
+## I. Household tool and dev reset
+- Tool `get_household {householdId}` (read-only) -> `{household {id, name}, people [{id, name, role, canApprove, approverRank, contactLabel}]}` for the family circle and approver names.
+- `POST /admin/reset` (bearer auth, **only when `ADMIN_ENABLED` is on; default off in production**): drops all tables, re-runs migrations and re-seeds the demo household. Destroys the audit log by design; for demos and tests.
+
 ## E. Tier 1 additions
 **New MCP tools** (approver-only where noted):
 | Tool | Input | Output |
