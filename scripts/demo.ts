@@ -1,4 +1,4 @@
-import { spawn, type ChildProcess } from 'node:child_process';
+import { spawn, spawnSync, type ChildProcess } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { seed } from './seed';
 
@@ -47,13 +47,20 @@ async function waitFor(url: string, label: string, ms = 30_000): Promise<void> {
 process.on('SIGINT', () => stop(0));
 process.on('SIGTERM', () => stop(0));
 
+// A fresh clone has no built web app yet: build it once so `npm install && npm run demo` just works.
+if (!existsSync('apps/web/dist/index.html')) {
+  process.stdout.write('Building the web app (first run only)...\n');
+  const build = spawnSync('npm', ['run', 'build:web'], { stdio: 'inherit', shell: true });
+  if (build.status !== 0) throw new Error('web app build failed');
+}
+
 seed(process.env.DB_PATH ?? './data/second-opinion.db');
 start('mcp-server', 'apps/mcp-server/src/index.ts');
 await waitFor(`http://127.0.0.1:${MCP_PORT}/healthz`, 'MCP server');
 start('simulator', 'apps/simulator/src/index.ts');
 await waitFor(`http://127.0.0.1:${SIM_PORT}/healthz`, 'simulator');
 
-const web = existsSync('apps/web/dist') ? `http://localhost:${SIM_PORT}/demo` : '(build the web app: npm run build -w @second-opinion/web)';
+const web = `http://localhost:${SIM_PORT}/demo`;
 process.stdout.write(
   `\nSecond Opinion is running.\n  Demo:        ${web}\n  MCP server:  http://127.0.0.1:${MCP_PORT}/mcp  (Streamable HTTP, bearer token from .env)\n  Simulator:   http://127.0.0.1:${SIM_PORT}/healthz\n  Family PINs: Priya 1234, Arjun 5678 (demo credentials)\n  Press Ctrl+C to stop.\n\n`,
 );

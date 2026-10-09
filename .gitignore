@@ -7,3 +7,6 @@ data/*.db-*
 *.log
 .DS_Store
 data/outbox/
+apps/web/dist/
+playwright-report/
+test-results/
