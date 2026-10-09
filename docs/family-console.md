@@ -1,4 +1,7 @@
-# Web app and Family Console (Tier 1) — `apps/web`
+# Web app and Family Console — `apps/web` (built)
+
+> **As built:** all routes below exist except `/family/digest` and `/family/audit` (the notification inbox at `/family/inbox` covers the family-facing history; the raw audit log stays in the database and `household_insights`). Charts are hand-written SVG (no chart library) with a text summary and a data table. Data fetching uses small hooks (`useAppState`, `useLive`) plus server-sent events instead of TanStack Query. Tests: 33 vitest component/integration tests and 17 Playwright tests (`e2e/`), including axe scans of every console page.
+
 
 One React + Vite + TypeScript SPA served by the simulator BFF. It contains the **demo view** (elder + family side by side) and the **Family Console** (what a real caregiver would use). Design is 25% of the score, so this is the main visual in the video.
 

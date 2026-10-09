@@ -15,7 +15,7 @@ git clone https://github.com/Monolithic-Dev/second-opinion && cd second-opinion
 npm install
 npm run demo            # builds the web app on first run, then opens everything on http://localhost:3000/demo
 ```
-Click **Buy gift cards (a scam)** on Dorothy's Echo, sign in on Priya's phone (demo PIN `1234`), and press **Deny**. Dorothy's device tells her, live.
+Click **Buy gift cards (a scam)** on Dorothy's Echo, sign in on Priya's phone (demo PIN `1234`), and press **Deny**. Dorothy's device tells her, live. Then open **Family console** for the full caregiver view (Arjun's demo PIN is `5678`; turn on two approvals under *Rules* to try the two-person flow).
 
 ## What is built
 - **MCP server** (spec 2025-11-25, Streamable HTTP, stateless): 12 tools (`check_message`, `place_hold`, `request_family_approval`, `resolve_approval`, `trusted_payees`, `list_holds`, `get_hold`, `get_household`, `get_policy`, `set_policy`, `household_insights`, `list_notifications`). Every tool has a title, an output schema and honest annotations; errors are tool results the model can act on.
@@ -23,7 +23,9 @@ Click **Buy gift cards (a scam)** on Dorothy's Echo, sign in on Priya's phone (d
 - **Household policy engine**: single-payment limit, daily cap, new-payee cool-off, quiet hours, two-approver quorum with veto, escalation. The policy can only add friction, never remove it.
 - **Transactional outbox** for family notifications with retry and backoff, plus escalation and expiry jobs. Delivery is simulated (HTML email rendered to a file).
 - **Simulator** (Alexa+ stand-in): a real MCP client, deterministic agent, live events, signed family sessions, fail-closed on any error.
-- **Web app** (React): the live demo screen. Accessible (axe-checked), works at phone width.
+- **Web app** (React, ~96 kB gzipped): the live demo screen and the **Family Console** (overview with protected dollars, requests, request detail with votes and timeline, family and trusted payees, household rules with validation, insights, notification inbox). Accessible (axe-checked on every page), works at phone width.
+
+![Family console: a request waiting for the second approver](docs/assets/console-detail.png)
 - **Reliability**: idempotency keys, request tracing from the screen to the decision row, tamper-evident audit log.
 
 ## Honest limits
@@ -31,8 +33,8 @@ Alexa+ cannot intercept phone calls; we gate pay/buy requests and answer "is thi
 
 ## Verify it
 ```bash
-npm run typecheck && npm test    # 205 server tests + 18 web tests
-npm run e2e                      # 8 real-browser tests (Playwright, incl. an accessibility scan)
+npm run typecheck && npm test    # 205 server tests + 33 web tests
+npm run e2e                      # 17 real-browser tests (Playwright), incl. the two-approver flow and accessibility scans of every page
 ```
 
 ## Docs index (`docs/`)

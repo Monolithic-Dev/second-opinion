@@ -33,6 +33,7 @@ export function Layout({ children }: { children: ReactNode }) {
         </NavLink>
         <nav className="nav" aria-label="Main">
           <NavLink to="/demo">Live demo</NavLink>
+          <NavLink to="/family">Family console</NavLink>
         </nav>
         <div className="right"><HealthPill /></div>
       </header>
