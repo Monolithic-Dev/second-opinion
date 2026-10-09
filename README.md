@@ -45,9 +45,11 @@ Alexa+ cannot intercept phone calls; we gate pay/buy requests and answer "is thi
 
 ## Verify it
 ```bash
-npm run typecheck && npm test    # 205 server tests + 33 web tests
+npm run typecheck && npm test    # 252 server-side tests + 33 web tests
 npm run e2e                      # 17 real-browser tests (Playwright), incl. the two-approver flow and accessibility scans of every page
 ```
+
+**Observability and deploy:** `GET /metrics` (Prometheus text) and `docker compose up --build` ([docs/deployment.md](docs/deployment.md)).
 
 **Guard SDK:** [packages/guard-sdk](packages/guard-sdk/README.md) lets any merchant MCP server add the check in a few lines ([FreshMart example](examples/freshmart-mcp)).
 
