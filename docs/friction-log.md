@@ -17,16 +17,16 @@ Date / time spent lost:
 ```
 
 ## Entries
-### FL-1 — better-sqlite3 has no usable prebuilt binary in a fresh Node 22 Docker image
-Tool/API/SDK: better-sqlite3 (native module) on `node:22-slim`
-Task attempted: build a Docker image that runs `npm ci`.
-Steps taken: `FROM node:22-slim`, `COPY`, `RUN npm ci`.
-Expected: the prebuilt binary is downloaded and install finishes.
-Actual: `node-gyp rebuild` ran and failed with "gyp ERR! find Python" (no python, make or g++ in the slim image).
-Severity: major (the build fails outright)
-Workaround used: install `python3 make g++` in the build stage, build there, copy `node_modules` into the runtime stage.
-Suggestion (actionable): the error should say that no prebuilt binary matched this Node version and name the OS packages needed; the README could include the slim-image recipe.
-Date / time spent lost: 2026-10-09, about 15 minutes.
+### FL-1 — npm tries to compile better-sqlite3 even though it ships prebuilt binaries
+Tool/API/SDK: better-sqlite3 13.0.3 (native module), npm 10 / Node 22.16 on Windows, and `node:22-slim` in Docker
+Task attempted: `npm install` on a clean clone.
+Steps taken: `git clone`, `npm install`.
+Expected: the bundled prebuilt binary is used.
+Actual: the package has a `binding.gyp` and no `install` script, so npm runs `node-gyp rebuild` by default. It fails with "could not find Visual Studio" on Windows and "find Python" in the slim Docker image, even though `prebuilds/win32-x64.node` and `linux-x64.node` are inside the package.
+Severity: major (a judge's first command fails)
+Workaround used: tried `ignore-scripts=true` in `.npmrc` first; that broke Linux because our lockfile relies on esbuild's postinstall to fetch its platform binary. Final fix: dropped the native module and moved to Node's built-in `node:sqlite` (decision D20).
+Suggestion (actionable): add an explicit no-op `"install"` script (or a prebuild check) to the package so npm does not fall back to node-gyp, and document it in the README.
+Date / time spent lost: 2026-10-09, about 45 minutes (found only by testing a clean clone).
 
 ### FL-2 — a workflow cannot check out another private repository with the default token
 Tool/API/SDK: GitHub Actions `actions/checkout@v4`

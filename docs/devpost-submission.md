@@ -60,12 +60,12 @@ Independently written scripts to re-score the detector; real Alexa+ integration 
 | Benchmark and scorer | All household data is synthetic |
 
 ## Built with
-TypeScript, Node 22, Model Context Protocol SDK, Express, SQLite (better-sqlite3), React, Vite, Playwright, axe-core, GitHub Actions, Docker.
+TypeScript, Node 22, Model Context Protocol SDK, Express, SQLite (Node's built-in node:sqlite), React, Vite, Playwright, axe-core, GitHub Actions, Docker.
 
 ## Product feedback (fill from `friction-log.md` before submitting)
 Cover each tool actually used, with what worked, what needs work, onboarding, and would-build-again:
 1. **MCP TypeScript SDK**: see FL-3.
 2. **GitHub Actions**: see FL-2.
-3. **Node tooling / native modules**: see FL-1.
+3. **Node tooling / native modules**: see FL-1 (the native-module problem that made us use the built-in SQLite).
 4. **Alexa+ developer documentation**: not verified at the time of writing; do not claim anything here until it is read and tried.
 5. **MCP Inspector, AWS/Bedrock**: write only if used.
