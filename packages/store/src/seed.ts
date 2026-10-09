@@ -1,6 +1,7 @@
 import type { Clock } from '@second-opinion/shared';
 import { evaluate } from '@second-opinion/engine';
 import type { Db } from './db';
+import { migrate } from './db';
 import { createRepos, type Repos } from './repos';
 
 export const DEMO_HOUSEHOLD = 'hh_demo';
@@ -56,4 +57,22 @@ export function seedDemo(db: Db, clock: Clock): Repos {
     }
   })();
   return repos;
+}
+
+/**
+ * Drop every table (and with it every trigger and index), re-run the migrations and re-seed the demo household.
+ * For demos and tests only: it destroys the audit log. Never expose it in production.
+ */
+export function resetDb(db: Db, clock: Clock): Repos {
+  db.pragma('foreign_keys = OFF');
+  try {
+    const tables = db.prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'").all() as Array<{ name: string }>;
+    db.transaction(() => {
+      for (const t of tables) db.exec(`DROP TABLE IF EXISTS "${t.name.replace(/"/g, '""')}"`);
+    })();
+  } finally {
+    db.pragma('foreign_keys = ON');
+  }
+  migrate(db);
+  return seedDemo(db, clock);
 }

@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import express, { type NextFunction, type Request, type Response } from 'express';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
+import { resetDb } from '@second-opinion/store';
 import type { Deps } from './deps';
 import { buildServer, SERVER_VERSION } from './server';
 import { bearerAuth, originGuard, protocolGuard, rateLimit } from './http-guards';
@@ -49,6 +50,15 @@ export function createApp(deps: Deps) {
       if (!res.headersSent) res.status(500).json({ jsonrpc: '2.0', error: { code: -32603, message: 'Internal server error' }, id: null });
     }
   });
+
+  if (deps.config.adminEnabled) {
+    // Demo/test helper: wipe and re-seed the database. Same bearer auth as /mcp. Disabled in production.
+    app.post('/admin/reset', bearerAuth(deps.config.authToken), (_req, res) => {
+      resetDb(deps.db, deps.clock);
+      deps.log.info('admin_reset', {});
+      res.json({ ok: true });
+    });
+  }
 
   const notAllowed = (_req: Request, res: Response) => {
     res.setHeader('Allow', 'POST');

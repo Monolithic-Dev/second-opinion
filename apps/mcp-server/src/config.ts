@@ -14,6 +14,7 @@ const schema = z.object({
   SEED_DEMO: z.enum(['0', '1']).default('1'),
   NOTIFY_CHANNELS: z.string().default('console,db,email_html'),
   OUTBOX_DIR: z.string().default('./data/outbox'),
+  ADMIN_ENABLED: z.enum(['0', '1']).optional(),
   JOBS_INTERVAL_MS: z.coerce.number().int().min(0).default(15000),
 });
 
@@ -30,6 +31,8 @@ export interface Config {
   seedDemo: boolean;
   notifyChannels: Array<'console' | 'db' | 'email_html'>;
   outboxDir: string;
+  /** Dev-only endpoints such as POST /admin/reset. Off by default in production. */
+  adminEnabled: boolean;
   /** 0 disables the background jobs (tests run them explicitly). */
   jobsIntervalMs: number;
 }
@@ -64,6 +67,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     seedDemo: e.SEED_DEMO === '1',
     notifyChannels: parseChannels(e.NOTIFY_CHANNELS),
     outboxDir: e.OUTBOX_DIR,
+    adminEnabled: e.ADMIN_ENABLED ? e.ADMIN_ENABLED === '1' : e.NODE_ENV !== 'production',
     jobsIntervalMs: e.NODE_ENV === 'test' ? 0 : e.JOBS_INTERVAL_MS,
   };
 }
