@@ -26,7 +26,7 @@ Turns "hold if risky" into a real, configurable protection system. Pure logic in
 - else `allow`. Outcomes combine by max severity; reasons accumulate and are shown on the card.
 - Hard rule: policy can only **tighten**; it never turns a risk `hold` into `allow`.
 
-> **As built (B4a/B4b):** `packages/policy` (pure: `decide`, `tally`, escalation helpers, `validatePolicy`) and policy persistence/tools are merged. Field names in code are camelCase (`maxSingleCents`, ...) and snake_case in SQL. `decide` skips payee, hour and cap rules for informational checks (`actionType: none`). The policy decision is stored with each (append-only) decision row. The notification outbox, escalation job and email rendering are B4c.
+> **As built (B4a/B4b):** `packages/policy` (pure: `decide`, `tally`, escalation helpers, `validatePolicy`) and policy persistence/tools are merged. Field names in code are camelCase (`maxSingleCents`, ...) and snake_case in SQL. `decide` skips payee, hour and cap rules for informational checks (`actionType: none`). The policy decision is stored with each (append-only) decision row. **B4c is merged too:** `packages/notify` (templates, dispatcher with 5s/20s/80s backoff, console/db/email-HTML adapters), migration 004, `list_notifications`, and the escalation / expiry / outbox jobs.
 
 ## 3. Approval state machine (`quorum.ts`, `escalation.ts`)
 ```

@@ -6,3 +6,4 @@ data/*.db-*
 .cache/
 *.log
 .DS_Store
+data/outbox/

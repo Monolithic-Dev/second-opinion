@@ -4,6 +4,7 @@ import { ToolError } from '@second-opinion/shared';
 import { z } from 'zod';
 import type { Deps } from '../deps';
 import { defineTool, idSchema } from './define';
+import { notifyHold } from '../services/notifications';
 import { holdStatusSchema, requireApprover } from './shared';
 
 export function registerResolveApproval(server: McpServer, deps: Deps): void {
@@ -52,6 +53,7 @@ export function registerResolveApproval(server: McpServer, deps: Deps): void {
       if (t.state === 'pending') return { holdId, decision, status: hold.status, resolvedAt: null, votes };
 
       const final = deps.repos.holds.finalize(holdId, t.state === 'approved' ? 'released' : 'denied', resolvedBy, note);
+      notifyHold(deps, 'hold_resolved', final, deps.repos.people.approvers(final.household_id).map((a) => a.id), { status: final.status });
       return { holdId, decision, status: final.status, resolvedAt: final.resolved_at, votes };
     },
   });

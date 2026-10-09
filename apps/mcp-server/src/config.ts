@@ -12,6 +12,9 @@ const schema = z.object({
   DB_PATH: z.string().min(1).default('./data/second-opinion.db'),
   HOLD_TTL_MS: z.coerce.number().int().min(1000).optional(),
   SEED_DEMO: z.enum(['0', '1']).default('1'),
+  NOTIFY_CHANNELS: z.string().default('console,db,email_html'),
+  OUTBOX_DIR: z.string().default('./data/outbox'),
+  JOBS_INTERVAL_MS: z.coerce.number().int().min(0).default(15000),
 });
 
 export interface Config {
@@ -25,6 +28,17 @@ export interface Config {
   /** Optional override of the household policy hold lifetime (tests, ops). */
   holdTtlOverrideMs: number | undefined;
   seedDemo: boolean;
+  notifyChannels: Array<'console' | 'db' | 'email_html'>;
+  outboxDir: string;
+  /** 0 disables the background jobs (tests run them explicitly). */
+  jobsIntervalMs: number;
+}
+
+function parseChannels(raw: string): Config['notifyChannels'] {
+  const allowed = ['console', 'db', 'email_html'] as const;
+  const out = raw.split(',').map((c) => c.trim()).filter(Boolean);
+  for (const c of out) if (!(allowed as readonly string[]).includes(c)) throw new Error(`Invalid configuration: NOTIFY_CHANNELS has unknown channel ${c}`);
+  return out as Config['notifyChannels'];
 }
 
 /** Validate environment once at startup. Throws a readable error on bad values. */
@@ -48,5 +62,8 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     dbPath: e.DB_PATH,
     holdTtlOverrideMs: e.HOLD_TTL_MS,
     seedDemo: e.SEED_DEMO === '1',
+    notifyChannels: parseChannels(e.NOTIFY_CHANNELS),
+    outboxDir: e.OUTBOX_DIR,
+    jobsIntervalMs: e.NODE_ENV === 'test' ? 0 : e.JOBS_INTERVAL_MS,
   };
 }

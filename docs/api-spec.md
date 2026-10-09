@@ -87,6 +87,12 @@ Notification is simulated (SSE event + audit row). Errors: `NOT_FOUND`, `FORBIDD
 - `list_holds` rows add `reasonText[]`, `quorumRequired`, `votes {approve, deny}`, `escalationLevel`.
 - Seed: approvers `p_priya` (rank 1) and `p_arjun` (rank 2); `request_family_approval` defaults to the lowest rank.
 
+## H. Notifications and background jobs (implemented in B4c)
+- Tool `list_notifications {householdId, recipientId?, limit?}` (read-only): approver notifications with kind `hold_requested|hold_escalated|hold_resolved`, channel, delivery `status` (queued|sent|failed), attempts and the hold description.
+- Every state change writes its notifications in the **same transaction** (transactional outbox), one row per configured channel (`NOTIFY_CHANNELS`, default console,db,email_html). `request_family_approval` notifies the chosen approver; `resolve_approval` announces the final outcome to all approvers; each (hold, recipient, kind) is queued at most once.
+- Jobs (`apps/mcp-server/src/jobs`, every `JOBS_INTERVAL_MS`, off in tests): **escalation** (one level per policy `escalateAfterMin`, next approver rank notified exactly once), **expiry** (approvers told once; the hold stays blocked, also when a read expired it first) and **outbox delivery** (retries after 5s, 20s, 80s; failed after the 4th attempt).
+- Delivery is simulated: the `email_html` adapter writes escaped HTML to `OUTBOX_DIR/<id>.html`; nothing is sent.
+
 ## E. Tier 1 additions
 **New MCP tools** (approver-only where noted):
 | Tool | Input | Output |
