@@ -12,14 +12,15 @@ interface Golden {
   ctx: Context;
   'rules-2026.10.1': { verdict: string; score: number; signals: string[] };
   'rules-2026.10.2': { verdict: string; score: number; signals: string[] };
+  'rules-2026.10.3': { verdict: string; score: number; signals: string[] };
 }
 const golden = JSON.parse(readFileSync(join(dirname(fileURLToPath(import.meta.url)), 'golden', 'rulesets.json'), 'utf8')) as Golden[];
 
 /**
  * A published rule-set version must never change: stored decisions are pinned to it and can be replayed. Improving the detector
- * means adding a NEW version. These snapshots were taken before `rules-2026.10.3` existed.
+ * means adding a NEW version. The 10.1 and 10.2 snapshots were taken before `rules-2026.10.3` existed, the 10.3 snapshot before `rules-2026.10.4`.
  */
-for (const version of ['rules-2026.10.1', 'rules-2026.10.2'] as const) {
+for (const version of ['rules-2026.10.1', 'rules-2026.10.2', 'rules-2026.10.3'] as const) {
   test(`T-FROZEN ${version} gives exactly the same verdict, score and signals as when it was published (${golden.length} inputs)`, () => {
     const drift: string[] = [];
     for (const g of golden) {

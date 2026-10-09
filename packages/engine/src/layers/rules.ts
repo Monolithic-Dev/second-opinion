@@ -8,6 +8,7 @@ export const WEIGHTS: Record<SignalId, number> = {
   REMOTE_ACCESS: 40,
   VERIFICATION_CODE: 35,
   CREDENTIAL_REQUEST: 35,
+  ADVANCE_FEE: 30,
   FAMILY_EMERGENCY: 30,
   PRIZE_OR_LOTTERY: 30,
   AUTHORITY_IMPERSONATION: 25,
@@ -105,7 +106,58 @@ const P = {
  * Rule packs. A published pack never changes (stored decisions are pinned to the rule set that used it); improving the
  * detector means a new pack. 'v2' = 'v1' plus the additions below, made after measuring 'v1' on the benchmark's dev split.
  */
-export type RulePack = 'v1' | 'v2';
+export type RulePack = 'v1' | 'v2' | 'v3';
+
+/**
+ * Pack v3 (rules-2026.10.4) closes the failure classes listed in docs/eval-report.md: a code mentioned before the verb, the speaker being
+ * the relative, more authority and secrecy phrasings, voucher/safe-account/changed-bank-details wording, and advance-fee requests.
+ * Written from the dev split and the (now consumed) test split's failure classes, NOT from the later test2 split.
+ */
+const V3_ADDITIONS: Partial<Record<SignalId, RegExp[]>> = {
+  VERIFICATION_CODE: [
+    // code first, verb later (possibly in the next sentence): "we texted you a passcode. please read it back"
+    /\b(?:code|passcode|otp|digit (?:number|code))\b[\s\S]{0,80}?\b(?:read (?:it )?back|read it|read (?:me|out)|tell me|what it says|give me|repeat|forward|share it)\b/,
+    /\b(?:reply|respond|text back)\b[^.!?]{0,30}\b(?:\d+|six|four|five) digit\b/,
+  ],
+  CREDENTIAL_REQUEST: [/\b(?:reply|send|give|share|provide)\b[^.!?]{0,30}\byour (?:bank|account|card) (?:details|number|information)\b/],
+  FAMILY_EMERGENCY: [
+    // the speaker is the relative: "I was in a crash ... $1,500 cash", "I'm at the police station and need $2,500 for bail"
+    /\bi(?:'m| am| was| got| had)\b[^.!?]{0,40}\b(?:crash|accident|police station|jail|arrested|custody)\b[\s\S]{0,120}?(?:\$\s?\d|\bcash\b|\bbail\b)/,
+    /\b(?:gran|grandma|grandpa|nana|nan|granny)\b[^.!?]{0,15}\b(?:it'?s me|this is)\b[\s\S]{0,160}?(?:\$\s?\d|\bcash\b|\bvouchers?\b)/,
+    /\bnew (?:phone )?number\b[\s\S]{0,120}?(?:\$\s?\d|\bcover\b|\bbill\b)/,
+    /\bmy (?:cards?|accounts?) (?:are|is) blocked\b[\s\S]{0,100}?\b(?:buy|send|vouchers?|codes?|cash)\b/,
+  ],
+  SECRECY: [
+    /\b(?:please )?(?:don'?t|do not|never) (?:tell|mention|say anything to|breathe a word to)\b[^.!?]{0,40}\b(?:anyone|anybody|staff|branch|teller|mum|mom|dad|mother|father|parents)\b/,
+    /\bkeep (?:this|it|that)(?: call| conversation| matter)? between (?:us|you and me)\b/,
+  ],
+  WIRE_OR_CRYPTO: [
+    /\bsafe account\b/,
+    /\b(?:double|triple) your (?:money|investment)\b/,
+    /\bchanged (?:his|her|their|our|the) bank (?:details|account)\b/,
+    /\b(?:new|updated) (?:bank )?account number\b/,
+    /\bby wire\b/,
+    /\bforward \$\s?\d[\d,]*\b/,
+  ],
+  GIFT_CARD: [
+    /\b(?:steam|apple|google play|itunes|amazon|walmart|target|ebay|vanilla)\s+(?:vouchers?|codes?)\b/,
+    /\bprepaid\s+vouchers?\b/,
+    /\bphotos? of the backs?\b/,
+  ],
+  REMOTE_ACCESS: [/\btake (?:remote )?control of your (?:screen|computer|pc|laptop|device)\b/],
+  UNSOLICITED_CONTACT: [
+    /\bunusual (?:sign-?in|activity|login)\b/,
+    /\bi (?:accidentally|mistakenly) sent\b/,
+    /\b(?:has|have) detected (?:a )?(?:virus|malware|hackers?)\b/,
+    /\bfinal (?:warning|notice)\b/,
+  ],
+  URGENCY: [/\bright away\b/, /\b(?:in|within) (?:ten|fifteen|twenty|thirty|forty|\d+) minutes?\b/, /\bor (?:he|she|they) (?:calls?|will call) the police\b/],
+  ADVANCE_FEE: [
+    /\b(?:handling|release|customs|activation|processing|courier|redelivery|clearance|unlock|insurance)\s+(?:fee|charge|payment)\b/,
+    /\b(?:send|pay)\b[^.!?]{0,30}\$\s?\d[\d,.]*\s+(?:for|as)\s+(?:the\s+)?(?:\w+\s+)?(?:insurance|fee|charge|taxes|handling|customs)\b/,
+    /\b(?:wants?|needs?|demands?)\b[^.!?]{0,20}\$\s?\d[\d,]*\s*(?:before|to)\s+(?:they\s+)?(?:release|let|clear)\b/,
+  ],
+};
 
 const V2_ADDITIONS: Partial<Record<SignalId, RegExp[]>> = {
   // asking for a code with a plain "I need ..." instead of "read me ..."
@@ -119,17 +171,24 @@ const V2_ADDITIONS: Partial<Record<SignalId, RegExp[]>> = {
   WIRE_OR_CRYPTO: [/\bwire\s+(?:me\s+|him\s+|her\s+|them\s+)?(?:\$|\d)/, /\bwire\s+(?:it|them|cash)\b/],
 };
 
-function patterns(pack: RulePack): Record<keyof typeof P | 'CREDENTIAL_REQUEST', RegExp[]> {
-  const base = { ...P, CREDENTIAL_REQUEST: [] as RegExp[] };
-  if (pack === 'v1') return base;
-  const out = { ...base };
-  for (const [id, extra] of Object.entries(V2_ADDITIONS) as Array<[keyof typeof out, RegExp[]]>) out[id] = [...out[id], ...extra];
+type PatternTable = Record<keyof typeof P | 'CREDENTIAL_REQUEST' | 'ADVANCE_FEE', RegExp[]>;
+
+function patterns(pack: RulePack): PatternTable {
+  const out: PatternTable = { ...P, CREDENTIAL_REQUEST: [], ADVANCE_FEE: [] };
+  const adds = pack === 'v1' ? [] : pack === 'v2' ? [V2_ADDITIONS] : [V2_ADDITIONS, V3_ADDITIONS];
+  for (const add of adds) for (const [id, extra] of Object.entries(add) as Array<[keyof PatternTable, RegExp[]]>) out[id] = [...out[id], ...extra];
   return out;
 }
-const PACKS: Record<RulePack, ReturnType<typeof patterns>> = { v1: patterns('v1'), v2: patterns('v2') };
+const PACKS: Record<RulePack, PatternTable> = { v1: patterns('v1'), v2: patterns('v2'), v3: patterns('v3') };
 
 const AUTHORITY =
   /\b(?:the )?(?:bank|irs|ssa|social security|medicare|police|sheriff|fbi|fraud (?:department|team)|security department|amazon (?:support|security)|microsoft support|apple support|your credit union|treasury|court|government)\b/;
+/** Pack v3: more officials (security desk, tax office, utilities, pension, customs, Microsoft) and "we need you to ...". */
+const AUTHORITY_V3 =
+  /\b(?:the )?(?:bank|irs|ssa|social security|medicare|police|sheriff|fbi|fraud (?:department|team)|security (?:department|team|desk)|card security|tax (?:office|authority|department)|revenue service|(?:electric|electricity|gas|power|water|energy|utility) company|pension (?:office|service)|customs (?:office|agent|officer)|amazon (?:support|security)|microsoft|apple support|your credit union|treasury|court|government)\b/;
+const DEMAND_V3 = /\b(?:must|have to|has to|need to|need you to|required|immediately|now|today|or (?:your|you will)|unless|else)\b/;
+const PRIZE_V3 = /\b(?:you'?ve won|you have won|you won|won our|winner|sweepstakes|lottery|jackpot|prize|cash award|selected to receive|monthly draw)\b/;
+const PRIZE_FEE_V3 = /\b(?:claim|fee|processing|taxes|pay|handling|insurance|send \$?\d)\b/;
 const DEMAND = /\b(?:must|have to|has to|need to|required|immediately|now|today|or (?:your|you will)|unless|else)\b/;
 const PRIZE = /\b(?:you'?ve won|you have won|you won|winner|sweepstakes|lottery|jackpot|prize)\b/;
 const PRIZE_FEE = /\b(?:claim|fee|processing|taxes|pay)\b/;
@@ -159,9 +218,9 @@ function payeeKey(s: string): string {
 }
 
 /** Layer 1: deterministic rule signals for text + context. `text` is raw user input. */
-export function detectRuleSignals(text: string, ctx: Context = {}, pack: RulePack = 'v2'): Signal[] {
+export function detectRuleSignals(text: string, ctx: Context = {}, pack: RulePack = 'v3'): Signal[] {
   const P = PACKS[pack];
-  const neg = pack === 'v2' ? NEGATION_V2 : NEGATION;
+  const neg = pack === 'v1' ? NEGATION : NEGATION_V2;
   const clean = normalize(text);
   const t = deleet(clean);
   const out: Signal[] = [];
@@ -171,17 +230,19 @@ export function detectRuleSignals(text: string, ctx: Context = {}, pack: RulePac
   out.push(...sig('REMOTE_ACCESS', anyRequest(t, P.REMOTE_ACCESS, neg)));
   out.push(...sig('VERIFICATION_CODE', anyRequest(t, P.VERIFICATION_CODE, neg)));
   out.push(...sig('CREDENTIAL_REQUEST', anyRequest(t, P.CREDENTIAL_REQUEST, neg)));
+  out.push(...sig('ADVANCE_FEE', anyRequest(t, P.ADVANCE_FEE, neg)));
   out.push(...sig('FAMILY_EMERGENCY', any(t, P.FAMILY_EMERGENCY)));
   out.push(...sig('SECRECY', any(t, P.SECRECY)));
   out.push(...sig('URGENCY', any(t, P.URGENCY)));
   out.push(...sig('UNSOLICITED_CONTACT', any(t, P.UNSOLICITED_CONTACT)));
   out.push(...sig('OFFICIAL_CHANNEL_ADVICE', any(t, P.OFFICIAL_CHANNEL_ADVICE)));
 
-  const prize = firstMatch(t, PRIZE);
-  if (prize && PRIZE_FEE.test(t)) out.push(...sig('PRIZE_OR_LOTTERY', prize));
+  const v3 = pack === 'v3';
+  const prize = firstMatch(t, v3 ? PRIZE_V3 : PRIZE);
+  if (prize && (v3 ? PRIZE_FEE_V3 : PRIZE_FEE).test(t)) out.push(...sig('PRIZE_OR_LOTTERY', prize));
 
-  const authority = firstMatch(t, AUTHORITY);
-  if (authority && DEMAND.test(t)) out.push(...sig('AUTHORITY_IMPERSONATION', authority));
+  const authority = firstMatch(t, v3 ? AUTHORITY_V3 : AUTHORITY);
+  if (authority && (v3 ? DEMAND_V3 : DEMAND).test(t)) out.push(...sig('AUTHORITY_IMPERSONATION', authority));
 
   const amount = ctx.amountCents ?? parseAmountCents(clean);
   if (amount !== undefined && amount >= HIGH_AMOUNT_CENTS) {

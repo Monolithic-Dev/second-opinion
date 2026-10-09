@@ -42,7 +42,7 @@ function buildIndex(playbooks: Playbook[]): { docs: Indexed[]; idf: Map<string, 
   return { docs, idf };
 }
 
-const INDEXES: Record<PlaybookPack, ReturnType<typeof buildIndex>> = { p1: buildIndex(PLAYBOOK_PACKS.p1), p2: buildIndex(PLAYBOOK_PACKS.p2) };
+const INDEXES: Record<PlaybookPack, ReturnType<typeof buildIndex>> = { p1: buildIndex(PLAYBOOK_PACKS.p1), p2: buildIndex(PLAYBOOK_PACKS.p2), p3: buildIndex(PLAYBOOK_PACKS.p3) };
 
 export interface PlaybookMatch {
   playbook: Playbook;

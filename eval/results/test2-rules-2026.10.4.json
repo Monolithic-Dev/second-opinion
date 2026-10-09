@@ -1,0 +1,110 @@
+{
+  "engineSha": "6388ce5",
+  "benchSha": "79552af",
+  "liveRuleSet": "rules-2026.10.4",
+  "results": {
+    "rules-2026.10.4": {
+      "n": 40,
+      "hold": {
+        "tp": 19,
+        "fp": 0,
+        "tn": 20,
+        "fn": 1,
+        "precision": 1,
+        "recall": 0.95,
+        "f1": 0.9743589743589743,
+        "fpr": 0
+      },
+      "flag": {
+        "tp": 20,
+        "fp": 2,
+        "tn": 18,
+        "fn": 0,
+        "precision": 0.9090909090909091,
+        "recall": 1,
+        "f1": 0.9523809523809523,
+        "fpr": 0.1
+      },
+      "perCategory": {
+        "gift_card": {
+          "total": 1,
+          "caughtAtHold": 1,
+          "caughtAtFlag": 1
+        },
+        "family_emergency": {
+          "total": 4,
+          "caughtAtHold": 4,
+          "caughtAtFlag": 4
+        },
+        "bank_impersonation": {
+          "total": 1,
+          "caughtAtHold": 1,
+          "caughtAtFlag": 1
+        },
+        "verification_code": {
+          "total": 2,
+          "caughtAtHold": 2,
+          "caughtAtFlag": 2
+        },
+        "government_impersonation": {
+          "total": 3,
+          "caughtAtHold": 3,
+          "caughtAtFlag": 3
+        },
+        "tech_support_remote": {
+          "total": 2,
+          "caughtAtHold": 1,
+          "caughtAtFlag": 2
+        },
+        "prize_lottery": {
+          "total": 2,
+          "caughtAtHold": 2,
+          "caughtAtFlag": 2
+        },
+        "delivery_fee": {
+          "total": 1,
+          "caughtAtHold": 1,
+          "caughtAtFlag": 1
+        },
+        "wire_crypto": {
+          "total": 3,
+          "caughtAtHold": 3,
+          "caughtAtFlag": 3
+        },
+        "romance_investment": {
+          "total": 1,
+          "caughtAtHold": 1,
+          "caughtAtFlag": 1
+        }
+      },
+      "misclassified": [
+        {
+          "id": "u-007",
+          "label": "scam",
+          "category": "tech_support_remote",
+          "difficulty": "tricky",
+          "verdict": "caution",
+          "error": "only flagged, not held"
+        },
+        {
+          "id": "u-032",
+          "label": "benign",
+          "category": "family_chat",
+          "difficulty": "tricky",
+          "verdict": "caution",
+          "error": "false flag"
+        },
+        {
+          "id": "u-040",
+          "label": "benign",
+          "category": "delivery_genuine",
+          "difficulty": "tricky",
+          "verdict": "caution",
+          "error": "false flag"
+        }
+      ],
+      "missingPredictions": [],
+      "problems": []
+    }
+  }
+}

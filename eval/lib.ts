@@ -7,7 +7,7 @@ import type { Context } from '@second-opinion/shared';
 
 export interface BenchRecord {
   id: string;
-  split: 'dev' | 'test';
+  split: 'dev' | 'test' | 'test2';
   label: 'scam' | 'benign';
   category: string;
   channel: Context['channel'];
@@ -110,6 +110,22 @@ export function checkTestNotFrozen(frozenPath: string, ruleSet: string, force: b
           `Running it again would let us tune on it. Pass --force only after recording why in docs/decisions.md.`,
       );
     }
+  }
+  return prior;
+}
+
+/**
+ * The test2 split is scored once per rule set (several rule sets may be scored over time). Returns the set of rule sets already frozen;
+ * throws if any requested one is among them, unless forced.
+ */
+export function checkTest2NotFrozen(frozenPath: string, ruleSets: string[], force: boolean): Record<string, FrozenTestRun> {
+  const prior: Record<string, FrozenTestRun> = existsSync(frozenPath) ? JSON.parse(readFileSync(frozenPath, 'utf8')) : {};
+  const again = ruleSets.filter((r) => prior[r]);
+  if (again.length && !force) {
+    throw new Error(
+      `The test2 split was already scored for ${again.join(', ')}. Running it again would let us tune on it. ` +
+        `Pass --force only after recording why in docs/decisions.md.`,
+    );
   }
   return prior;
 }
