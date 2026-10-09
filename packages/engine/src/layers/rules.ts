@@ -7,6 +7,7 @@ export const WEIGHTS: Record<SignalId, number> = {
   WIRE_OR_CRYPTO: 40,
   REMOTE_ACCESS: 40,
   VERIFICATION_CODE: 35,
+  CREDENTIAL_REQUEST: 35,
   FAMILY_EMERGENCY: 30,
   PRIZE_OR_LOTTERY: 30,
   AUTHORITY_IMPERSONATION: 25,
@@ -31,14 +32,20 @@ export const HIGH_AMOUNT_CENTS = 50_000;
 const NEGATION = /\b(?:never|will not|won'?t|do not|don'?t|does not|doesn'?t|no (?:real|legitimate|genuine))\s+(?:ever\s+)?(?:ask|request|require|demand|accept|share|give|send)\b/;
 
 /** First match of `re` that is not part of a warning sentence. */
-function firstRequestMatch(t: string, re: RegExp): string | undefined {
+/**
+ * Pack v2 guard: up to four words may sit between "never"/"do not" and the verb ("we will never call you to ask you to share ...").
+ * A comma or full stop ends the warning, so "don't tell anyone, buy gift cards" is still a request.
+ */
+const NEGATION_V2 = /\b(?:never|will not|won'?t|do not|don'?t|does not|doesn'?t|no (?:real|legitimate|genuine))\s+(?:ever\s+)?(?:\w+\s+){0,4}?(?:ask|request|require|demand|accept|share|give|send)\b/;
+
+function firstRequestMatch(t: string, re: RegExp, negation: RegExp = NEGATION): string | undefined {
   const g = new RegExp(re.source, re.flags.includes('g') ? re.flags : re.flags + 'g');
   for (const m of t.matchAll(g)) {
     const start = m.index ?? 0;
     const before = t.slice(Math.max(0, start - 70), start);
     const sentenceStart = Math.max(before.lastIndexOf('. '), before.lastIndexOf('! '), before.lastIndexOf('? '));
     const sameSentence = sentenceStart >= 0 ? before.slice(sentenceStart + 2) : before;
-    if (!NEGATION.test(sameSentence)) return m[0];
+    if (!negation.test(sameSentence)) return m[0];
   }
   return undefined;
 }
@@ -94,6 +101,33 @@ const P = {
   ],
 };
 
+/**
+ * Rule packs. A published pack never changes (stored decisions are pinned to the rule set that used it); improving the
+ * detector means a new pack. 'v2' = 'v1' plus the additions below, made after measuring 'v1' on the benchmark's dev split.
+ */
+export type RulePack = 'v1' | 'v2';
+
+const V2_ADDITIONS: Partial<Record<SignalId, RegExp[]>> = {
+  // asking for a code with a plain "I need ..." instead of "read me ..."
+  VERIFICATION_CODE: [/\b(?:need|require|provide|confirm|verify)\b[^.!?]{0,40}\b(?:code|passcode|otp|pin)\b/],
+  // credential phishing: card photos, PINs, passwords
+  CREDENTIAL_REQUEST: [
+    /\b(?:photo|picture|scan|copy)\s+of\s+your\s+(?:debit|credit|bank|atm)\s+card\b/,
+    /\b(?:send|give|share|tell|provide|enter|confirm)\b[^.!?]{0,30}\b(?:your|the)\s+(?:pin|password|passcode|login|social security number|ssn)\b/,
+  ],
+  // "wire $8,000", "wire me $400", "wire it"
+  WIRE_OR_CRYPTO: [/\bwire\s+(?:me\s+|him\s+|her\s+|them\s+)?(?:\$|\d)/, /\bwire\s+(?:it|them|cash)\b/],
+};
+
+function patterns(pack: RulePack): Record<keyof typeof P | 'CREDENTIAL_REQUEST', RegExp[]> {
+  const base = { ...P, CREDENTIAL_REQUEST: [] as RegExp[] };
+  if (pack === 'v1') return base;
+  const out = { ...base };
+  for (const [id, extra] of Object.entries(V2_ADDITIONS) as Array<[keyof typeof out, RegExp[]]>) out[id] = [...out[id], ...extra];
+  return out;
+}
+const PACKS: Record<RulePack, ReturnType<typeof patterns>> = { v1: patterns('v1'), v2: patterns('v2') };
+
 const AUTHORITY =
   /\b(?:the )?(?:bank|irs|ssa|social security|medicare|police|sheriff|fbi|fraud (?:department|team)|security department|amazon (?:support|security)|microsoft support|apple support|your credit union|treasury|court|government)\b/;
 const DEMAND = /\b(?:must|have to|has to|need to|required|immediately|now|today|or (?:your|you will)|unless|else)\b/;
@@ -104,9 +138,9 @@ function sig(id: SignalId, evidence: string | undefined): Signal[] {
   return evidence ? [{ id, weight: WEIGHTS[id], evidence: evidence.slice(0, 80) }] : [];
 }
 
-function anyRequest(t: string, res: RegExp[]): string | undefined {
+function anyRequest(t: string, res: RegExp[], negation: RegExp = NEGATION): string | undefined {
   for (const re of res) {
-    const m = firstRequestMatch(t, re);
+    const m = firstRequestMatch(t, re, negation);
     if (m) return m;
   }
   return undefined;
@@ -125,15 +159,18 @@ function payeeKey(s: string): string {
 }
 
 /** Layer 1: deterministic rule signals for text + context. `text` is raw user input. */
-export function detectRuleSignals(text: string, ctx: Context = {}): Signal[] {
+export function detectRuleSignals(text: string, ctx: Context = {}, pack: RulePack = 'v2'): Signal[] {
+  const P = PACKS[pack];
+  const neg = pack === 'v2' ? NEGATION_V2 : NEGATION;
   const clean = normalize(text);
   const t = deleet(clean);
   const out: Signal[] = [];
 
-  out.push(...sig('GIFT_CARD', anyRequest(t, P.GIFT_CARD)));
-  out.push(...sig('WIRE_OR_CRYPTO', anyRequest(t, P.WIRE_OR_CRYPTO)));
-  out.push(...sig('REMOTE_ACCESS', anyRequest(t, P.REMOTE_ACCESS)));
-  out.push(...sig('VERIFICATION_CODE', anyRequest(t, P.VERIFICATION_CODE)));
+  out.push(...sig('GIFT_CARD', anyRequest(t, P.GIFT_CARD, neg)));
+  out.push(...sig('WIRE_OR_CRYPTO', anyRequest(t, P.WIRE_OR_CRYPTO, neg)));
+  out.push(...sig('REMOTE_ACCESS', anyRequest(t, P.REMOTE_ACCESS, neg)));
+  out.push(...sig('VERIFICATION_CODE', anyRequest(t, P.VERIFICATION_CODE, neg)));
+  out.push(...sig('CREDENTIAL_REQUEST', anyRequest(t, P.CREDENTIAL_REQUEST, neg)));
   out.push(...sig('FAMILY_EMERGENCY', any(t, P.FAMILY_EMERGENCY)));
   out.push(...sig('SECRECY', any(t, P.SECRECY)));
   out.push(...sig('URGENCY', any(t, P.URGENCY)));

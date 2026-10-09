@@ -17,9 +17,16 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - uses: actions/checkout@v4
+        with:
+          repository: Monolithic-Dev/scam-script-bench
+          ref: c2f7b1c2156721e1838e3628cd91d2c89224c5ee
+          path: .bench
       - run: npm ci
       - run: npm run typecheck
       - run: npm test
+        env:
+          BENCH_PATH: .bench
       - run: npm run build:web
 
   e2e:

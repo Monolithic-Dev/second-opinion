@@ -1,5 +1,6 @@
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
+import { LIVE_RULESET_VERSION } from '@second-opinion/engine';
 import { startTestServer, HERO } from './helpers';
 
 let t: Awaited<ReturnType<typeof startTestServer>>;
@@ -71,7 +72,7 @@ test('T-LAYER-5 decisions record the live rule-set version and layer breakdown f
   const r = await t.call<Checked & { ruleSetVersion: string }>(client, 'check_message', { householdId: HH, text: 'Pay the plumber $40', context: { actionType: 'payment' } });
   const d = t.repos.decisions.getByCheck(r.structuredContent!.checkId)!;
   assert.equal(d.rule_set_version, r.structuredContent!.ruleSetVersion);
-  assert.equal(d.rule_set_version, 'rules-2026.10.2');
+  assert.equal(d.rule_set_version, LIVE_RULESET_VERSION);
   assert.ok('layerBreakdown' in JSON.parse(d.features_json));
   await client.close();
 });

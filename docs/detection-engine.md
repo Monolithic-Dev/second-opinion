@@ -66,6 +66,9 @@ interface Context { channel?: string; actionType?: 'purchase'|'payment'|'transfe
 ## 8. When it is wrong
 False negative (scam allowed): the money never moves without the elder asking; the payee/new-payee and amount signals still add friction; surface "I'm not sure" at `caution`. False positive (benign held): family approves in one tap; trusted payees reduce repeats. Both are shown honestly in the failure table.
 
+## 9a. Rule sets, packs and measured quality (as built)
+A rule set (`registry.ts`) names its layers, a **rule pack** (`v1`, `v2`) and a **playbook pack** (`p1`, `p2`). Published versions never change (`test/frozen-rulesets.test.ts` replays 72 inputs against golden output): `rules-2026.10.1` (rules only), `.2` (+ playbooks + behavior), `.3` (live: v2 pack adds code/credential-request and wire patterns, a wider "we will never ask" warning guard, the decisive rule `CREDENTIAL_PLUS_PRESSURE` and the new signal `CREDENTIAL_REQUEST`; p2 adds delivery-fee wordings). Measured results, including what is missed, are in [eval-report.md](eval-report.md).
+
 ## 9. Layered pipeline (Tier 1, `packages/engine`)
 | Layer | File | Adds | Cap |
 |---|---|---|---|

@@ -19,8 +19,8 @@ export { normalize, deleet } from './normalize';
 export { RULESET_VERSION } from './version';
 export { RULESETS, LIVE_RULESET_VERSION, getRuleSet, listRuleSets, type RuleSet } from './registry';
 export { parseAmountCents, wordsToNumber } from './amount';
-export { detectRuleSignals, WEIGHTS, HIGH_AMOUNT_CENTS } from './layers/rules';
-export { topMatches, tokens, PLAYBOOKS, MIN_SIMILARITY, playbookWeight } from './layers/playbooks';
+export { detectRuleSignals, WEIGHTS, HIGH_AMOUNT_CENTS, type RulePack } from './layers/rules';
+export { topMatches, tokens, PLAYBOOKS, PLAYBOOK_PACKS, MIN_SIMILARITY, playbookWeight, type PlaybookPack } from './layers/playbooks';
 export { detectBehaviorSignals, localHour, isQuietHour, BEHAVIOR_WEIGHTS } from './layers/behavior';
 export { fuse, LAYER_CAPS, type LayerId } from './layers/fusion';
 export { scoreSignals, hardRuleOf, verdictFor, clampScore, HOLD_THRESHOLD, CAUTION_THRESHOLD, isPositive } from './score';
@@ -52,11 +52,11 @@ export function evaluate(text: string, ctx: Context = {}, history: HistoryItem[]
   const ruleSet = typeof options.ruleSet === 'object' ? options.ruleSet : getRuleSet(options.ruleSet ?? LIVE_RULESET_VERSION);
   const on = new Set(ruleSet.layers);
 
-  const rules: Signal[] = detectRuleSignals(trimmed, ctx);
+  const rules: Signal[] = detectRuleSignals(trimmed, ctx, ruleSet.rulePack);
   let playbooks: Signal[] = [];
   let match: PlaybookMatch | null = null;
   if (on.has('playbooks')) {
-    const r = detectPlaybookSignals(trimmed);
+    const r = detectPlaybookSignals(trimmed, ruleSet.playbookPack);
     playbooks = r.signals;
     match = r.match;
   }
@@ -68,7 +68,7 @@ export function evaluate(text: string, ctx: Context = {}, history: HistoryItem[]
     });
   }
 
-  const fused = fuse({ rules, playbooks, behavior });
+  const fused = fuse({ rules, playbooks, behavior }, ruleSet.rulePack);
   const fp = fingerprint(fused.signals);
   const similarTo = findSimilar(fp, history);
   const { spokenSummary, card } = explain(fused.verdict, fused.signals, similarTo);
