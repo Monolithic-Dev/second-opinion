@@ -27,6 +27,7 @@
     "apps/simulator/src",
     "apps/simulator/test",
     "scripts",
-    "eval"
+    "eval",
+    "examples"
   ]
 }

@@ -1,0 +1,10 @@
+{
+  "name": "@second-opinion/guard-sdk",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "description": "Wrap any MCP tool that moves money so Second Opinion checks it first, holds it when risky, and fails closed.",
+  "exports": { ".": "./src/index.ts" },
+  "dependencies": { "@modelcontextprotocol/sdk": "1.32.1" }
+}

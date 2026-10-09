@@ -22,7 +22,7 @@
     "demo": "tsx scripts/demo.ts",
     "start:sim": "tsx apps/simulator/src/index.ts",
     "dev:sim": "tsx watch apps/simulator/src/index.ts",
-    "test:node": "node --import tsx --test \"packages/*/test/**/*.test.ts\" \"apps/*/test/**/*.test.ts\" \"eval/test/**/*.test.ts\"",
+    "test:node": "node --import tsx --test \"packages/*/test/**/*.test.ts\" \"apps/*/test/**/*.test.ts\" \"eval/test/**/*.test.ts\" \"examples/*/test/**/*.test.ts\"",
     "test:web": "npm -w @second-opinion/web run test",
     "build:web": "npm -w @second-opinion/web run build",
     "dev:web": "npm -w @second-opinion/web run dev",
