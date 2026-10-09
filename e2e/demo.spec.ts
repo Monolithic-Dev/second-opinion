@@ -41,11 +41,11 @@ test('hero flow: a scam payment request is paused, the family denies it, Dorothy
   await expect(page.getByText('1 waiting for you')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Purchase of $1,000 to gift cards' })).toBeVisible();
 
-  await page.screenshot({ path: 'docs/assets/demo-held.png' });
+  if (process.env.UPDATE_SCREENSHOTS) await page.screenshot({ path: 'docs/assets/demo-held.png' });
   await page.getByRole('button', { name: 'Deny' }).click();
   await expect(log.getByText("Your family said no, so I've cancelled it. You're safe.")).toBeVisible();
   await expect(page.getByText('Nothing needs your attention')).toBeVisible();
-  await page.screenshot({ path: 'docs/assets/demo-denied.png' });
+  if (process.env.UPDATE_SCREENSHOTS) await page.screenshot({ path: 'docs/assets/demo-denied.png' });
 });
 
 test('a routine payment to a trusted payee goes through without a hold', async ({ page }) => {

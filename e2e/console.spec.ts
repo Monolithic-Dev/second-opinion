@@ -48,7 +48,7 @@ test('overview: all clear, then one request needs a decision', async ({ page, re
   await holdHero(request);
   await expect(page.getByText('1 request needs your decision')).toBeVisible(); // live update, no reload
   await expect(page.getByRole('link', { name: 'Purchase of $1,000 to gift cards' }).first()).toBeVisible();
-  await page.screenshot({ path: 'docs/assets/console-overview.png' });
+  if (process.env.UPDATE_SCREENSHOTS) await page.screenshot({ path: 'docs/assets/console-overview.png' });
 });
 
 test('two approvers: one approval keeps it waiting, the second (a different person) releases it', async ({ page, request }) => {
@@ -68,7 +68,7 @@ test('two approvers: one approval keeps it waiting, the second (a different pers
   await expect(page.getByText('1 of 2 approvals')).toBeVisible();
   await expect(page.getByText('Priya', { exact: true }).first()).toBeVisible();
   await expect(page.getByText(/Waiting for the other approver/)).toBeVisible();
-  await page.screenshot({ path: 'docs/assets/console-detail.png' });
+  if (process.env.UPDATE_SCREENSHOTS) await page.screenshot({ path: 'docs/assets/console-detail.png' });
 
   await page.getByRole('button', { name: 'Sign out' }).click();
   await signIn(page, 'Arjun');
