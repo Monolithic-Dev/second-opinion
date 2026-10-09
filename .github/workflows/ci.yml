@@ -17,7 +17,10 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      # The bench repo is private for now, so this checkout fails and the regression-gate tests skip.
+      # Make the bench public (or add a read token) to turn the gate on.
       - uses: actions/checkout@v4
+        continue-on-error: true
         with:
           repository: Monolithic-Dev/scam-script-bench
           ref: c2f7b1c2156721e1838e3628cd91d2c89224c5ee
