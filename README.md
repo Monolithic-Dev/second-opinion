@@ -29,14 +29,16 @@ Click **Buy gift cards (a scam)** on Dorothy's Echo, sign in on Priya's phone (d
 - **Reliability**: idempotency keys, request tracing from the screen to the decision row, tamper-evident audit log.
 
 ## How good is the detector?
-Measured on a 60-script benchmark ([`scam-script-bench`](https://github.com/Monolithic-Dev/scam-script-bench), full write-up in [docs/eval-report.md](docs/eval-report.md)):
+Measured on a 100-script benchmark ([`scam-script-bench`](https://github.com/Monolithic-Dev/scam-script-bench), full write-up in [docs/eval-report.md](docs/eval-report.md)):
 
 | | Scams held (blocked until family decides) | Scams flagged | Benign wrongly **held** |
 |---|---|---|---|
 | dev split (tuned on) | 86.7% | 93.3% | 0% |
-| **test split (held out, scored once)** | **46.7%** | **80.0%** | **0%** |
+| **test split (held out, scored once, `rules-2026.10.3`)** | **46.7%** | **80.0%** | **0%** |
+| fresh `test2` split, older detector `rules-2026.10.3` (written before tuning) | 30.0% | 70.0% | 0% |
+| `test2`, new `rules-2026.10.4` (**not independent**: same author wrote the rules) | 95.0% | 100% | 0% |
 
-The drop from dev to test is the honest cost of tuning on a tiny set, and we publish it with the list of what was missed and why. The scam-playbook layer is what generalises (+13 points held on test over rules alone). No benign message was ever held. Rule sets are immutable and version-pinned (`rules-2026.10.1` to `.3`), a regression gate in CI protects quality, and the numbers are reproducible with `npm run eval`.
+The drop from dev to test is the honest cost of tuning on a tiny set, and we publish it with the list of what was missed and why. The scam-playbook layer is what generalises (+13 points held on test over rules alone). No benign message was ever held. The 95% on test2 only shows the new rules can express those cases; it is not a claim about real scams (see the caveat in the report). Rule sets are immutable and version-pinned (`rules-2026.10.1` to `.4`), a regression gate in CI protects quality, and the numbers are reproducible with `npm run eval`.
 
 ## Honest limits
 Alexa+ cannot intercept phone calls; we gate pay/buy requests and answer "is this a scam?". The Alexa+ experience is **simulated**; payments are **simulated**; family notification is **simulated**; all data is **synthetic**. A polite scam with no scam vocabulary ("send $900 to my cousin") is not caught by the playbook layer. Decision support, not a guarantee.

@@ -18,7 +18,7 @@ export interface Fused {
  * Combine layer outputs: subtotal per layer, cap positive contribution of playbooks/behavior, sum, clamp 0-100,
  * apply thresholds, then decisive hard rules (which only raise to `hold`). Deterministic and order-independent.
  */
-export function fuse(layers: Partial<Record<LayerId, Signal[]>>, pack: 'v1' | 'v2' = 'v2'): Fused {
+export function fuse(layers: Partial<Record<LayerId, Signal[]>>, pack: 'v1' | 'v2' | 'v3' = 'v3'): Fused {
   const breakdown: Record<LayerId, number> = { rules: 0, playbooks: 0, behavior: 0 };
   const signals: Signal[] = [];
   for (const id of ['rules', 'playbooks', 'behavior'] as const) {

@@ -1,0 +1,652 @@
+{
+  "engineSha": "6388ce5",
+  "benchSha": "79552af",
+  "liveRuleSet": "rules-2026.10.3",
+  "results": {
+    "rules-2026.10.1": {
+      "n": 40,
+      "hold": {
+        "tp": 3,
+        "fp": 0,
+        "tn": 20,
+        "fn": 17,
+        "precision": 1,
+        "recall": 0.15,
+        "f1": 0.2608695652173913,
+        "fpr": 0
+      },
+      "flag": {
+        "tp": 14,
+        "fp": 2,
+        "tn": 18,
+        "fn": 6,
+        "precision": 0.875,
+        "recall": 0.7,
+        "f1": 0.7777777777777777,
+        "fpr": 0.1
+      },
+      "perCategory": {
+        "gift_card": {
+          "total": 1,
+          "caughtAtHold": 1,
+          "caughtAtFlag": 1
+        },
+        "family_emergency": {
+          "total": 4,
+          "caughtAtHold": 0,
+          "caughtAtFlag": 3
+        },
+        "bank_impersonation": {
+          "total": 1,
+          "caughtAtHold": 1,
+          "caughtAtFlag": 1
+        },
+        "verification_code": {
+          "total": 2,
+          "caughtAtHold": 0,
+          "caughtAtFlag": 0
+        },
+        "government_impersonation": {
+          "total": 3,
+          "caughtAtHold": 1,
+          "caughtAtFlag": 3
+        },
+        "tech_support_remote": {
+          "total": 2,
+          "caughtAtHold": 0,
+          "caughtAtFlag": 1
+        },
+        "prize_lottery": {
+          "total": 2,
+          "caughtAtHold": 0,
+          "caughtAtFlag": 0
+        },
+        "delivery_fee": {
+          "total": 1,
+          "caughtAtHold": 0,
+          "caughtAtFlag": 1
+        },
+        "wire_crypto": {
+          "total": 3,
+          "caughtAtHold": 0,
+          "caughtAtFlag": 3
+        },
+        "romance_investment": {
+          "total": 1,
+          "caughtAtHold": 0,
+          "caughtAtFlag": 1
+        }
+      },
+      "misclassified": [
+        {
+          "id": "u-002",
+          "label": "scam",
+          "category": "family_emergency",
+          "difficulty": "tricky",
+          "verdict": "allow",
+          "error": "missed scam"
+        },
+        {
+          "id": "u-004",
+          "label": "scam",
+          "category": "verification_code",
+          "difficulty": "tricky",
+          "verdict": "allow",
+          "error": "missed scam"
+        },
+        {
+          "id": "u-005",
+          "label": "scam",
+          "category": "government_impersonation",
+          "difficulty": "easy",
+          "verdict": "caution",
+          "error": "only flagged, not held"
+        },
+        {
+          "id": "u-006",
+          "label": "scam",
+          "category": "government_impersonation",
+          "difficulty": "tricky",
+          "verdict": "caution",
+          "error": "only flagged, not held"
+        },
+        {
+          "id": "u-007",
+          "label": "scam",
+          "category": "tech_support_remote",
+          "difficulty": "tricky",
+          "verdict": "allow",
+          "error": "missed scam"
+        },
+        {
+          "id": "u-008",
+          "label": "scam",
+          "category": "tech_support_remote",
+          "difficulty": "easy",
+          "verdict": "caution",
+          "error": "only flagged, not held"
+        },
+        {
+          "id": "u-009",
+          "label": "scam",
+          "category": "family_emergency",
+          "difficulty": "easy",
+          "verdict": "caution",
+          "error": "only flagged, not held"
+        },
+        {
+          "id": "u-010",
+          "label": "scam",
+          "category": "family_emergency",
+          "difficulty": "tricky",
+          "verdict": "caution",
+          "error": "only flagged, not held"
+        },
+        {
+          "id": "u-011",
+          "label": "scam",
+          "category": "prize_lottery",
+          "difficulty": "easy",
+          "verdict": "allow",
+          "error": "missed scam"
+        },
+        {
+          "id": "u-012",
+          "label": "scam",
+          "category": "prize_lottery",
+          "difficulty": "tricky",
+          "verdict": "allow",
+          "error": "missed scam"
+        },
+        {
+          "id": "u-013",
+          "label": "scam",
+          "category": "verification_code",
+          "difficulty": "tricky",
+          "verdict": "allow",
+          "error": "missed scam"
+        },
+        {
+          "id": "u-014",
+          "label": "scam",
+          "category": "delivery_fee",
+          "difficulty": "easy",
+          "verdict": "caution",
+          "error": "only flagged, not held"
+        },
+        {
+          "id": "u-015",
+          "label": "scam",
+          "category": "wire_crypto",
+          "difficulty": "tricky",
+          "verdict": "caution",
+          "error": "only flagged, not held"
+        },
+        {
+          "id": "u-016",
+          "label": "scam",
+          "category": "romance_investment",
+          "difficulty": "tricky",
+          "verdict": "caution",
+          "error": "only flagged, not held"
+        },
+        {
+          "id": "u-017",
+          "label": "scam",
+          "category": "wire_crypto",
+          "difficulty": "tricky",
+          "verdict": "caution",
+          "error": "only flagged, not held"
+        },
+        {
+          "id": "u-019",
+          "label": "scam",
+          "category": "wire_crypto",
+          "difficulty": "tricky",
+          "verdict": "caution",
+          "error": "only flagged, not held"
+        },
+        {
+          "id": "u-020",
+          "label": "scam",
+          "category": "family_emergency",
+          "difficulty": "easy",
+          "verdict": "caution",
+          "error": "only flagged, not held"
+        },
+        {
+          "id": "u-032",
+          "label": "benign",
+          "category": "family_chat",
+          "difficulty": "tricky",
+          "verdict": "caution",
+          "error": "false flag"
+        },
+        {
+          "id": "u-040",
+          "label": "benign",
+          "category": "delivery_genuine",
+          "difficulty": "tricky",
+          "verdict": "caution",
+          "error": "false flag"
+        }
+      ],
+      "missingPredictions": [],
+      "problems": []
+    },
+    "rules-2026.10.2": {
+      "n": 40,
+      "hold": {
+        "tp": 6,
+        "fp": 0,
+        "tn": 20,
+        "fn": 14,
+        "precision": 1,
+        "recall": 0.3,
+        "f1": 0.4615384615384615,
+        "fpr": 0
+      },
+      "flag": {
+        "tp": 14,
+        "fp": 2,
+        "tn": 18,
+        "fn": 6,
+        "precision": 0.875,
+        "recall": 0.7,
+        "f1": 0.7777777777777777,
+        "fpr": 0.1
+      },
+      "perCategory": {
+        "gift_card": {
+          "total": 1,
+          "caughtAtHold": 1,
+          "caughtAtFlag": 1
+        },
+        "family_emergency": {
+          "total": 4,
+          "caughtAtHold": 2,
+          "caughtAtFlag": 3
+        },
+        "bank_impersonation": {
+          "total": 1,
+          "caughtAtHold": 1,
+          "caughtAtFlag": 1
+        },
+        "verification_code": {
+          "total": 2,
+          "caughtAtHold": 0,
+          "caughtAtFlag": 0
+        },
+        "government_impersonation": {
+          "total": 3,
+          "caughtAtHold": 2,
+          "caughtAtFlag": 3
+        },
+        "tech_support_remote": {
+          "total": 2,
+          "caughtAtHold": 0,
+          "caughtAtFlag": 1
+        },
+        "prize_lottery": {
+          "total": 2,
+          "caughtAtHold": 0,
+          "caughtAtFlag": 0
+        },
+        "delivery_fee": {
+          "total": 1,
+          "caughtAtHold": 0,
+          "caughtAtFlag": 1
+        },
+        "wire_crypto": {
+          "total": 3,
+          "caughtAtHold": 0,
+          "caughtAtFlag": 3
+        },
+        "romance_investment": {
+          "total": 1,
+          "caughtAtHold": 0,
+          "caughtAtFlag": 1
+        }
+      },
+      "misclassified": [
+        {
+          "id": "u-002",
+          "label": "scam",
+          "category": "family_emergency",
+          "difficulty": "tricky",
+          "verdict": "allow",
+          "error": "missed scam"
+        },
+        {
+          "id": "u-004",
+          "label": "scam",
+          "category": "verification_code",
+          "difficulty": "tricky",
+          "verdict": "allow",
+          "error": "missed scam"
+        },
+        {
+          "id": "u-006",
+          "label": "scam",
+          "category": "government_impersonation",
+          "difficulty": "tricky",
+          "verdict": "caution",
+          "error": "only flagged, not held"
+        },
+        {
+          "id": "u-007",
+          "label": "scam",
+          "category": "tech_support_remote",
+          "difficulty": "tricky",
+          "verdict": "allow",
+          "error": "missed scam"
+        },
+        {
+          "id": "u-008",
+          "label": "scam",
+          "category": "tech_support_remote",
+          "difficulty": "easy",
+          "verdict": "caution",
+          "error": "only flagged, not held"
+        },
+        {
+          "id": "u-009",
+          "label": "scam",
+          "category": "family_emergency",
+          "difficulty": "easy",
+          "verdict": "caution",
+          "error": "only flagged, not held"
+        },
+        {
+          "id": "u-011",
+          "label": "scam",
+          "category": "prize_lottery",
+          "difficulty": "easy",
+          "verdict": "allow",
+          "error": "missed scam"
+        },
+        {
+          "id": "u-012",
+          "label": "scam",
+          "category": "prize_lottery",
+          "difficulty": "tricky",
+          "verdict": "allow",
+          "error": "missed scam"
+        },
+        {
+          "id": "u-013",
+          "label": "scam",
+          "category": "verification_code",
+          "difficulty": "tricky",
+          "verdict": "allow",
+          "error": "missed scam"
+        },
+        {
+          "id": "u-014",
+          "label": "scam",
+          "category": "delivery_fee",
+          "difficulty": "easy",
+          "verdict": "caution",
+          "error": "only flagged, not held"
+        },
+        {
+          "id": "u-015",
+          "label": "scam",
+          "category": "wire_crypto",
+          "difficulty": "tricky",
+          "verdict": "caution",
+          "error": "only flagged, not held"
+        },
+        {
+          "id": "u-016",
+          "label": "scam",
+          "category": "romance_investment",
+          "difficulty": "tricky",
+          "verdict": "caution",
+          "error": "only flagged, not held"
+        },
+        {
+          "id": "u-017",
+          "label": "scam",
+          "category": "wire_crypto",
+          "difficulty": "tricky",
+          "verdict": "caution",
+          "error": "only flagged, not held"
+        },
+        {
+          "id": "u-019",
+          "label": "scam",
+          "category": "wire_crypto",
+          "difficulty": "tricky",
+          "verdict": "caution",
+          "error": "only flagged, not held"
+        },
+        {
+          "id": "u-032",
+          "label": "benign",
+          "category": "family_chat",
+          "difficulty": "tricky",
+          "verdict": "caution",
+          "error": "false flag"
+        },
+        {
+          "id": "u-040",
+          "label": "benign",
+          "category": "delivery_genuine",
+          "difficulty": "tricky",
+          "verdict": "caution",
+          "error": "false flag"
+        }
+      ],
+      "missingPredictions": [],
+      "problems": []
+    },
+    "rules-2026.10.3": {
+      "n": 40,
+      "hold": {
+        "tp": 6,
+        "fp": 0,
+        "tn": 20,
+        "fn": 14,
+        "precision": 1,
+        "recall": 0.3,
+        "f1": 0.4615384615384615,
+        "fpr": 0
+      },
+      "flag": {
+        "tp": 14,
+        "fp": 2,
+        "tn": 18,
+        "fn": 6,
+        "precision": 0.875,
+        "recall": 0.7,
+        "f1": 0.7777777777777777,
+        "fpr": 0.1
+      },
+      "perCategory": {
+        "gift_card": {
+          "total": 1,
+          "caughtAtHold": 1,
+          "caughtAtFlag": 1
+        },
+        "family_emergency": {
+          "total": 4,
+          "caughtAtHold": 2,
+          "caughtAtFlag": 3
+        },
+        "bank_impersonation": {
+          "total": 1,
+          "caughtAtHold": 1,
+          "caughtAtFlag": 1
+        },
+        "verification_code": {
+          "total": 2,
+          "caughtAtHold": 0,
+          "caughtAtFlag": 0
+        },
+        "government_impersonation": {
+          "total": 3,
+          "caughtAtHold": 2,
+          "caughtAtFlag": 3
+        },
+        "tech_support_remote": {
+          "total": 2,
+          "caughtAtHold": 0,
+          "caughtAtFlag": 1
+        },
+        "prize_lottery": {
+          "total": 2,
+          "caughtAtHold": 0,
+          "caughtAtFlag": 0
+        },
+        "delivery_fee": {
+          "total": 1,
+          "caughtAtHold": 0,
+          "caughtAtFlag": 1
+        },
+        "wire_crypto": {
+          "total": 3,
+          "caughtAtHold": 0,
+          "caughtAtFlag": 3
+        },
+        "romance_investment": {
+          "total": 1,
+          "caughtAtHold": 0,
+          "caughtAtFlag": 1
+        }
+      },
+      "misclassified": [
+        {
+          "id": "u-002",
+          "label": "scam",
+          "category": "family_emergency",
+          "difficulty": "tricky",
+          "verdict": "allow",
+          "error": "missed scam"
+        },
+        {
+          "id": "u-004",
+          "label": "scam",
+          "category": "verification_code",
+          "difficulty": "tricky",
+          "verdict": "allow",
+          "error": "missed scam"
+        },
+        {
+          "id": "u-006",
+          "label": "scam",
+          "category": "government_impersonation",
+          "difficulty": "tricky",
+          "verdict": "caution",
+          "error": "only flagged, not held"
+        },
+        {
+          "id": "u-007",
+          "label": "scam",
+          "category": "tech_support_remote",
+          "difficulty": "tricky",
+          "verdict": "allow",
+          "error": "missed scam"
+        },
+        {
+          "id": "u-008",
+          "label": "scam",
+          "category": "tech_support_remote",
+          "difficulty": "easy",
+          "verdict": "caution",
+          "error": "only flagged, not held"
+        },
+        {
+          "id": "u-009",
+          "label": "scam",
+          "category": "family_emergency",
+          "difficulty": "easy",
+          "verdict": "caution",
+          "error": "only flagged, not held"
+        },
+        {
+          "id": "u-011",
+          "label": "scam",
+          "category": "prize_lottery",
+          "difficulty": "easy",
+          "verdict": "allow",
+          "error": "missed scam"
+        },
+        {
+          "id": "u-012",
+          "label": "scam",
+          "category": "prize_lottery",
+          "difficulty": "tricky",
+          "verdict": "allow",
+          "error": "missed scam"
+        },
+        {
+          "id": "u-013",
+          "label": "scam",
+          "category": "verification_code",
+          "difficulty": "tricky",
+          "verdict": "allow",
+          "error": "missed scam"
+        },
+        {
+          "id": "u-014",
+          "label": "scam",
+          "category": "delivery_fee",
+          "difficulty": "easy",
+          "verdict": "caution",
+          "error": "only flagged, not held"
+        },
+        {
+          "id": "u-015",
+          "label": "scam",
+          "category": "wire_crypto",
+          "difficulty": "tricky",
+          "verdict": "caution",
+          "error": "only flagged, not held"
+        },
+        {
+          "id": "u-016",
+          "label": "scam",
+          "category": "romance_investment",
+          "difficulty": "tricky",
+          "verdict": "caution",
+          "error": "only flagged, not held"
+        },
+        {
+          "id": "u-017",
+          "label": "scam",
+          "category": "wire_crypto",
+          "difficulty": "tricky",
+          "verdict": "caution",
+          "error": "only flagged, not held"
+        },
+        {
+          "id": "u-019",
+          "label": "scam",
+          "category": "wire_crypto",
+          "difficulty": "tricky",
+          "verdict": "caution",
+          "error": "only flagged, not held"
+        },
+        {
+          "id": "u-032",
+          "label": "benign",
+          "category": "family_chat",
+          "difficulty": "tricky",
+          "verdict": "caution",
+          "error": "false flag"
+        },
+        {
+          "id": "u-040",
+          "label": "benign",
+          "category": "delivery_genuine",
+          "difficulty": "tricky",
+          "verdict": "caution",
+          "error": "false flag"
+        }
+      ],
+      "missingPredictions": [],
+      "problems": []
+    }
+  }
+}

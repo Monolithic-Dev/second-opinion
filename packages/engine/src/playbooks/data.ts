@@ -94,7 +94,7 @@ export const PLAYBOOKS: Playbook[] = [
     advice: 'Call your relative on the number you already have before sending anything.' },
 ];
 
-export type PlaybookPack = 'p1' | 'p2';
+export type PlaybookPack = 'p1' | 'p2' | 'p3';
 
 /**
  * Pack 'p2' adds more ways real delivery-fee scams are worded ("parcel could not be delivered", "redelivery fee at the link"),
@@ -114,4 +114,18 @@ export const PLAYBOOKS_P2: Playbook[] = PLAYBOOKS.map((p) =>
     : p,
 );
 
-export const PLAYBOOK_PACKS: Record<PlaybookPack, Playbook[]> = { p1: PLAYBOOKS, p2: PLAYBOOKS_P2 };
+/** More phrasings per existing playbook, added with rules-2026.10.4 (the playbook ids and advice are unchanged). */
+const P3_EXTRA: Record<string, string[]> = {
+  'verification-code-theft': ['I accidentally sent a code to your phone can you tell me what it says', 'reply with the six digit number we just sent you'],
+  'new-number-relative': ['I lost my phone this is a new number I need you to cover a bill for me today'],
+  'fake-invoice': ['your landlord changed his bank details transfer the rent to the new account number and ignore the old one'],
+  'investment-guaranteed': ['our trading desk guarantees you will double your money move the funds into the account we set up'],
+  'lottery-prize-fee': ['you have been selected to receive a cash award send a fee for courier insurance to release the funds', 'you won our monthly draw send a handling fee to collect your reward'],
+  'romance-money': ['I am stuck at the port the customs agent wants money before they release my equipment you are the only one I trust'],
+  'job-check-overpay': ['remote assistant job we will send you a cheque deposit it and forward the money to our supplier by wire'],
+  'utility-shutoff': ['your power will be cut in thirty minutes unless you pay now with a prepaid card'],
+  'medicare-card': ['your pension payment is on hold pay a release charge to receive it'],
+};
+export const PLAYBOOKS_P3: Playbook[] = PLAYBOOKS_P2.map((p) => (P3_EXTRA[p.id] ? { ...p, phrases: [...p.phrases, ...P3_EXTRA[p.id]!] } : p));
+
+export const PLAYBOOK_PACKS: Record<PlaybookPack, Playbook[]> = { p1: PLAYBOOKS, p2: PLAYBOOKS_P2, p3: PLAYBOOKS_P3 };

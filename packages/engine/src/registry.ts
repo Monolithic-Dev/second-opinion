@@ -24,9 +24,14 @@ export const RULESETS: Record<string, RuleSet> = {
     description: 'As .2, plus code/credential-request and wire patterns, a credential-pressure decisive rule and delivery-fee playbook phrasings (tuned on the benchmark dev split only)',
     layers: ['rules', 'playbooks', 'behavior'], rulePack: 'v2', playbookPack: 'p2',
   },
+  'rules-2026.10.4': {
+    version: 'rules-2026.10.4',
+    description: 'As .3, plus rule pack v3 (code before the verb, the speaker being the relative, more authority/secrecy/voucher/safe-account phrasings, advance-fee requests) and playbook pack p3',
+    layers: ['rules', 'playbooks', 'behavior'], rulePack: 'v3', playbookPack: 'p3',
+  },
 };
 
-export const LIVE_RULESET_VERSION = 'rules-2026.10.3';
+export const LIVE_RULESET_VERSION = 'rules-2026.10.4';
 
 export function getRuleSet(version: string): RuleSet {
   const rs = RULESETS[version];

@@ -2,11 +2,11 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { evaluate, getRuleSet, LIVE_RULESET_VERSION } from '../src';
 
-const ids = (text: string, ruleSet = LIVE_RULESET_VERSION, ctx = {}) => evaluate(text, ctx, [], { ruleSet }).signals.map((s) => s.id);
+const ids = (text: string, ruleSet: string = LIVE_RULESET_VERSION, ctx = {}) => evaluate(text, ctx, [], { ruleSet }).signals.map((s) => s.id);
 
-test('T-V3-1 live rule set is rules-2026.10.3 and uses the v2 rule pack and p2 playbooks', () => {
-  assert.equal(LIVE_RULESET_VERSION, 'rules-2026.10.3');
-  const rs = getRuleSet(LIVE_RULESET_VERSION);
+test('T-V3-1 rules-2026.10.3 stays on the v2 rule pack and p2 playbooks; the live set has moved on to 10.4', () => {
+  assert.equal(LIVE_RULESET_VERSION, 'rules-2026.10.4');
+  const rs = getRuleSet('rules-2026.10.3');
   assert.deepEqual([rs.rulePack, rs.playbookPack], ['v2', 'p2']);
   assert.deepEqual([getRuleSet('rules-2026.10.2').rulePack, getRuleSet('rules-2026.10.2').playbookPack], ['v1', 'p1']);
 });

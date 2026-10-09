@@ -2,7 +2,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import {
-  checkTestNotFrozen, gitSha, LIVE_RULESET_VERSION, loadBench, predict, readJsonl, RULESETS,
+  checkTest2NotFrozen, checkTestNotFrozen, gitSha, LIVE_RULESET_VERSION, loadBench, predict, readJsonl, RULESETS,
   type BenchRecord, type FrozenTestRun, type ScoreResult,
 } from './lib';
 
@@ -16,7 +16,7 @@ import {
  * Rules (docs/detection-engine.md section 7): tune on dev only; run test once; report the failures.
  */
 interface Args {
-  split: 'dev' | 'test';
+  split: 'dev' | 'test' | 'test2';
   ruleSets: string[];
   write: boolean;
   force: boolean;
@@ -29,7 +29,7 @@ export function parseArgs(argv: string[], env: NodeJS.ProcessEnv = process.env):
     return i === -1 ? undefined : argv[i + 1];
   };
   const split = flag('split') ?? 'dev';
-  if (split !== 'dev' && split !== 'test') throw new Error('--split must be dev or test');
+  if (split !== 'dev' && split !== 'test' && split !== 'test2') throw new Error('--split must be dev, test or test2');
   const only = flag('ruleset');
   if (only && !(only in RULESETS)) throw new Error(`unknown rule set ${only}. Known: ${Object.keys(RULESETS).join(', ')}`);
   return {
@@ -52,7 +52,9 @@ export async function main(argv = process.argv.slice(2)): Promise<void> {
   const engineSha = gitSha('.');
   const benchSha = gitSha(benchRoot);
 
+  const frozen2Path = join(outDir, 'test2-frozen.json');
   if (args.split === 'test') checkTestNotFrozen(frozenPath, LIVE_RULESET_VERSION, args.force);
+  const frozen2 = args.split === 'test2' ? checkTest2NotFrozen(frozen2Path, args.ruleSets, args.force) : {};
 
   const results: Record<string, ScoreResult> = {};
   for (const ruleSet of args.ruleSets) results[ruleSet] = scorer.score(records, predict(records, ruleSet));
@@ -80,8 +82,14 @@ export async function main(argv = process.argv.slice(2)): Promise<void> {
 
   if (args.write) {
     mkdirSync(outDir, { recursive: true });
-    writeFileSync(join(outDir, `${args.split}.md`), markdown + '\n');
-    writeFileSync(join(outDir, `${args.split}.json`), JSON.stringify({ engineSha, benchSha, liveRuleSet: LIVE_RULESET_VERSION, results }, null, 2) + '\n');
+    const base = `${args.split}${args.split === 'test2' && args.ruleSets.length === 1 ? '-' + args.ruleSets[0] : ''}`;
+    writeFileSync(join(outDir, `${base}.md`), markdown + '\n');
+    writeFileSync(join(outDir, `${base}.json`), JSON.stringify({ engineSha, benchSha, liveRuleSet: LIVE_RULESET_VERSION, results }, null, 2) + '\n');
+    if (args.split === 'test2') {
+      for (const rs of args.ruleSets) frozen2[rs] = { ruleSet: rs, engineSha, benchSha, at: new Date().toISOString(), result: results[rs]! };
+      writeFileSync(frozen2Path, JSON.stringify(frozen2, null, 2) + '\n');
+      process.stderr.write(`\ntest2 scored and frozen for ${args.ruleSets.join(', ')}\n`);
+    }
     if (args.split === 'test') {
       const frozen: FrozenTestRun = { ruleSet: LIVE_RULESET_VERSION, engineSha, benchSha, at: new Date().toISOString(), result: results[LIVE_RULESET_VERSION]! };
       writeFileSync(frozenPath, JSON.stringify(frozen, null, 2) + '\n');

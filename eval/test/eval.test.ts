@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { existsSync, mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { checkTestNotFrozen, contextFor, loadBench, predict, readJsonl, type BenchRecord } from '../lib';
+import { checkTestNotFrozen, contextFor, LIVE_RULESET_VERSION, loadBench, predict, readJsonl, type BenchRecord } from '../lib';
 import { parseArgs } from '../run';
 
 const rec = (over: Partial<BenchRecord>): BenchRecord => ({
@@ -43,11 +43,11 @@ test('argument parsing: defaults, explicit split, one rule set, and bad input', 
   assert.equal(d.split, 'dev');
   assert.equal(d.write, false);
   assert.equal(d.bench, '../scam-script-bench');
-  assert.deepEqual(d.ruleSets, ['rules-2026.10.1', 'rules-2026.10.2', 'rules-2026.10.3']);
+  assert.deepEqual(d.ruleSets, ['rules-2026.10.1', 'rules-2026.10.2', 'rules-2026.10.3', 'rules-2026.10.4']);
   assert.equal(parseArgs(['--split', 'test', '--write', '--force'], {}).force, true);
   assert.deepEqual(parseArgs(['--ruleset', 'rules-2026.10.2'], {}).ruleSets, ['rules-2026.10.2']);
   assert.equal(parseArgs([], { BENCH_PATH: '/x/bench' }).bench, '/x/bench');
-  assert.throws(() => parseArgs(['--split', 'prod'], {}), /dev or test/);
+  assert.throws(() => parseArgs(['--split', 'prod'], {}), /dev, test or test2/);
   assert.throws(() => parseArgs(['--ruleset', 'nope'], {}), /unknown rule set/);
 });
 
@@ -70,7 +70,7 @@ const haveBench = existsSync(join(BENCH, 'scripts', 'score.mjs'));
 test('T-EVAL-3 REGRESSION GATE: on the dev split the live rule set keeps scam recall >= 80% and false holds <= 10%', { skip: !haveBench && 'scam-script-bench not checked out' }, async () => {
   const { scorer } = await loadBench(BENCH);
   const dev = readJsonl<BenchRecord>(join(BENCH, 'data', 'dev.jsonl'));
-  const result = scorer.score(dev, predict(dev, 'rules-2026.10.3'));
+  const result = scorer.score(dev, predict(dev, LIVE_RULESET_VERSION));
   assert.ok((result.hold.recall ?? 0) >= 0.8, `recall at hold ${result.hold.recall}`);
   assert.ok((result.hold.fpr ?? 1) <= 0.1, `false-positive rate at hold ${result.hold.fpr}`);
   assert.equal(result.problems.length, 0);
@@ -85,4 +85,13 @@ test('the live rule set beats the rules-only baseline on dev (each layer must ea
   assert.ok((v2.hold.recall ?? 0) > (v1.hold.recall ?? 0), 'playbooks add recall');
   assert.ok((v3.hold.recall ?? 0) > (v2.hold.recall ?? 0), 'the tuned pack adds recall');
   assert.ok((v3.hold.fpr ?? 1) <= (v1.hold.fpr ?? 1) + 1e-9, 'without more false holds');
+});
+
+test('rules-2026.10.4 does not lose any dev recall or add false holds compared with 10.3', { skip: !haveBench && 'scam-script-bench not checked out' }, async () => {
+  const { scorer } = await loadBench(BENCH);
+  const dev = readJsonl<BenchRecord>(join(BENCH, 'data', 'dev.jsonl'));
+  const v3 = scorer.score(dev, predict(dev, 'rules-2026.10.3'));
+  const v4 = scorer.score(dev, predict(dev, 'rules-2026.10.4'));
+  assert.ok((v4.hold.recall ?? 0) >= (v3.hold.recall ?? 0), 'recall at hold');
+  assert.ok((v4.hold.fpr ?? 1) <= (v3.hold.fpr ?? 1) + 1e-9, 'false holds');
 });
