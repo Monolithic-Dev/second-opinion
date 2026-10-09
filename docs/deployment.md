@@ -24,6 +24,16 @@ LLM_CACHE_DIR=./.cache/llm
 BENCH_PATH=../scam-script-bench
 ```
 
+## Docker (shipped, smoke-tested)
+```
+export MCP_AUTH_TOKEN=<24+ chars> SESSION_SECRET=<long random> FAMILY_PINS=p_priya:4821,p_arjun:7390
+docker compose up --build        # console + demo on http://localhost:3000, MCP on http://localhost:3001/mcp
+```
+One image, two services (`mcp`, `sim`); production mode refuses default secrets. SQLite lives in the `so-data` volume. Ports bind to 127.0.0.1 only; put a TLS proxy (Caddy) in front for anything public.
+
+## Metrics
+`GET /metrics` (bearer-protected, Prometheus text): `so_tool_calls_total{tool,outcome}`, `so_tool_duration_ms` histogram, and gauges `so_checks{verdict}`, `so_holds{status}`, `so_notifications{status}` read from the database. Counts only: never message text or ids (tested).
+
 ## CI (GitHub Actions `ci.yml`)
 Stages: checkout → Node 22 → `npm ci` → `npm run typecheck` → `npm test` → `npm run eval -- --split dev --cache-only`. No secrets. Badge in README.
 

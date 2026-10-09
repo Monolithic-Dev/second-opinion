@@ -1,0 +1,12 @@
+node_modules
+.git
+.github
+.env
+data/*.db*
+data/outbox
+apps/web/dist
+test-results
+playwright-report
+e2e
+docs
+.cache

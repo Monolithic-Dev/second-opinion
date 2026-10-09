@@ -1,0 +1,23 @@
+# docker compose up --build   (needs MCP_AUTH_TOKEN >= 24 chars, SESSION_SECRET and FAMILY_PINS in .env or the shell)
+services:
+  mcp:
+    build: .
+    environment:
+      MCP_AUTH_TOKEN: ${MCP_AUTH_TOKEN:?set MCP_AUTH_TOKEN (24+ characters)}
+      DB_PATH: /app/data/second-opinion.db
+      OUTBOX_DIR: /app/data/outbox
+    volumes: ["so-data:/app/data"]
+    ports: ["127.0.0.1:3001:3001"]
+  sim:
+    build: .
+    command: ["npx", "tsx", "apps/simulator/src/index.ts"]
+    environment:
+      PORT_CHECK: "3000"
+      MCP_URL: http://mcp:3001/mcp
+      MCP_AUTH_TOKEN: ${MCP_AUTH_TOKEN:?}
+      SESSION_SECRET: ${SESSION_SECRET:?set SESSION_SECRET}
+      FAMILY_PINS: ${FAMILY_PINS:?set FAMILY_PINS like p_priya:4821,p_arjun:7390}
+    depends_on: [mcp]
+    ports: ["127.0.0.1:3000:3000"]
+volumes:
+  so-data:
