@@ -48,7 +48,7 @@ Notification is simulated (SSE event + audit row). Errors: `NOT_FOUND`, `FORBIDD
 {"holdId":"hold_77","decision":"deny","resolvedBy":"p_priya","note":"Not a real bank call"}
 // → {"holdId":"hold_77","status":"denied","resolvedAt":"..."}
 ```
-`decision` ∈ approve|deny. `approve` ⇒ status `approved` then `released`. Errors: `FORBIDDEN` (resolver not approver), `CONFLICT` (not pending / expired).
+`decision` ∈ approve|deny. `approve` ⇒ final status `released` (approved and released in one atomic step); `deny` ⇒ `denied`. Output: `{holdId, decision, status, resolvedAt}`. Errors: `FORBIDDEN` (resolver not approver), `CONFLICT` (not pending / expired).
 
 ### Tool: `trusted_payees`
 ```json
