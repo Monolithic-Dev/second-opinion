@@ -43,3 +43,6 @@
 
 ## Not tested (and why)
 Real Alexa+ devices (unavailable), real push notifications, load/perf beyond sanity, visual regression, Bedrock output quality beyond schema checks. Stated openly in submission.
+
+## Browser tests and screenshots
+`npm run e2e` runs 17 Playwright tests against a real stack on spare ports (3100/3101, own database). Screenshots used in the README are regenerated only on request: `UPDATE_SCREENSHOTS=1 npm run e2e`, so a normal run leaves the working tree clean.
