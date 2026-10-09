@@ -1,17 +1,17 @@
 # Submission checklist (target: all ticked by Oct 22)
 
 ## Repo (`second-opinion`)
-- [ ] Public; MIT license visible in the GitHub **About** section
+- [ ] Public; MIT license visible in the GitHub **About** section — **both repos are currently private; the owner must make them public**
 - [ ] README: pitch, run steps, architecture image, honesty section, how it maps to rules
-- [ ] `npm run demo` verified on a clean clone
+- [x] `npm run demo` verified on a clean clone (2026-10-09: install 10 s, no compiler, demo healthy) — repeat on release day
 - [ ] MCP server uses spec 2025-11-25+ over Streamable HTTP and is **called at runtime** by `apps/simulator`
-- [ ] `apps/simulator` source included; video shows it working
-- [ ] `skills/second-opinion/SKILL.md` present and referenced
-- [ ] No secrets; `.env.example` only
-- [ ] CI green badge
+- [x] `apps/simulator` source included; [ ] video shows it working
+- [x] `skills/second-opinion/SKILL.md` present and referenced
+- [x] No secrets; `.env.example` only (re-check with a secret scan on release day)
+- [ ] CI green badge (CI is green; add the badge to the README once the repo is public)
 
 ## Second repo (`scam-script-bench`) — Open Source mini challenge
-- [ ] Public, MIT, 60 scripts (30 dev / 30 test), schema, scorer, results of our engine
+- [ ] Public, MIT, 100 scripts (dev 30, test 30, test2 40), schema, scorer, results of our engine (README results section still to write)
 - [ ] Created during the hackathon window; commit history shows it
 - [ ] Contribution URL, repo URL, GitHub username, short description (what/how/why) ready for the form
 

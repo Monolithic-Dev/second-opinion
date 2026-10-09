@@ -14,7 +14,7 @@ Rules: video **< 3:00**, public on YouTube/Vimeo, English, footage of the projec
 | 1:15–1:30 | Dev drawer 5 s | Real MCP calls: `check_message` → `place_hold` → `request_family_approval` → `resolve_approval` |
 
 ## Full 3:00 outline
-0:00 hook (hero) → 0:35 what it is + honesty ("simulated Alexa+, MCP server is real") → 1:00 architecture slide (one diagram) → 1:20 accuracy slide: table recall/precision on held-out test split + two real failures shown → 2:00 Agent Skill + open-source benchmark repo → 2:20 AWS: Bedrock phrasing + cached eval (if implemented) → 2:40 impact + what we'd do next → 2:55 end card (repo URL).
+0:00 hook (hero, above) → 0:35 what it is + honesty ("the Alexa+ voice side is simulated; the MCP server, risk engine, approvals and audit log are real") → 1:00 architecture slide (one diagram) → 1:20 **Guard SDK beat (10 s)**: the FreshMart merchant server orders "$900 of gift cards" and is held by the same guard, "$24 of groceries" goes through → 1:35 accuracy slide: held-out `test` split 46.7% held / 80% flagged / 0% false holds, and the fresh `test2` split where the older detector held 30% (say plainly that the 95% for the newest rules is not independent) → 2:10 Agent Skill + open-source benchmark repo + `npm run backtest` (rule changes are reviewed before they go live) → 2:30 reliability: fail-closed demo (stop the MCP server, the order is refused, not run) → 2:45 impact + what we'd do next → 2:55 end card (repo URL).
 
 ## Slides (max 3)
 1. Architecture (from `architecture.md` mermaid).
