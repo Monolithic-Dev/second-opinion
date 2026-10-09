@@ -125,3 +125,18 @@ tr.link:hover { background: var(--surface-2); cursor: pointer; }
 .chart { width: 100%; height: auto; }
 .chart text { fill: var(--muted); font-size: 11px; font-family: var(--font); }
 .toast { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--bg); padding: 12px 18px; border-radius: 12px; z-index: 20; box-shadow: var(--shadow); max-width: 90vw; }
+
+/* forms */
+fieldset { margin: 0; min-width: 0; }
+fieldset.card { padding: var(--space-4); }
+legend { padding: 0 var(--space-2); }
+legend h2 { margin: 0; }
+.field-hint { font-weight: 400; color: var(--muted); font-size: var(--text-sm); }
+.field-error { font-size: var(--text-sm); }
+blockquote { font-size: var(--text-lg); }
+
+/* narrow screens: nothing may force horizontal scroll */
+.shell > *, .split > *, .row > *, .stack > * { min-width: 0; }
+.table-wrap { overflow-x: auto; max-width: 100%; }
+td, th { overflow-wrap: anywhere; }
+.card, .risk, .bubble { overflow-wrap: anywhere; }

@@ -1,12 +1,11 @@
 node_modules/
 dist/
 .env
-data/*.db
-data/*.db-*
+data/*
+!data/.gitkeep
 .cache/
 *.log
 .DS_Store
-data/outbox/
 apps/web/dist/
 playwright-report/
 test-results/
