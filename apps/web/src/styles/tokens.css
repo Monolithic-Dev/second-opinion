@@ -1,0 +1,67 @@
+/* Design tokens. Text/background pairs meet WCAG AA (4.5:1) in both themes. */
+:root {
+  color-scheme: light dark;
+  --bg: #f4f6f9;
+  --surface: #ffffff;
+  --surface-2: #eef1f5;
+  --text: #121821;
+  --muted: #4d5a6b;
+  --border: #d5dbe3;
+  --brand: #2150c9;
+  --brand-ink: #ffffff;
+  --brand-soft: #e6edfd;
+
+  --ok: #17603a;
+  --ok-bg: #e2f3e9;
+  --warn: #7a4300;
+  --warn-bg: #fcefd3;
+  --danger: #9c2217;
+  --danger-bg: #fce6e3;
+  --info: #1f4d9e;
+  --info-bg: #e6eefc;
+  --focus: #0b57d0;
+
+  --radius: 14px;
+  --radius-sm: 10px;
+  --shadow: 0 1px 2px rgb(16 24 40 / 6%), 0 4px 16px rgb(16 24 40 / 6%);
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+
+  --text-sm: 0.875rem;
+  --text-base: 1.0625rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.625rem;
+  --caption: 1.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e1218;
+    --surface: #171c25;
+    --surface-2: #1f2530;
+    --text: #eef2f7;
+    --muted: #a9b4c3;
+    --border: #2f3744;
+    --brand: #7ea2ff;
+    --brand-ink: #0b1220;
+    --brand-soft: #1b2744;
+
+    --ok: #7ad6a3;
+    --ok-bg: #12301f;
+    --warn: #f3c26b;
+    --warn-bg: #36270c;
+    --danger: #ff9b90;
+    --danger-bg: #3a1613;
+    --info: #9bbcff;
+    --info-bg: #15233f;
+    --focus: #9bbcff;
+    --shadow: 0 1px 2px rgb(0 0 0 / 40%), 0 4px 16px rgb(0 0 0 / 30%);
+  }
+}

@@ -126,7 +126,7 @@ export function createSimApp(deps: SimDeps) {
   }));
 
   // ---- family sign-in (demo credentials; production uses real identity)
-  app.post('/api/auth/login', limiter(10), wrap(async (req, res) => {
+  app.post('/api/auth/login', limiter(config.loginRateLimitPerMin), wrap(async (req, res) => {
     const { personId, pin } = loginBody.parse(req.body);
     if (!pinMatches(pin, config.pins[personId])) return fail(res, 401, 'BAD_CREDENTIALS', 'Wrong PIN.');
     const token = signSession({ personId, exp: Date.now() + SESSION_TTL_MS }, config.sessionSecret);

@@ -38,3 +38,8 @@ test('T-CFG-1 production refuses default credentials; bad PIN lists are rejected
   assert.throws(() => loadSimConfig({ FAMILY_PINS: 'oops' }), /FAMILY_PINS/);
   assert.deepEqual(loadSimConfig({}).pins, { p_priya: '1234', p_arjun: '5678' });
 });
+
+test('the login rate limit is configurable and defaults to 10 per minute', () => {
+  assert.equal(loadSimConfig({}).loginRateLimitPerMin, 10);
+  assert.equal(loadSimConfig({ LOGIN_RATE_LIMIT_PER_MIN: '1000' }).loginRateLimitPerMin, 1000);
+});

@@ -15,15 +15,22 @@
   "scripts": {
     "dev": "tsx watch apps/mcp-server/src/index.ts",
     "start": "tsx apps/mcp-server/src/index.ts",
-    "test": "node --import tsx --test \"packages/*/test/**/*.test.ts\" \"apps/*/test/**/*.test.ts\"",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "npm run test:node && npm run test:web",
+    "typecheck": "tsc -p tsconfig.json --noEmit && npm -w @second-opinion/web run typecheck",
     "seed": "tsx scripts/seed.ts",
     "reset": "tsx scripts/reset.ts",
     "demo": "tsx scripts/demo.ts",
     "start:sim": "tsx apps/simulator/src/index.ts",
-    "dev:sim": "tsx watch apps/simulator/src/index.ts"
+    "dev:sim": "tsx watch apps/simulator/src/index.ts",
+    "test:node": "node --import tsx --test \"packages/*/test/**/*.test.ts\" \"apps/*/test/**/*.test.ts\"",
+    "test:web": "npm -w @second-opinion/web run test",
+    "build:web": "npm -w @second-opinion/web run build",
+    "dev:web": "npm -w @second-opinion/web run dev",
+    "e2e": "playwright test"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@playwright/test": "^1.64.0",
     "@types/better-sqlite3": "^7.6.13",
     "@types/express": "^5.0.0",
     "@types/node": "^22.10.0",

@@ -14,6 +14,7 @@ const schema = z.object({
   WEB_DIST: z.string().default('./apps/web/dist'),
   DEFAULT_HOUSEHOLD: z.string().default('hh_demo'),
   MCP_TIMEOUT_MS: z.coerce.number().int().min(100).default(5000),
+  LOGIN_RATE_LIMIT_PER_MIN: z.coerce.number().int().min(1).default(10),
 });
 
 export interface SimConfig {
@@ -28,6 +29,8 @@ export interface SimConfig {
   webDist: string;
   defaultHousehold: string;
   mcpTimeoutMs: number;
+  /** Sign-in attempts per minute per address. Raise only for automated browser tests. */
+  loginRateLimitPerMin: number;
 }
 
 function parsePins(raw: string): Record<string, string> {
@@ -52,5 +55,6 @@ export function loadSimConfig(env: NodeJS.ProcessEnv = process.env): SimConfig {
   return {
     env: e.NODE_ENV, host: e.HOST, port: e.SIM_PORT, mcpUrl: e.MCP_URL, mcpToken: e.MCP_AUTH_TOKEN, sessionSecret: e.SESSION_SECRET,
     pins: parsePins(e.FAMILY_PINS), webDist: e.WEB_DIST, defaultHousehold: e.DEFAULT_HOUSEHOLD, mcpTimeoutMs: e.MCP_TIMEOUT_MS,
+    loginRateLimitPerMin: e.LOGIN_RATE_LIMIT_PER_MIN,
   };
 }

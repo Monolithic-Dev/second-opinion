@@ -157,7 +157,7 @@ export async function runTurn(input: TurnInput, gw: Gateway, publish: Publish): 
               : check.spokenSummary;
             const spoken = pausedSpeech(reason, check.similarTo?.date, who);
             publish('hold.created', { householdId: hh, holdId: hold.holdId });
-            return done({ reply: `${spoken} ${check.card.advice}`.trim(), spoken, card: check.card, verdict: check.verdict, decision: check.decision, holdId: hold.holdId, executed: false });
+            return done({ reply: spoken, spoken, card: check.card, verdict: check.verdict, decision: check.decision, holdId: hold.holdId, executed: false });
           }
 
           if (check.verdict === 'caution') {
