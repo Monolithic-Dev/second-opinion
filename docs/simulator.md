@@ -1,38 +1,45 @@
-# Simulator (stand-in for Alexa+ and the family phone)
+# Simulator (stand-in for Alexa+ and the family phone) — as built
 
-The Rules allow a simulated Alexa+ experience if the repo contains its source and the video shows it working. Our simulator is more than a mock: it is a real MCP **client** calling the real server.
+The Rules allow a simulated Alexa+ experience if the repo contains its source and the video shows it working. `apps/simulator` is more than a mock: it is a real **MCP client** (Streamable HTTP, official SDK) calling the real MCP server, plus the backend for the web app.
 
 ## Honest framing (say it in README and video)
-- We cannot run on a real Alexa+ device. The simulator plays the assistant.
-- In real Alexa+, a third-party MCP server only sees requests routed to it. In the simulator we route pay/buy intents through the guard to show the intended integration.
-- Family notification is simulated (second pane + SSE).
+- We cannot run on a real Alexa+ device. The simulator plays the assistant; payments and purchases are **simulated** (nothing moves money).
+- In real Alexa+ a third-party MCP server only sees requests routed to it. In the simulator every pay/buy intent is routed through the guard to show the intended integration. The Guard SDK (`guard-sdk.md`) shows how a merchant server routes its own tools.
+- Family notification is simulated (in-app inbox + HTML email rendered to a file).
 
-## Agent modes (`AGENT_MODE`)
-| Mode | Behaviour | Needs AWS |
+## Run it
+`npm run demo` seeds the database, starts the MCP server (:3001) and the simulator (:3000), waits for both and prints the URLs. No AWS account or network access.
+
+## Components (`apps/simulator/src`)
+| File | Role |
+|---|---|
+| `gateway.ts` | `McpGateway`: lazy MCP client, one reconnect on failure, per-call timeout, `x-request-id` propagated through `AsyncLocalStorage` so the MCP server stores it as the decision `trace_id`. `GatewayDown` and `ToolCallError` are distinct. |
+| `agent/intent.ts` | Deterministic intent classifier (below). No model. |
+| `agent/router.ts` | `runTurn()`: fixed tool sequences, fail-closed, builds `reply` (captions), `spoken` (read aloud), `card`, `trace`. |
+| `events.ts` | `EventHub`: SSE fan-out with heartbeat and a connection cap. |
+| `session.ts` | HMAC-signed, expiring, HttpOnly SameSite=Lax session cookie; constant-time PIN check. |
+| `app.ts` | Express API, security headers, CSRF header check, rate-limited login, static web app with SPA fallback. |
+| `config.ts` | Validated env; production refuses default secrets, PINs or MCP token. |
+
+## Intents (`agent/intent.ts`)
+| Intent | Examples | Calls |
 |---|---|---|
-| `router` (default) | Deterministic intent classifier → fixed tool sequence | No |
-| `bedrock` | Bedrock Converse with MCP tools exposed as tool specs; model chooses calls; guardrail: system prompt + a code-level rule that `place_hold` is auto-invoked on `verdict=hold` | Yes |
+| `PURCHASE_OR_PAY` | "Buy five $200 gift cards", "Pay Greenleaf Pharmacy $24", "Wire $500 to my neighbour" | `check_message` → (if hold or policy needs approval) `place_hold` → `request_family_approval` → `get_household` |
+| `SCAM_QUESTION` | "I got a text saying…", "Is this legit?", "Someone called…" | `check_message` only (no action context) |
+| `STATUS` | "What's pending?" | `list_holds` |
+| `TRUST_LIST` / `TRUST_ADD` (family) | "Who do I trust?", "Add City Power & Light to trusted" | `trusted_payees` |
+| `FAMILY_DECISION` (family) | "Approve it", "Deny it" | `list_holds` → `resolve_approval`. The **elder** saying "approve" is refused. |
+| `FALLBACK` | anything else | help text |
+Questions about a message are never treated as actions, even when they mention money. Every state-changing call carries an idempotency key, so the gateway's single retry cannot create a second hold.
 
-## Router intents (`agent/intent.ts`)
-| Intent | Trigger (regex, case-insens.) | Tool sequence |
-|---|---|---|
-| PURCHASE_OR_PAY | `\b(buy|order|purchase|pay|send|transfer|wire|deposit)\b` + money/gift words | `check_message(ctx.actionType)` → if hold: `place_hold` → `request_family_approval` |
-| SCAM_QUESTION | `scam|suspicious|is this (real|legit)|someone (called|texted|emailed)|got a (text|call|email)` | `check_message` only |
-| TRUST_ADD | `add .* (to )?trusted` / `trust .*` (family speaker only) | `trusted_payees add` |
-| TRUST_LIST | `who (can|do) i trust|trusted` | `trusted_payees list` |
-| STATUS | `any (holds|pending)|what('s| is) pending` | `list_holds` |
-| FALLBACK | none | "I can check a message or a payment for you." |
-Amount parsing: `$(\d[\d,]*)(?:\.\d\d)?`, "N x $M", "N hundred" → `amountCents`. Payee: text after "to|from" or the gift-card/merchant noun.
+## What is read aloud
+When a request is paused the spoken text is always: *"I've paused this."* + the single most important reason (concrete red flags first, not the generic "known scam pattern") + *"It's the same kind of request as Tuesday."* when we have seen it before + *"I've asked Priya to check."* It is never cut in the middle of that list. Captions (`reply`) additionally carry the advice line.
 
-## Response composition
-`reply` (display), `spoken` (TTS text; no markdown), `card` (from tool), `holdId`, `verdict`, `trace[]` (tool name, args, result summary, ms). Spoken replies ≤ 2 sentences.
-Voice: Web Speech API `SpeechRecognition` + `speechSynthesis`; typing box always available (fallback + accessibility). Captions always shown.
+## HTTP API (see `api-spec.md` §B)
+`POST /api/utter`, `GET /api/state`, `GET /api/events` (SSE), `POST /api/auth/login|logout`, `GET /api/auth/me`, `POST /api/family/holds/:id/vote`, `PUT /api/family/policy`, `POST|DELETE /api/family/payees`, `GET /api/family/insights`, `POST /api/reset`, `GET /healthz`. Family voice (`speaker: "family"`) and all `/api/family/*` need a session. Non-GET API calls need `X-Requested-With: so`.
 
-## UI (`public/`)
-Left: **Elder pane** (big mic button, transcript, spoken reply captions, red-flag card). Right: **Family pane — "Priya's phone"** (pending holds, flags, Approve/Deny, history). Bottom drawer: **Developer trace** (live MCP calls + engine signals). Top bar: mode badge, Reset demo, Scenario buttons (seeded utterances for reliable demo).
+## Fail-safe
+MCP server down, slow or erroring ⇒ *"I couldn't verify this, so I haven't done it."*, `executed: false`, no hold released, `/api/state` answers 503. Tested with a gateway pointed at a dead port.
 
-## Realtime
-Simulator keeps one SSE channel per page; broadcasts `hold.created`, `hold.resolved`, `check.done`, `reset`. The simulator polls nothing: it emits events after its own MCP calls complete.
-
-## MCP client (`mcpClient.ts`)
-Official SDK `Client` + `StreamableHTTPClientTransport(MCP_URL)` with `Authorization` header from `MCP_AUTH_TOKEN`. One connection per process, reconnect on failure; `/healthz` reports `mcp:true|false`. If the MCP server is down, replies "I can't reach the safety checker, so I haven't done anything." (fail-safe).
+## Auth (demo-grade, honest)
+Seeded PINs (Priya `1234`, Arjun `5678`) are **demo credentials** and are refused in production config. Production would use real identity (e.g. Login with Amazon) and per-user consent.

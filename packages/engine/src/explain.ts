@@ -73,7 +73,10 @@ export function explain(
 ): { spokenSummary: string; card: Card } {
   const positives = signals.filter((s) => isPositive(s.id) && s.weight > 0).sort((a, b) => b.weight - a.weight);
   const flags = positives.map((s) => (s.id === 'PLAYBOOK_MATCH' ? `Matches a known scam: ${s.evidence}` : FLAG_TEXT[s.id])).filter((x): x is string => Boolean(x)).slice(0, 5);
-  const spoken = positives.map((s) => SPOKEN_TEXT[s.id]).filter((x): x is string => Boolean(x)).slice(0, 3);
+  // "a known scam pattern" adds little when we can name concrete red flags, so it is spoken only when it is all we have.
+  const concrete = positives.filter((s) => s.id !== 'PLAYBOOK_MATCH');
+  const spokenSource = concrete.length >= 2 ? concrete : positives;
+  const spoken = spokenSource.map((s) => SPOKEN_TEXT[s.id]).filter((x): x is string => Boolean(x)).slice(0, 3);
   const ids = new Set(positives.map((s) => s.id));
   const advice = ADVICE_ORDER.find(([id]) => ids.has(id))?.[1] ?? 'When in doubt, check with family before paying.';
 
