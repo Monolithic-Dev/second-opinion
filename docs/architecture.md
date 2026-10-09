@@ -34,7 +34,7 @@ flowchart LR
 |---|---|---|
 | `apps/mcp-server` | MCP server (official TS SDK, `StreamableHTTPServerTransport`), tools, engine, store | SQLite |
 | `src/engine` | Pure functions: `detectSignals(text,ctx)`, `score(signals)`, `fingerprint(signals)`, `explain(result)` | none (pure) |
-| `src/store` | SQLite access (`better-sqlite3`), schema, seed | disk |
+| `src/store` | SQLite access (built-in `node:sqlite`), schema, seed | disk |
 | `apps/simulator` | Express server + static UI; intent router; MCP client; SSE fan-out | MCP server, Bedrock (opt.) |
 | `skills/second-opinion` | `SKILL.md` Agent Skill describing when/how to call the tools | n/a |
 | `eval/` | Runs engine over `scam-script-bench`, writes metrics | engine, bench repo |

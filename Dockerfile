@@ -1,7 +1,5 @@
 # One image, two commands (MCP server, simulator + console). See docker-compose.yml.
 FROM node:22-slim AS build
-# better-sqlite3 compiles from source when no prebuilt binary matches this Node version
-RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY package.json package-lock.json ./
 COPY packages ./packages

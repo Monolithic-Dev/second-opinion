@@ -53,7 +53,7 @@ Alexa+ checks every pay/buy/send-money request (and any "is this a scam?" questi
 - Latency: `check_message` p95 < 50 ms (rules only); simulator turn < 2 s (router mode).
 - Reliability: demo path has **zero** network dependence in `AGENT_MODE=router`.
 - Safety: synthetic data only; decision-support wording; fail-safe (blocked, not released) on any error.
-- Portability: Node 22, no native services; `better-sqlite3` is the only native dep.
+- Portability: Node 22.13+, no native services and no native npm modules (SQLite is the built-in `node:sqlite`).
 - Accessibility: large type, high contrast, captions of every spoken reply, keyboard operable.
 
 ## 8. Scope

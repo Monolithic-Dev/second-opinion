@@ -1,4 +1,4 @@
-# Data model (SQLite via better-sqlite3)
+# Data model (SQLite via Node's built-in node:sqlite)
 
 All data is **synthetic**. IDs are text with prefixes. Timestamps are ISO-8601 UTC strings. Amounts are integer cents.
 
