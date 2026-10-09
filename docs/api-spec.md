@@ -79,6 +79,14 @@ Notification is simulated (SSE event + audit row). Errors: `NOT_FOUND`, `FORBIDD
 - `check_message` additionally returns `decisionId` and `ruleSetVersion`. Every check writes one row to the append-only `decisions` table (verdict, score, reasons, features, latency, trace id, rule-set version). `decisions` and `audit_events` reject UPDATE/DELETE via triggers.
 - Tracing: the server echoes `x-request-id` (valid 8–64 char client value, otherwise a UUID) and stores it as `trace_id` in decisions and audit payloads.
 
+## G. Policy and quorum (implemented in B4b; supersedes the matching parts of §A)
+- `check_message` also returns `decision {outcome: allow|require_approval|block, reasons[], reasonText[], quorum}` from the household policy (`policy-and-approvals.md`). The risk `verdict` and the policy `decision` are separate: place a hold when **either** says so (`verdict` hold/caution, or `decision.outcome = require_approval`). A `block` outcome (e.g. daily cap) cannot be held: `place_hold` returns `FORBIDDEN` ("a family member must act in the family console").
+- `place_hold` returns `{holdId, status, expiresAt, quorumRequired, reasons}`. TTL = policy `holdTtlMin` (server env `HOLD_TTL_MS` overrides, for tests/ops).
+- `resolve_approval` records **one vote**. Output `{holdId, decision, status, resolvedAt|null, votes {approve, deny, required}}`. Quorum 1 or 2 distinct approvers release (`released`); any deny vetoes (`denied`); until then `status` stays `pending`. Repeating the same vote is a no-op; a changed vote or a vote on a finished hold is `CONFLICT`; the elder is `FORBIDDEN`.
+- New tools: `get_policy {householdId}` → `{policy, isDefault}`; `set_policy {householdId, requestedBy, patch}` (approver only; strict keys; range-checked; audited with before/after) → `{policy, changed[]}`; `household_insights {householdId, days?}` → `{protectedCents, checksByDay[], holdsByStatus, topSignals[], medianResponseSec}`.
+- `list_holds` rows add `reasonText[]`, `quorumRequired`, `votes {approve, deny}`, `escalationLevel`.
+- Seed: approvers `p_priya` (rank 1) and `p_arjun` (rank 2); `request_family_approval` defaults to the lowest rank.
+
 ## E. Tier 1 additions
 **New MCP tools** (approver-only where noted):
 | Tool | Input | Output |
