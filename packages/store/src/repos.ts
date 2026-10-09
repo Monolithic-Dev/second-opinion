@@ -83,6 +83,12 @@ export function createRepos(db: Db, clock: Clock) {
         newId('evt'), householdId, type, JSON.stringify(payload ?? {}), now(),
       );
     },
+    /** Everything that happened to one hold, oldest first (the hold timeline). */
+    forHold(householdId: string, holdId: string): AuditRow[] {
+      return db
+        .prepare("SELECT * FROM audit_events WHERE household_id = ? AND json_extract(payload_json, '$.holdId') = ? ORDER BY created_at, rowid")
+        .all(householdId, holdId) as AuditRow[];
+    },
     list(householdId: string, limit = 100): AuditRow[] {
       return db
         .prepare('SELECT * FROM audit_events WHERE household_id = ? ORDER BY created_at DESC, rowid DESC LIMIT ?')

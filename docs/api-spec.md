@@ -97,6 +97,10 @@ Notification is simulated (SSE event + audit row). Errors: `NOT_FOUND`, `FORBIDD
 - Tool `get_household {householdId}` (read-only) -> `{household {id, name}, people [{id, name, role, canApprove, approverRank, contactLabel}]}` for the family circle and approver names.
 - `POST /admin/reset` (bearer auth, **only when `ADMIN_ENABLED` is on; default off in production**): drops all tables, re-runs migrations and re-seeds the demo household. Destroys the audit log by design; for demos and tests.
 
+## J. Hold detail
+- Tool `get_hold {holdId}` (read-only): `{hold {...status, quorumRequired, escalationLevel, expiresAt, resolvedBy, note}, risk {verdict, score, flags[], reasonText[], text}, votes [{approverId, name, decision, note, decidedAt}], timeline [{type, label, at, by}]}`. The timeline is built from the append-only audit log (paused, family asked, each vote, escalation, decision, expiry).
+- Simulator route `GET /api/family/holds/:holdId` (family session) returns it for the console.
+
 ## E. Tier 1 additions
 **New MCP tools** (approver-only where noted):
 | Tool | Input | Output |
