@@ -21,6 +21,7 @@ export function registerPlaceHold(server: McpServer, deps: Deps): void {
       description: z.string().trim().min(1).max(200).describe('Short human description, e.g. "5 x $200 gift cards"'),
     },
     output: { holdId: z.string(), status: holdStatusSchema, expiresAt: z.string() },
+    idempotent: true,
     annotations: { title: 'Hold a risky payment or purchase', readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
     household: (a) => a.householdId,
     handler: ({ householdId, checkId, actionType, amountCents, payee, description }) => {

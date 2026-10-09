@@ -28,6 +28,17 @@ export interface HoldRow {
   resolved_at: string | null; resolved_by: string | null; note: string | null;
 }
 export interface AuditRow { id: string; household_id: string | null; type: string; payload_json: string; created_at: string }
+export interface DecisionRow {
+  id: string; household_id: string; check_id: string; trace_id: string; rule_set_version: string; verdict: Verdict; score: number;
+  reasons_json: string; features_json: string; latency_ms: number; created_at: string;
+}
+export interface NewDecision {
+  householdId: string; checkId: string; traceId: string; ruleSetVersion: string; verdict: Verdict; score: number;
+  reasons: unknown; features: unknown; latencyMs: number;
+}
+export interface IdempotencyRow {
+  tool: string; key: string; household_id: string | null; request_hash: string; response_json: string; created_at: string;
+}
 
 export interface NewCheck {
   householdId: string; text: string; channel: Channel; actionType: ActionType; amountCents?: number | undefined;
@@ -139,6 +150,33 @@ export function createRepos(db: Db, clock: Clock) {
         | undefined,
   };
 
+  const decisions = {
+    /** Append-only (DB triggers forbid UPDATE/DELETE). One row per risk check, pinned to the rule-set version. */
+    insert(d: NewDecision, id: string = newId('dec')): DecisionRow {
+      db.prepare(
+        `INSERT INTO decisions (id, household_id, check_id, trace_id, rule_set_version, verdict, score, reasons_json, features_json, latency_ms, created_at)
+         VALUES (?,?,?,?,?,?,?,?,?,?,?)`,
+      ).run(
+        id, d.householdId, d.checkId, d.traceId, d.ruleSetVersion, d.verdict, d.score,
+        JSON.stringify(d.reasons), JSON.stringify(d.features), d.latencyMs, now(),
+      );
+      return db.prepare('SELECT * FROM decisions WHERE id = ?').get(id) as DecisionRow;
+    },
+    getByCheck: (checkId: string) => db.prepare('SELECT * FROM decisions WHERE check_id = ?').get(checkId) as DecisionRow | undefined,
+    list: (householdId: string, limit = 100) =>
+      db.prepare('SELECT * FROM decisions WHERE household_id = ? ORDER BY created_at DESC, rowid DESC LIMIT ?').all(householdId, limit) as DecisionRow[],
+  };
+
+  const idempotency = {
+    get: (tool: string, key: string) =>
+      db.prepare('SELECT * FROM idempotency_keys WHERE tool = ? AND key = ?').get(tool, key) as IdempotencyRow | undefined,
+    put(row: { tool: string; key: string; householdId: string | null; requestHash: string; response: unknown }): void {
+      db.prepare('INSERT INTO idempotency_keys (tool, key, household_id, request_hash, response_json, created_at) VALUES (?,?,?,?,?,?)').run(
+        row.tool, row.key, row.householdId, row.requestHash, JSON.stringify(row.response), now(),
+      );
+    },
+  };
+
   const holds = {
     /** Pending holds past `expires_at` become `expired` (they stay blocked; never auto-released). */
     expireStale(householdId?: string): string[] {
@@ -204,7 +242,7 @@ export function createRepos(db: Db, clock: Clock) {
   };
 
   return {
-    audit, households, people, payees, checks, fingerprints, holds,
+    audit, households, people, payees, checks, fingerprints, decisions, idempotency, holds,
     transaction: <T>(fn: () => T): T => db.transaction(fn)(),
     now,
   };

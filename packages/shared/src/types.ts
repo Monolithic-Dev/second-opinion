@@ -74,6 +74,8 @@ export interface HistoryItem {
 }
 
 export interface CheckResult {
+  /** Version of the rule set that produced this verdict; every stored decision is pinned to it. */
+  ruleSetVersion: string;
   verdict: Verdict;
   score: number;
   signals: Signal[];

@@ -74,6 +74,11 @@ Notification is simulated (SSE event + audit row). Errors: `NOT_FOUND`, `FORBIDD
 | GET | `/healthz` | Liveness | `{ok:true, mcp:true\|false}` |
 `trace` exposes every MCP call to the UI (a "developer drawer") so judges see real tool use.
 
+## F. Idempotency, decision log and tracing (implemented in B1)
+- `check_message`, `place_hold` and `resolve_approval` accept an optional `idempotencyKey` (8–100 chars `[A-Za-z0-9_.:-]`). Same key + same arguments ⇒ the first result is returned with `replayed: true` and nothing new is written (audit event `tool.<name>.replayed`). Same key + different arguments ⇒ `CONFLICT`. Failed calls are not cached. Keys are scoped per tool.
+- `check_message` additionally returns `decisionId` and `ruleSetVersion`. Every check writes one row to the append-only `decisions` table (verdict, score, reasons, features, latency, trace id, rule-set version). `decisions` and `audit_events` reject UPDATE/DELETE via triggers.
+- Tracing: the server echoes `x-request-id` (valid 8–64 char client value, otherwise a UUID) and stores it as `trace_id` in decisions and audit payloads.
+
 ## E. Tier 1 additions
 **New MCP tools** (approver-only where noted):
 | Tool | Input | Output |

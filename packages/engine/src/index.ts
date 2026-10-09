@@ -3,8 +3,10 @@ import { detectRuleSignals } from './layers/rules';
 import { scoreSignals } from './score';
 import { fingerprint, findSimilar } from './fingerprint';
 import { explain } from './explain';
+import { RULESET_VERSION } from './version';
 
 export { normalize, deleet } from './normalize';
+export { RULESET_VERSION } from './version';
 export { parseAmountCents, wordsToNumber } from './amount';
 export { detectRuleSignals, WEIGHTS, HIGH_AMOUNT_CENTS } from './layers/rules';
 export { scoreSignals, HOLD_THRESHOLD, CAUTION_THRESHOLD, isPositive } from './score';
@@ -26,7 +28,7 @@ export function evaluate(text: string, ctx: Context = {}, history: HistoryItem[]
   const similarTo = findSimilar(fp, history);
   const { spokenSummary, card } = explain(verdict, signals, similarTo);
 
-  const result: CheckResult = { verdict, score, signals, fingerprint: fp, similarTo, spokenSummary, card };
+  const result: CheckResult = { ruleSetVersion: RULESET_VERSION, verdict, score, signals, fingerprint: fp, similarTo, spokenSummary, card };
   if (hardRule) result.hardRule = hardRule;
   return result;
 }

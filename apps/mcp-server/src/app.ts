@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import express, { type NextFunction, type Request, type Response } from 'express';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import type { Deps } from './deps';
@@ -10,6 +11,13 @@ const METHOD_NOT_ALLOWED = { jsonrpc: '2.0', error: { code: -32000, message: 'Me
 export function createApp(deps: Deps) {
   const app = express();
   app.disable('x-powered-by');
+  app.use((req, res, next) => {
+    const given = req.headers['x-request-id'];
+    const id = typeof given === 'string' && /^[\w.-]{8,64}$/.test(given) ? given : randomUUID();
+    req.headers['x-request-id'] = id;
+    res.setHeader('x-request-id', id);
+    next();
+  });
   app.use(express.json({ limit: '100kb' }));
 
   app.get('/healthz', (_req, res) => {
