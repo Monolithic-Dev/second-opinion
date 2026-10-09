@@ -19,6 +19,7 @@ export function registerResolveApproval(server: McpServer, deps: Deps): void {
       note: z.string().trim().max(300).optional(),
     },
     output: { holdId: z.string(), decision: z.enum(['approve', 'deny']), status: holdStatusSchema, resolvedAt: z.string() },
+    idempotent: true,
     annotations: { title: 'Approve or deny a held action', readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: false },
     handler: ({ holdId, decision, resolvedBy, note }) => {
       const hold = deps.repos.holds.get(holdId);

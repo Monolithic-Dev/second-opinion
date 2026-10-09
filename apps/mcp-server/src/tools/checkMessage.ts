@@ -25,6 +25,8 @@ export function registerCheckMessage(server: McpServer, deps: Deps): void {
     },
     output: {
       checkId: z.string(),
+      decisionId: z.string(),
+      ruleSetVersion: z.string(),
       verdict: z.enum(VERDICTS),
       score: z.number().int(),
       signals: z.array(signalSchema),
@@ -33,19 +35,22 @@ export function registerCheckMessage(server: McpServer, deps: Deps): void {
       spokenSummary: z.string(),
       card: cardSchema,
     },
+    idempotent: true,
     annotations: { title: 'Check a message or payment request', readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
     household: (a) => a.householdId,
-    handler: ({ householdId, text, channel, context }) => {
+    handler: ({ householdId, text, channel, context }, ctx) => {
       requireHousehold(deps, householdId);
       const trustedPayees = deps.repos.payees.list(householdId).map((p) => p.name);
       const history = deps.repos.checks.history(householdId);
       let result;
+      const t0 = performance.now();
       try {
         result = evaluate(text, { ...context, channel, trustedPayees }, history);
       } catch (e) {
         if (e instanceof RangeError) throw new ToolError('INVALID_INPUT', e.message);
         throw e;
       }
+      const latencyMs = Math.round((performance.now() - t0) * 100) / 100;
       const actionType = context?.actionType ?? 'none';
       const row = deps.repos.transaction(() => {
         const inserted = deps.repos.checks.insert({
@@ -53,10 +58,18 @@ export function registerCheckMessage(server: McpServer, deps: Deps): void {
           signals: result.signals, score: result.score, verdict: result.verdict, fingerprint: result.fingerprint,
         });
         deps.repos.fingerprints.upsert(householdId, result.fingerprint, inserted.id);
-        return inserted;
+        const decision = deps.repos.decisions.insert({
+          householdId, checkId: inserted.id, traceId: ctx.traceId, ruleSetVersion: result.ruleSetVersion,
+          verdict: result.verdict, score: result.score, latencyMs,
+          reasons: { signals: result.signals, hardRule: result.hardRule ?? null, fingerprint: result.fingerprint },
+          features: { channel: channel ?? 'unknown', actionType, amountCents: context?.amountCents ?? null, payee: context?.payee ?? null, trustedPayeeCount: trustedPayees.length, historySize: history.length },
+        });
+        return { inserted, decision };
       });
       return {
-        checkId: row.id,
+        checkId: row.inserted.id,
+        decisionId: row.decision.id,
+        ruleSetVersion: result.ruleSetVersion,
         verdict: result.verdict,
         score: result.score,
         signals: result.signals,
