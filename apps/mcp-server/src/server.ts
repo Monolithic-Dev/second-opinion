@@ -1,7 +1,9 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { Deps } from './deps';
 import { registerCheckMessage } from './tools/checkMessage';
+import { registerHouseholdInsights } from './tools/householdInsights';
 import { registerListHolds } from './tools/listHolds';
+import { registerPolicyTools } from './tools/policyTools';
 import { registerPlaceHold } from './tools/placeHold';
 import { registerRequestFamilyApproval } from './tools/requestFamilyApproval';
 import { registerResolveApproval } from './tools/resolveApproval';
@@ -27,5 +29,7 @@ export function buildServer(deps: Deps): McpServer {
   registerResolveApproval(server, deps);
   registerTrustedPayees(server, deps);
   registerListHolds(server, deps);
+  registerPolicyTools(server, deps);
+  registerHouseholdInsights(server, deps);
   return server;
 }

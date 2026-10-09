@@ -10,7 +10,7 @@ const schema = z.object({
   MCP_ALLOWED_ORIGINS: z.string().default('http://localhost:3000'),
   MCP_RATE_LIMIT_PER_MIN: z.coerce.number().int().min(1).default(600),
   DB_PATH: z.string().min(1).default('./data/second-opinion.db'),
-  HOLD_TTL_MS: z.coerce.number().int().min(1000).default(10 * 60 * 1000),
+  HOLD_TTL_MS: z.coerce.number().int().min(1000).optional(),
   SEED_DEMO: z.enum(['0', '1']).default('1'),
 });
 
@@ -22,7 +22,8 @@ export interface Config {
   allowedOrigins: string[];
   rateLimitPerMin: number;
   dbPath: string;
-  holdTtlMs: number;
+  /** Optional override of the household policy hold lifetime (tests, ops). */
+  holdTtlOverrideMs: number | undefined;
   seedDemo: boolean;
 }
 
@@ -45,7 +46,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     allowedOrigins: e.MCP_ALLOWED_ORIGINS.split(',').map((s) => s.trim()).filter(Boolean),
     rateLimitPerMin: e.MCP_RATE_LIMIT_PER_MIN,
     dbPath: e.DB_PATH,
-    holdTtlMs: e.HOLD_TTL_MS,
+    holdTtlOverrideMs: e.HOLD_TTL_MS,
     seedDemo: e.SEED_DEMO === '1',
   };
 }

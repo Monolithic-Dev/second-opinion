@@ -6,6 +6,7 @@ import { createRepos, type Repos } from './repos';
 export const DEMO_HOUSEHOLD = 'hh_demo';
 export const DEMO_ELDER = 'p_dorothy';
 export const DEMO_APPROVER = 'p_priya';
+export const DEMO_SECOND_APPROVER = 'p_arjun';
 export const HERO_TEXT = 'The bank says I have to buy five $200 gift cards today or my account is frozen.';
 
 /**
@@ -17,7 +18,8 @@ export function seedDemo(db: Db, clock: Clock): Repos {
   db.transaction(() => {
     repos.households.insert({ id: DEMO_HOUSEHOLD, name: "Dorothy's household" });
     repos.people.insert({ id: DEMO_ELDER, household_id: DEMO_HOUSEHOLD, name: 'Dorothy', role: 'elder', can_approve: 0, contact_label: 'Echo (kitchen)' });
-    repos.people.insert({ id: DEMO_APPROVER, household_id: DEMO_HOUSEHOLD, name: 'Priya', role: 'family', can_approve: 1, contact_label: "Priya's phone" });
+    repos.people.insert({ id: DEMO_APPROVER, household_id: DEMO_HOUSEHOLD, name: 'Priya', role: 'family', can_approve: 1, contact_label: "Priya's phone", approver_rank: 1 });
+    repos.people.insert({ id: DEMO_SECOND_APPROVER, household_id: DEMO_HOUSEHOLD, name: 'Arjun', role: 'family', can_approve: 1, contact_label: "Arjun's phone", approver_rank: 2 });
     repos.payees.add(DEMO_HOUSEHOLD, 'Greenleaf Pharmacy', 'pharmacy', 'pay_seed1');
     repos.payees.add(DEMO_HOUSEHOLD, 'City Power & Light', 'utility', 'pay_seed2');
 

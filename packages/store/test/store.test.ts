@@ -85,7 +85,7 @@ test('T-STORE-7 seed is idempotent and enables "same as" recognition', () => {
   const { db, clock, repos } = setup();
   seedDemo(db, clock);
   seedDemo(db, clock);
-  assert.equal(repos.people.list(DEMO_HOUSEHOLD).length, 2);
+  assert.equal(repos.people.list(DEMO_HOUSEHOLD).length, 3);
   assert.equal(repos.payees.list(DEMO_HOUSEHOLD).length, 2);
   const again = evaluate(HERO_TEXT, { actionType: 'purchase' }, repos.checks.history(DEMO_HOUSEHOLD));
   assert.equal(again.similarTo?.checkId, 'chk_seed1');
