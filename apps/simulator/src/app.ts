@@ -142,6 +142,10 @@ export function createSimApp(deps: SimDeps) {
   });
 
   // ---- family console
+  app.get('/api/family/holds/:holdId', requireFamily, wrap(async (req, res) => {
+    res.json(await gateway.call('get_hold', { holdId: id.parse(req.params.holdId) }));
+  }));
+
   app.post('/api/family/holds/:holdId/vote', requireFamily, wrap(async (req, res) => {
     const holdId = id.parse(req.params.holdId);
     const body = voteBody.parse(req.body);

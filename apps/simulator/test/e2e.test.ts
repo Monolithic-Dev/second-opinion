@@ -248,3 +248,17 @@ test('the gateway reconnects after the MCP server restarts its session (stateles
   assert.equal(a.json.executed, true);
   assert.equal(b.json.executed, true);
 });
+
+test('hold detail (votes and timeline) is a family-only route', async () => {
+  await s.reset();
+  const held = await utter(HERO);
+  const holdId = held.json.holdId as string;
+  assert.equal((await s.api(`/api/family/holds/${holdId}`)).status, 401);
+  const { cookie } = await s.login();
+  const detail = await s.api(`/api/family/holds/${holdId}`, { cookie });
+  assert.equal(detail.status, 200);
+  assert.equal(detail.json.hold.holdId, holdId);
+  assert.ok(detail.json.risk.flags.includes('Asks for gift cards'));
+  assert.deepEqual(detail.json.timeline.map((e: { label: string }) => e.label).slice(0, 2), ['Request paused', 'Family asked to review']);
+  assert.equal((await s.api('/api/family/holds/hold_nope', { cookie })).status, 404);
+});
