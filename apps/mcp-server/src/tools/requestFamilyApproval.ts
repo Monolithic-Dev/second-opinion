@@ -3,6 +3,7 @@ import { ToolError } from '@second-opinion/shared';
 import { z } from 'zod';
 import type { Deps } from '../deps';
 import { defineTool, idSchema } from './define';
+import { notifyHold } from '../services/notifications';
 import { holdStatusSchema, requireApprover } from './shared';
 
 export function registerRequestFamilyApproval(server: McpServer, deps: Deps): void {
@@ -24,6 +25,7 @@ export function registerRequestFamilyApproval(server: McpServer, deps: Deps): vo
       const approver = requireApprover(deps, hold.household_id, id);
       deps.repos.holds.setApprover(holdId, approver.id);
       deps.repos.audit.write('approval.requested', hold.household_id, { holdId, approverId: approver.id });
+      notifyHold(deps, 'hold_requested', hold, [approver.id]);
       return { holdId, status: hold.status, notified: [approver.id] };
     },
   });

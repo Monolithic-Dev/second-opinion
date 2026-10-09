@@ -46,6 +46,14 @@ export interface ApprovalRow {
   id: string; hold_id: string; approver_id: string; decision: 'approve' | 'deny'; note: string | null; decided_at: string;
 }
 export interface SpendItem { amountCents: number; at: string }
+export interface NotificationRow {
+  id: string; household_id: string; recipient_id: string; channel: 'console' | 'db' | 'email_html';
+  kind: 'hold_requested' | 'hold_escalated' | 'hold_resolved'; payload_json: string; status: 'queued' | 'sent' | 'failed';
+  attempts: number; next_attempt_at: string; last_error: string | null; created_at: string; sent_at: string | null;
+}
+export interface NewNotification {
+  householdId: string; recipientId: string; channel: NotificationRow['channel']; kind: NotificationRow['kind']; payload: unknown;
+}
 export interface IdempotencyRow {
   tool: string; key: string; household_id: string | null; request_hash: string; response_json: string; created_at: string;
 }
@@ -257,6 +265,47 @@ export function createRepos(db: Db, clock: Clock) {
       db.prepare('SELECT reasons_json FROM decisions WHERE household_id = ? AND created_at >= ?').all(householdId, sinceIso) as Array<{ reasons_json: string }>,
   };
 
+  /** Transactional outbox: enqueue inside the same transaction as the state change. */
+  const notifications = {
+    enqueue(n: NewNotification, id: string = newId('ntf')): NotificationRow {
+      const t = now();
+      db.prepare(
+        `INSERT INTO notifications (id, household_id, recipient_id, channel, kind, payload_json, status, attempts, next_attempt_at, created_at)
+         VALUES (?,?,?,?,?,?, 'queued', 0, ?, ?)`,
+      ).run(id, n.householdId, n.recipientId, n.channel, n.kind, JSON.stringify(n.payload), t, t);
+      return db.prepare('SELECT * FROM notifications WHERE id = ?').get(id) as NotificationRow;
+    },
+    /** True if this recipient already has a notification of this kind for the hold (keeps enqueueing idempotent). */
+    exists(holdId: string, recipientId: string, kind: NotificationRow['kind']): boolean {
+      return Boolean(
+        db
+          .prepare("SELECT 1 FROM notifications WHERE recipient_id = ? AND kind = ? AND json_extract(payload_json, '$.holdId') = ? LIMIT 1")
+          .get(recipientId, kind, holdId),
+      );
+    },
+    due: (nowIso: string, limit = 50) =>
+      db
+        .prepare("SELECT * FROM notifications WHERE status = 'queued' AND next_attempt_at <= ? ORDER BY created_at, rowid LIMIT ?")
+        .all(nowIso, limit) as NotificationRow[],
+    markSent(id: string, atIso: string): void {
+      db.prepare("UPDATE notifications SET status = 'sent', sent_at = ?, last_error = NULL WHERE id = ?").run(atIso, id);
+    },
+    retry(id: string, attempts: number, nextIso: string, error: string): void {
+      db.prepare('UPDATE notifications SET attempts = ?, next_attempt_at = ?, last_error = ? WHERE id = ?').run(attempts, nextIso, error, id);
+    },
+    fail(id: string, attempts: number, error: string): void {
+      db.prepare("UPDATE notifications SET status = 'failed', attempts = ?, last_error = ? WHERE id = ?").run(attempts, error, id);
+    },
+    list(householdId: string, opts: { recipientId?: string | undefined; limit?: number } = {}): NotificationRow[] {
+      const limit = opts.limit ?? 50;
+      return (opts.recipientId
+        ? db.prepare('SELECT * FROM notifications WHERE household_id = ? AND recipient_id = ? ORDER BY created_at DESC, rowid DESC LIMIT ?').all(householdId, opts.recipientId, limit)
+        : db.prepare('SELECT * FROM notifications WHERE household_id = ? ORDER BY created_at DESC, rowid DESC LIMIT ?').all(householdId, limit)) as NotificationRow[];
+    },
+    countByStatus: () =>
+      db.prepare('SELECT status, COUNT(*) AS n FROM notifications GROUP BY status').all() as Array<{ status: string; n: number }>,
+  };
+
   const decisions = {
     /** Append-only (DB triggers forbid UPDATE/DELETE). One row per risk check, pinned to the rule-set version. */
     insert(d: NewDecision, id: string = newId('dec')): DecisionRow {
@@ -356,6 +405,20 @@ export function createRepos(db: Db, clock: Clock) {
         return db.prepare('SELECT * FROM holds WHERE id = ?').get(id) as HoldRow;
       })();
     },
+    /** All pending holds in the system (after lazy expiry), oldest first: input for the escalation job. */
+    listPending(): HoldRow[] {
+      holds.expireStale();
+      return db.prepare("SELECT * FROM holds WHERE status = 'pending' ORDER BY created_at, rowid").all() as HoldRow[];
+    },
+    /** Expired holds nobody has been told about yet (lazy expiry on reads does not notify). */
+    expiredWithoutNotice(): HoldRow[] {
+      return db
+        .prepare(
+          `SELECT h.* FROM holds h WHERE h.status = 'expired' AND NOT EXISTS (
+             SELECT 1 FROM notifications n WHERE n.kind = 'hold_resolved' AND json_extract(n.payload_json, '$.holdId') = h.id)`,
+        )
+        .all() as HoldRow[];
+    },
     setEscalation(id: string, level: number): void {
       db.prepare('UPDATE holds SET escalation_level = ? WHERE id = ?').run(level, id);
     },
@@ -376,7 +439,7 @@ export function createRepos(db: Db, clock: Clock) {
   };
 
   return {
-    audit, households, people, payees, checks, fingerprints, decisions, idempotency, payments, policies, approvals, spend, insights, holds,
+    audit, households, people, payees, checks, fingerprints, decisions, idempotency, payments, policies, approvals, spend, insights, notifications, holds,
     transaction: <T>(fn: () => T): T => db.transaction(fn)(),
     now,
   };

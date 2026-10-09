@@ -3,6 +3,7 @@ import type { Deps } from './deps';
 import { registerCheckMessage } from './tools/checkMessage';
 import { registerHouseholdInsights } from './tools/householdInsights';
 import { registerListHolds } from './tools/listHolds';
+import { registerListNotifications } from './tools/listNotifications';
 import { registerPolicyTools } from './tools/policyTools';
 import { registerPlaceHold } from './tools/placeHold';
 import { registerRequestFamilyApproval } from './tools/requestFamilyApproval';
@@ -29,6 +30,7 @@ export function buildServer(deps: Deps): McpServer {
   registerResolveApproval(server, deps);
   registerTrustedPayees(server, deps);
   registerListHolds(server, deps);
+  registerListNotifications(server, deps);
   registerPolicyTools(server, deps);
   registerHouseholdInsights(server, deps);
   return server;
