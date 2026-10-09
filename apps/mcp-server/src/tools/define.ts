@@ -80,8 +80,11 @@ export function defineTool<I extends z.ZodRawShape, O extends z.ZodRawShape>(ser
       const traceId = traceIdFrom(extra);
       const { idempotencyKey, ...args } = rawArgs as { idempotencyKey?: string } & z.infer<z.ZodObject<I>>;
       const household = spec.household?.(args as z.infer<z.ZodObject<I>>) ?? null;
-      const finish = (extraFields: Record<string, unknown>) =>
-        deps.log.info('tool', { tool: spec.name, traceId, household, ms: Math.round(performance.now() - started), ...extraFields });
+      const finish = (extraFields: Record<string, unknown>) => {
+        const ms = performance.now() - started;
+        deps.metrics?.observeTool(spec.name, extraFields.isError ? 'error' : 'ok', ms);
+        deps.log.info('tool', { tool: spec.name, traceId, household, ms: Math.round(ms), ...extraFields });
+      };
       try {
         let replayed = false;
         const out = deps.repos.transaction(() => {
@@ -110,6 +113,7 @@ export function defineTool<I extends z.ZodRawShape, O extends z.ZodRawShape>(ser
           finish({ isError: true, code: e.code });
           return errorResult(e.code, e.message);
         }
+        deps.metrics?.observeTool(spec.name, 'error', performance.now() - started);
         deps.log.error('tool_failed', { tool: spec.name, traceId, household, error: e instanceof Error ? e.message : String(e) });
         return errorResult('INTERNAL', 'Something went wrong. The action was not taken.');
       }

@@ -4,12 +4,14 @@ import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/
 import { resetDb } from '@second-opinion/store';
 import type { Deps } from './deps';
 import { buildServer, SERVER_VERSION } from './server';
+import { Metrics } from './metrics';
 import { bearerAuth, originGuard, protocolGuard, rateLimit } from './http-guards';
 
 const METHOD_NOT_ALLOWED = { jsonrpc: '2.0', error: { code: -32000, message: 'Method not allowed: this server is stateless, use POST' }, id: null };
 
 /** Express app: /healthz, /readyz, and the stateless Streamable HTTP endpoint /mcp (docs/mcp-best-practices.md §1). */
 export function createApp(deps: Deps) {
+  deps.metrics ??= new Metrics();
   const app = express();
   app.disable('x-powered-by');
   app.use((req, res, next) => {
@@ -31,6 +33,11 @@ export function createApp(deps: Deps) {
     } catch {
       res.status(503).json({ ok: false });
     }
+  });
+
+  // Prometheus scrape endpoint: same bearer token as /mcp, counts only.
+  app.get('/metrics', bearerAuth(deps.config.authToken), (_req, res) => {
+    res.type('text/plain; version=0.0.4').send(deps.metrics!.render(deps.db));
   });
 
   const guards = [originGuard(deps.config.allowedOrigins), bearerAuth(deps.config.authToken), protocolGuard(), rateLimit(deps.config.rateLimitPerMin)];
