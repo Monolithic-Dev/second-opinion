@@ -35,7 +35,7 @@ Scams work because they say "pay now". The people most at risk are often alone a
 Measured on [`scam-script-bench`](https://github.com/Monolithic-Dev/scam-script-bench), a 100-script synthetic benchmark we built for this (dev 30, held-out test 30, fresh test2 40):
 - On the held-out test split the detector held **46.7%** of scams (flagged 80%), with **0%** of benign messages wrongly held. The dev split, which we tuned on, was 86.7%. We publish the gap and the list of what was missed.
 - The newest rule set (`rules-2026.10.4`) holds 95% on test2 with 0% false holds, **but the same author wrote test2 and the new rules, so we do not claim that number generalises**. The older detector held 30% of test2, written before tuning, which is the fairer picture of unfamiliar wording.
-- All 60+ numbers reproduce with `npm run eval`. No benchmark claim is made about real-world accuracy; the scripts are invented and English-only.
+- Every number here reproduces with `npm run eval`. No benchmark claim is made about real-world accuracy; the scripts are invented and English-only.
 
 ## Challenges
 - Making "hold and approve" safe when anything can fail: every error path leaves the action unexecuted.
