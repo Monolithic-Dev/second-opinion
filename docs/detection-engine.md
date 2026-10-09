@@ -74,5 +74,12 @@ False negative (scam allowed): the money never moves without the elder asking; t
 | L3 Behavior | `layers/behavior.ts` | `AMOUNT_ANOMALY` (+20), `PAYEE_VELOCITY` (+15), `QUIET_HOURS` (+10), `RETRY_AFTER_DENY` (+30) from household history | 40 |
 | L4 LLM (optional) | `layers/llm.ts` | Suggested ids from the `SignalId` enum, cached | 20 |
 | Fusion | `layers/fusion.ts` | Sum with caps, clamp 0–100, thresholds 60/30, hard rules kept, `layerBreakdown` + `reasons[]` | — |
+**As built (B2, rule set `rules-2026.10.2`):**
+- L2 is idf-weighted **keyword coverage** (not full BM25): `similarity = Σ idf(matched keywords) / Σ idf(all keywords)` over the playbook's own phrases, stop-word filtered, simple plural stemming. Fires when `similarity ≥ 0.30` **and** ≥ 3 distinct keywords match; `weight = min(30, round(60 × similarity))`. Measured on the fixtures: scams 0.31–0.64, benign ≤ 0.16. Known limit: a polite scam with no scam vocabulary ("send $900 to my cousin") is not caught by L2.
+- L3 needs `options.now`; without it the behavior layer is skipped so `evaluate` stays pure. Payments and denied holds come from the store (`payments.recent`, `holds.deniedSince`); the household timezone is `America/Chicago` until the policy engine (B4) makes it per-household.
+- Fusion floors each layer's contribution at 0 (a trusted payee cannot cancel risk found by another layer) and caps playbooks at 30 and behavior at 40.
+- `registry.ts` keeps every rule-set version (`rules-2026.10.1` rules only, `rules-2026.10.2` all layers). `evaluate(..., {ruleSet})` runs any version; `evaluateWithShadow` runs a candidate beside the live set and reports disagreement (backtest CLI is B3).
+- `check_message` returns `layerBreakdown` and `playbook`; decisions store the breakdown for replay.
+
 New `SignalId`s: `PLAYBOOK_MATCH`, `AMOUNT_ANOMALY`, `PAYEE_VELOCITY`, `QUIET_HOURS`, `RETRY_AFTER_DENY`. Defaults enable L1–L3; every layer can be switched off (`options.layers`) for ablation and demo safety. All layers are deterministic and pure; L2 is lexical (BM25), **no embeddings or training**.
 Ablation protocol: report L1, L1+L2, L1+L2+L3, +L4 on the same split; headline remains test recall/FPR at *hold* for the default pipeline. Weights frozen at G2.

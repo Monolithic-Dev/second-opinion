@@ -7,6 +7,10 @@ import { defineTool } from './define';
 import { actionTypeSchema, amountSchema, cardSchema, channelSchema, householdIdSchema, requireHousehold, signalSchema, similarSchema } from './shared';
 import { VERDICTS } from '@second-opinion/shared';
 
+const DAY_MS = 24 * 60 * 60 * 1000;
+/** Household timezone for quiet hours until per-household policy lands (docs/policy-and-approvals.md). */
+const HOUSEHOLD_TIMEZONE = 'America/Chicago';
+
 export function registerCheckMessage(server: McpServer, deps: Deps): void {
   defineTool(server, deps, {
     name: 'check_message',
@@ -27,6 +31,8 @@ export function registerCheckMessage(server: McpServer, deps: Deps): void {
       checkId: z.string(),
       decisionId: z.string(),
       ruleSetVersion: z.string(),
+      layerBreakdown: z.record(z.string(), z.number()),
+      playbook: z.object({ id: z.string(), name: z.string(), advice: z.string(), similarity: z.number() }).nullable(),
       verdict: z.enum(VERDICTS),
       score: z.number().int(),
       signals: z.array(signalSchema),
@@ -42,10 +48,13 @@ export function registerCheckMessage(server: McpServer, deps: Deps): void {
       requireHousehold(deps, householdId);
       const trustedPayees = deps.repos.payees.list(householdId).map((p) => p.name);
       const history = deps.repos.checks.history(householdId);
+      const now = deps.clock();
+      const payments = deps.repos.payments.recent(householdId, new Date(now.getTime() - 30 * DAY_MS).toISOString());
+      const denied = deps.repos.holds.deniedSince(householdId, new Date(now.getTime() - DAY_MS).toISOString());
       let result;
       const t0 = performance.now();
       try {
-        result = evaluate(text, { ...context, channel, trustedPayees }, history);
+        result = evaluate(text, { ...context, channel, trustedPayees }, history, { payments, denied, now, timezone: HOUSEHOLD_TIMEZONE });
       } catch (e) {
         if (e instanceof RangeError) throw new ToolError('INVALID_INPUT', e.message);
         throw e;
@@ -62,7 +71,7 @@ export function registerCheckMessage(server: McpServer, deps: Deps): void {
           householdId, checkId: inserted.id, traceId: ctx.traceId, ruleSetVersion: result.ruleSetVersion,
           verdict: result.verdict, score: result.score, latencyMs,
           reasons: { signals: result.signals, hardRule: result.hardRule ?? null, fingerprint: result.fingerprint },
-          features: { channel: channel ?? 'unknown', actionType, amountCents: context?.amountCents ?? null, payee: context?.payee ?? null, trustedPayeeCount: trustedPayees.length, historySize: history.length },
+          features: { channel: channel ?? 'unknown', actionType, amountCents: context?.amountCents ?? null, payee: context?.payee ?? null, trustedPayeeCount: trustedPayees.length, historySize: history.length, paymentsConsidered: payments.length, deniedConsidered: denied.length, layerBreakdown: result.layerBreakdown },
         });
         return { inserted, decision };
       });
@@ -70,6 +79,8 @@ export function registerCheckMessage(server: McpServer, deps: Deps): void {
         checkId: row.inserted.id,
         decisionId: row.decision.id,
         ruleSetVersion: result.ruleSetVersion,
+        layerBreakdown: result.layerBreakdown,
+        playbook: result.playbook,
         verdict: result.verdict,
         score: result.score,
         signals: result.signals,

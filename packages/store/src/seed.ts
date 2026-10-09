@@ -21,6 +21,22 @@ export function seedDemo(db: Db, clock: Clock): Repos {
     repos.payees.add(DEMO_HOUSEHOLD, 'Greenleaf Pharmacy', 'pharmacy', 'pay_seed1');
     repos.payees.add(DEMO_HOUSEHOLD, 'City Power & Light', 'utility', 'pay_seed2');
 
+    // A month of ordinary payments so the behavior layer has a baseline (amount anomaly, payee velocity).
+    const ordinary: Array<[string, number, string, number]> = [
+      ['chk_seedp1', 2400, 'greenleaf pharmacy', 26], ['chk_seedp2', 8640, 'city power & light', 22],
+      ['chk_seedp3', 3100, 'greenleaf pharmacy', 18], ['chk_seedp4', 2800, 'greenleaf pharmacy', 12],
+      ['chk_seedp5', 2500, 'greenleaf pharmacy', 8], ['chk_seedp6', 3000, 'greenleaf pharmacy', 4],
+    ];
+    for (const [id, cents, payee, daysAgo] of ordinary) {
+      if (repos.checks.get(id)) continue;
+      const at = new Date(clock().getTime() - daysAgo * 24 * 60 * 60 * 1000).toISOString();
+      repos.checks.insert(
+        { householdId: DEMO_HOUSEHOLD, text: `Pay ${payee} $${(cents / 100).toFixed(2)}`, channel: 'voice', actionType: 'payment', amountCents: cents, payee,
+          signals: [{ id: 'TRUSTED_PAYEE', weight: -40, evidence: payee }], score: 0, verdict: 'allow', fingerprint: 'NONE', createdAt: at },
+        id,
+      );
+    }
+
     if (!repos.checks.get('chk_seed1')) {
       const past = new Date(clock().getTime() - 3 * 24 * 60 * 60 * 1000).toISOString();
       const ctx = { actionType: 'purchase' as const, payee: 'gift cards' };
