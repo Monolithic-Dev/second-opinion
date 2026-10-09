@@ -4,7 +4,9 @@ import {
   type ActionType,
   type Channel,
   type Clock,
+  type DeniedItem,
   type HistoryItem,
+  type PaymentItem,
   type HoldStatus,
   type PayeeKind,
   type Signal,
@@ -150,6 +152,20 @@ export function createRepos(db: Db, clock: Clock) {
         | undefined,
   };
 
+  /** Household payment history for the behavior layer: allowed requests and released holds that carry an amount. */
+  const payments = {
+    recent(householdId: string, sinceIso: string): PaymentItem[] {
+      return db
+        .prepare(
+          `SELECT c.amount_cents AS amountCents, c.payee AS payee, c.created_at AS at FROM checks c
+           WHERE c.household_id = ? AND c.action_type != 'none' AND c.amount_cents IS NOT NULL AND c.created_at >= ?
+             AND (c.verdict = 'allow' OR EXISTS (SELECT 1 FROM holds h WHERE h.check_id = c.id AND h.status = 'released'))
+           ORDER BY c.created_at`,
+        )
+        .all(householdId, sinceIso) as PaymentItem[];
+    },
+  };
+
   const decisions = {
     /** Append-only (DB triggers forbid UPDATE/DELETE). One row per risk check, pinned to the rule-set version. */
     insert(d: NewDecision, id: string = newId('dec')): DecisionRow {
@@ -210,6 +226,15 @@ export function createRepos(db: Db, clock: Clock) {
       }
       return row;
     },
+    /** Holds family denied since `sinceIso`, with the fingerprint of the original check (retry-after-deny signal). */
+    deniedSince(householdId: string, sinceIso: string): DeniedItem[] {
+      return db
+        .prepare(
+          `SELECT c.fingerprint AS fingerprint, h.resolved_at AS at FROM holds h JOIN checks c ON c.id = h.check_id
+           WHERE h.household_id = ? AND h.status = 'denied' AND h.resolved_at >= ? ORDER BY h.resolved_at DESC`,
+        )
+        .all(householdId, sinceIso) as DeniedItem[];
+    },
     byCheck: (checkId: string) =>
       db.prepare('SELECT * FROM holds WHERE check_id = ? ORDER BY created_at DESC, rowid DESC').all(checkId) as HoldRow[],
     listByStatus(householdId: string, status?: HoldStatus): HoldRow[] {
@@ -242,7 +267,7 @@ export function createRepos(db: Db, clock: Clock) {
   };
 
   return {
-    audit, households, people, payees, checks, fingerprints, decisions, idempotency, holds,
+    audit, households, people, payees, checks, fingerprints, decisions, idempotency, payments, holds,
     transaction: <T>(fn: () => T): T => db.transaction(fn)(),
     now,
   };

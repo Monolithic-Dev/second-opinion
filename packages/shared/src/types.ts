@@ -60,6 +60,24 @@ export interface Card {
   advice: string;
 }
 
+export interface PaymentItem {
+  amountCents: number;
+  payee: string | null;
+  at: string;
+}
+
+export interface DeniedItem {
+  fingerprint: string;
+  at: string;
+}
+
+export interface PlaybookRef {
+  id: string;
+  name: string;
+  advice: string;
+  similarity: number;
+}
+
 export interface Similar {
   checkId: string;
   date: string;
@@ -76,6 +94,10 @@ export interface HistoryItem {
 export interface CheckResult {
   /** Version of the rule set that produced this verdict; every stored decision is pinned to it. */
   ruleSetVersion: string;
+  /** Score contributed by each layer after caps (rules / playbooks / behavior). */
+  layerBreakdown: Record<string, number>;
+  /** Best matching known-scam playbook, if any. */
+  playbook: PlaybookRef | null;
   verdict: Verdict;
   score: number;
   signals: Signal[];
