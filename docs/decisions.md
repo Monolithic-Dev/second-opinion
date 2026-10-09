@@ -19,3 +19,9 @@
 | D10 | _(Phase 6)_ | Record Alexa+ Agent Skill packaging findings | Docs unverified so far | Docs differ from SKILL.md plan |
 
 Log later changes below with date and impact on other docs.
+
+## Implementation log
+| Date | Change |
+|---|---|
+| 2026-10-09 | Phases 1-3 shipped as PRs #1-#4 (scaffold+shared, engine, store, MCP server). MCP SDK 1.32.1 verified: negotiates `2025-11-25`; invalid tool input already returns `isError` results. |
+| 2026-10-09 | `resolve_approval` is not idempotent (second call is `CONFLICT`); approve ends in status `released`. Rate-limit default is 600 requests/min. |
