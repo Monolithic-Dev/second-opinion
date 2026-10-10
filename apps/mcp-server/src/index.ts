@@ -1,5 +1,5 @@
 import { pathToFileURL } from 'node:url';
-import { systemClock } from '@second-opinion/shared';
+import { fakeClock, systemClock } from '@second-opinion/shared';
 import { migrate, openDb, createRepos, seedDemo } from '@second-opinion/store';
 import { createApp } from './app';
 import { loadConfig, type Config } from './config';
@@ -28,7 +28,7 @@ export function createDeps(config: Config, log: Logger, clock = systemClock): De
 async function main(): Promise<void> {
   const config = loadConfig();
   const log = createLogger(config.env === 'development' ? 'debug' : 'info');
-  const deps = createDeps(config, log);
+  const deps = createDeps(config, log, config.fixedNow ? fakeClock(config.fixedNow) : systemClock);
   const app = createApp(deps);
   const stopJobs = startJobs(deps, createAdapters(config, log));
   const server = app.listen(config.port, config.host, () => {

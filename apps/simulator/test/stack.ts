@@ -35,7 +35,7 @@ async function waitFor(url: string, ms = 20_000): Promise<void> {
 export async function startStack(simEnv: Record<string, string> = {}) {
   const mcpPort = await freePort();
   const child: ChildProcess = spawn(process.execPath, ['--import', 'tsx', 'apps/mcp-server/src/index.ts'], {
-    env: { ...process.env, NODE_ENV: 'test', HOST: '127.0.0.1', MCP_PORT: String(mcpPort), MCP_AUTH_TOKEN: TOKEN, DB_PATH: ':memory:', SEED_DEMO: '1', OUTBOX_DIR: './data/test-outbox' },
+    env: { ...process.env, NODE_ENV: 'test', HOST: '127.0.0.1', MCP_PORT: String(mcpPort), MCP_AUTH_TOKEN: TOKEN, DB_PATH: ':memory:', SEED_DEMO: '1', OUTBOX_DIR: './data/test-outbox', FIXED_NOW: '2026-10-09T17:00:00.000Z' },
     stdio: ['ignore', 'ignore', 'ignore'],
   });
   await waitFor(`http://127.0.0.1:${mcpPort}/healthz`);

@@ -1,0 +1,20 @@
+{
+  "_note": "TEMPLATE from the Alexa+ MCP Toolkit quickstart. Replace every REPLACE_ value, add the media files, then run `alexa-ai deploy`. Field limits: name <= 30, shortDescription <= 123, fullDescription <= 4000, 3-4 examplePhrases <= 200 each.",
+  "name": { "value": "Second Opinion" },
+  "shortDescription": "A family safety check for payments and purchases made by voice, with approval before risky ones go ahead.",
+  "fullDescription": "Second Opinion checks payment and purchase requests made through Alexa+ for scam warning signs, explains the red flags in plain language, pauses risky requests, and asks a trusted family member to approve or deny. Alexa+ can never approve a request itself. You can also ask whether a call, text or email looks like a scam.",
+  "examplePhrases": [
+    "Alexa, ask Second Opinion if this message is a scam",
+    "Alexa, ask Second Opinion to check a payment of two hundred dollars to my pharmacy",
+    "Alexa, ask Second Opinion what is waiting for the family to approve"
+  ],
+  "privacyAndCompliance": {
+    "privacyPolicyUrl": "https://REPLACE_WITH_YOUR_PRIVACY_POLICY_URL",
+    "termsOfUseUrl": "https://REPLACE_WITH_YOUR_TERMS_URL"
+  },
+  "mediaAssets": {
+    "icons": { "light": { "72": "REPLACE_icon_72.png", "64": "REPLACE_icon_64.png", "88": "REPLACE_icon_88.png", "126": "REPLACE_icon_126.png", "180": "REPLACE_icon_180.png", "241": "REPLACE_icon_241.png" } },
+    "carouselImages": [{ "uri": "REPLACE_600x900.png", "altText": "A paused gift-card request with the red flags listed and a family member's approve and deny buttons" }]
+  },
+  "integrations": [{ "type": "MCP", "endpoint": { "type": "HTTPS", "uri": "https://REPLACE_WITH_YOUR_PUBLIC_URL/mcp" } }]
+}
