@@ -35,6 +35,7 @@ export function registerGetHold(server: McpServer, deps: Deps): void {
       votes: z.array(z.object({ approverId: z.string(), name: z.string(), decision: z.enum(['approve', 'deny']), note: z.string().nullable(), decidedAt: z.string() })),
       timeline: z.array(z.object({ type: z.string(), label: z.string(), at: z.string(), by: z.string().nullable() })),
     },
+    ui: true,
     annotations: { title: 'Get one held action with its votes and timeline', readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     handler: ({ holdId }) => {
       const h = deps.repos.holds.get(holdId);

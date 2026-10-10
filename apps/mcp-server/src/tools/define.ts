@@ -4,6 +4,7 @@ import type { CallToolResult, ToolAnnotations } from '@modelcontextprotocol/sdk/
 import { ToolError, ID_PATTERN } from '@second-opinion/shared';
 import { z } from 'zod';
 import type { Deps } from '../deps';
+import { CARD_URI } from '../ui/register';
 
 /** Household/person/hold ids: prefixed, bounded, safe characters. */
 export const idSchema = z.string().max(80).regex(ID_PATTERN, 'must look like prefix_id');
@@ -58,6 +59,8 @@ interface Spec<I extends z.ZodRawShape, O extends z.ZodRawShape> {
   annotations: ToolAnnotations;
   /** Adds an optional `idempotencyKey` input and `replayed` output. Handlers must be synchronous so the result and its key commit atomically. */
   idempotent?: boolean;
+  /** Show the Second Opinion card (MCP App) when the host can render UI. */
+  ui?: boolean;
   handler: (args: z.infer<z.ZodObject<I>>, ctx: ToolContext) => z.infer<z.ZodObject<O>>;
   /** household the call acts on, for audit + logs */
   household?: (args: z.infer<z.ZodObject<I>>) => string | undefined;
@@ -74,7 +77,10 @@ export function defineTool<I extends z.ZodRawShape, O extends z.ZodRawShape>(ser
 
   server.registerTool(
     spec.name,
-    { title: spec.title, description: spec.description, inputSchema: input, outputSchema: output, annotations: spec.annotations },
+    {
+      title: spec.title, description: spec.description, inputSchema: input, outputSchema: output, annotations: spec.annotations,
+      ...(spec.ui ? { _meta: { ui: { resourceUri: CARD_URI }, 'ui/resourceUri': CARD_URI } } : {}),
+    },
     (async (rawArgs: Record<string, unknown>, extra: RequestExtra): Promise<CallToolResult> => {
       const started = performance.now();
       const traceId = traceIdFrom(extra);
