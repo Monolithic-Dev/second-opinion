@@ -5,7 +5,8 @@ import { resetDb } from '@second-opinion/store';
 import type { Deps } from './deps';
 import { buildServer, SERVER_VERSION } from './server';
 import { Metrics } from './metrics';
-import { bearerAuth, originGuard, protocolGuard, rateLimit } from './http-guards';
+import { bearerAuth, householdScope, mcpAuth, originGuard, protocolGuard, rateLimit } from './http-guards';
+import { createOAuth } from './oauth';
 
 const METHOD_NOT_ALLOWED = { jsonrpc: '2.0', error: { code: -32000, message: 'Method not allowed: this server is stateless, use POST' }, id: null };
 
@@ -40,7 +41,10 @@ export function createApp(deps: Deps) {
     res.type('text/plain; version=0.0.4').send(deps.metrics!.render(deps.db));
   });
 
-  const guards = [originGuard(deps.config.allowedOrigins), bearerAuth(deps.config.authToken), protocolGuard(), rateLimit(deps.config.rateLimitPerMin)];
+  const oauth = deps.config.oauth ? createOAuth(deps.config.oauth, deps) : undefined;
+  if (oauth) app.use(oauth.router);
+
+  const guards = [originGuard(deps.config.allowedOrigins), mcpAuth(deps.config.authToken, oauth), householdScope(deps), protocolGuard(), rateLimit(deps.config.rateLimitPerMin)];
 
   app.post('/mcp', ...guards, async (req: Request, res: Response) => {
     const server = buildServer(deps);

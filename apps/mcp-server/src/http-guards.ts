@@ -1,6 +1,8 @@
 import { createHash, timingSafeEqual } from 'node:crypto';
 import type { NextFunction, Request, Response } from 'express';
 import { SUPPORTED_PROTOCOL_VERSIONS } from '@modelcontextprotocol/sdk/types.js';
+import type { Deps } from './deps';
+import { ASSISTANT_FORBIDDEN_TOOLS, type OAuth } from './oauth';
 
 function jsonRpcError(res: Response, status: number, code: number, message: string): void {
   res.status(status).json({ jsonrpc: '2.0', error: { code, message }, id: null });
@@ -30,6 +32,50 @@ export function bearerAuth(token: string) {
     if (!m || !safeEqual(m[1] as string, token)) {
       res.setHeader('WWW-Authenticate', 'Bearer');
       return jsonRpcError(res, 401, -32001, 'Unauthorized');
+    }
+    next();
+  };
+}
+
+/**
+ * Auth for /mcp: the static operator token, or (when OAuth is on) an access token issued by our authorization server.
+ * An OAuth token is bound to one household (`res.locals.household`). With OAuth on, the 401 carries no WWW-Authenticate header,
+ * as the Alexa+ MCP Toolkit requires.
+ */
+export function mcpAuth(staticToken: string, oauth?: OAuth) {
+  return (req: Request, res: Response, next: NextFunction): void => {
+    const m = /^Bearer (.+)$/.exec(req.headers.authorization ?? '');
+    if (m && safeEqual(m[1] as string, staticToken)) return next();
+    const p = m && oauth ? oauth.verifyAccess(m[1] as string) : null;
+    if (p) {
+      res.locals.household = p.sub;
+      return next();
+    }
+    if (!oauth) res.setHeader('WWW-Authenticate', 'Bearer');
+    jsonRpcError(res, 401, -32001, 'Unauthorized');
+  };
+}
+
+/**
+ * An assistant (OAuth) token may only touch its own household, and may never approve a hold or change the rules.
+ * Hold ids are checked against the hold's household, so a token cannot reach another household through an id.
+ */
+export function householdScope(deps: Deps) {
+  return (req: Request, res: Response, next: NextFunction): void => {
+    const household = res.locals.household as string | undefined;
+    if (!household) return next();
+    const msgs = Array.isArray(req.body) ? req.body : [req.body];
+    for (const msg of msgs) {
+      if (!msg || msg.method !== 'tools/call') continue;
+      const name = String(msg.params?.name ?? '');
+      const args = (msg.params?.arguments ?? {}) as Record<string, unknown>;
+      const deny = (why: string) => jsonRpcError(res, 403, -32003, `Forbidden: ${why}`);
+      if (ASSISTANT_FORBIDDEN_TOOLS.has(name)) return deny(`${name} is only available to the family console`);
+      if (typeof args.householdId === 'string' && args.householdId !== household) return deny('this token is linked to a different household');
+      if (typeof args.holdId === 'string') {
+        const hold = deps.repos.holds.get(args.holdId);
+        if (hold && hold.household_id !== household) return deny('this token is linked to a different household');
+      }
     }
     next();
   };

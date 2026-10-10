@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { OAuthConfig } from './oauth';
 
 const DEFAULT_TOKEN = 'dev-token';
 
@@ -16,6 +17,18 @@ const schema = z.object({
   OUTBOX_DIR: z.string().default('./data/outbox'),
   ADMIN_ENABLED: z.enum(['0', '1']).optional(),
   JOBS_INTERVAL_MS: z.coerce.number().int().min(0).default(15000),
+  // OAuth 2.1 for assistant linking (Alexa+). Enabled when OAUTH_CLIENT_ID is set.
+  PUBLIC_URL: z.string().url().optional(),
+  OAUTH_CLIENT_ID: z.string().min(1).optional(),
+  OAUTH_CLIENT_SECRET: z.string().min(16).optional(),
+  OAUTH_REDIRECT_URIS: z.string().default(''),
+  OAUTH_SIGNING_KEY: z.string().min(32).optional(),
+  OAUTH_LINK_CODE: z.string().min(6).optional(),
+  OAUTH_HOUSEHOLD: z.string().min(1).default('hh_demo'),
+  /** Tests and demos only: freeze the server clock at this ISO time so results do not depend on the time of day. */
+  FIXED_NOW: z.string().datetime().optional(),
+  OAUTH_ACCESS_TTL_SEC: z.coerce.number().int().min(60).default(3600),
+  OAUTH_REFRESH_TTL_SEC: z.coerce.number().int().min(300).default(2592000),
 });
 
 export interface Config {
@@ -35,6 +48,9 @@ export interface Config {
   adminEnabled: boolean;
   /** 0 disables the background jobs (tests run them explicitly). */
   jobsIntervalMs: number;
+  /** Present when OAuth account linking is enabled. */
+  oauth: OAuthConfig | undefined;
+  fixedNow: string | undefined;
 }
 
 function parseChannels(raw: string): Config['notifyChannels'] {
@@ -55,6 +71,21 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
   if (e.NODE_ENV === 'production' && (e.MCP_AUTH_TOKEN === DEFAULT_TOKEN || e.MCP_AUTH_TOKEN.length < 24)) {
     throw new Error('Invalid configuration: MCP_AUTH_TOKEN must be set to a random value of at least 24 characters in production');
   }
+  if (e.NODE_ENV === 'production' && e.FIXED_NOW) throw new Error('Invalid configuration: FIXED_NOW is not allowed in production');
+  let oauth: OAuthConfig | undefined;
+  if (e.OAUTH_CLIENT_ID) {
+    const redirectUris = e.OAUTH_REDIRECT_URIS.split(',').map((x) => x.trim()).filter(Boolean);
+    const publicUrl = (e.PUBLIC_URL ?? `http://127.0.0.1:${e.MCP_PORT}`).replace(/\/+$/, '');
+    if (!e.OAUTH_SIGNING_KEY || !e.OAUTH_LINK_CODE || redirectUris.length === 0) {
+      throw new Error('Invalid configuration: OAuth needs OAUTH_SIGNING_KEY (32+ chars), OAUTH_LINK_CODE (6+ chars) and OAUTH_REDIRECT_URIS');
+    }
+    if (e.NODE_ENV === 'production' && !publicUrl.startsWith('https://')) throw new Error('Invalid configuration: PUBLIC_URL must be https in production');
+    for (const u of redirectUris) if (!/^https:\/\//.test(u) && !/^http:\/\/(localhost|127\.0\.0\.1)[:/]/.test(u)) throw new Error(`Invalid configuration: redirect URI ${u} must be https (or localhost)`);
+    oauth = {
+      publicUrl, clientId: e.OAUTH_CLIENT_ID, clientSecret: e.OAUTH_CLIENT_SECRET, redirectUris, signingKey: e.OAUTH_SIGNING_KEY, linkCode: e.OAUTH_LINK_CODE,
+      householdId: e.OAUTH_HOUSEHOLD, accessTtlSec: e.OAUTH_ACCESS_TTL_SEC, refreshTtlSec: e.OAUTH_REFRESH_TTL_SEC,
+    };
+  }
   return {
     env: e.NODE_ENV,
     host: e.HOST,
@@ -69,5 +100,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     outboxDir: e.OUTBOX_DIR,
     adminEnabled: e.ADMIN_ENABLED ? e.ADMIN_ENABLED === '1' : e.NODE_ENV !== 'production',
     jobsIntervalMs: e.NODE_ENV === 'test' ? 0 : e.JOBS_INTERVAL_MS,
+    oauth,
+    fixedNow: e.FIXED_NOW,
   };
 }

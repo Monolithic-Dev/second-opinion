@@ -49,6 +49,8 @@ npm run typecheck && npm test    # 252 server-side tests + 33 web tests
 npm run e2e                      # 17 real-browser tests (Playwright), incl. the two-approver flow and accessibility scans of every page
 ```
 
+**Connecting to Alexa+:** [docs/alexa-integration.md](docs/alexa-integration.md) says what is real (MCP server, OAuth 2.1 + PKCE account linking) and what is simulated (the Alexa+ voice assistant), and lists the steps to connect.
+
 **Safe rule changes:** `npm run backtest -- --candidate rules-2026.10.4 --baseline rules-2026.10.3` replays every stored check under two rule sets and lists who got stricter or looser, before anything goes live.
 
 **Observability and deploy:** `GET /metrics` (Prometheus text) and `docker compose up --build` ([docs/deployment.md](docs/deployment.md)).
