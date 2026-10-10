@@ -49,6 +49,7 @@ export function registerCheckMessage(server: McpServer, deps: Deps): void {
       decision: decisionSchema,
     },
     idempotent: true,
+    ui: true,
     annotations: { title: 'Check a message or payment request', readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
     household: (a) => a.householdId,
     handler: ({ householdId, text, channel, context }, ctx) => {

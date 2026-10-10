@@ -16,7 +16,7 @@
 | OAuth 2.1 authorization code + PKCE (S256), `resource` parameter, protected-resource metadata, authorization-server metadata, static client (no dynamic registration), 401 without `WWW-Authenticate` | **Done** (`apps/mcp-server/src/oauth.ts`, tests T-OAUTH-1 to 9) |
 | Round trip under 500 ms | Likely (the engine takes about a millisecond and tools are synchronous SQLite), **not measured against Alexa+**. Measure through the tunnel |
 | Add-on package (`addon.json`, icons, carousel image, privacy and terms URLs) | Template only: `alexa-addon/addon.json`. Needs real URLs and artwork |
-| Text-only is allowed (MCP Apps visuals optional) | OK |
+| Visuals via the MCP Apps standard (optional) | **Done**: `check_message` and `get_hold` link to a `ui://second-opinion/card.html` view (verdict, red flags, who must approve), authored for Alexa's 768x480 reference size, self-contained (no network), with text fallback for voice-only devices. Tested at protocol level (T-CARD-1 to 3) and rendered in a browser with a stand-in host; **not yet seen on a real Alexa+ screen** |
 | Elicitation (Alexa+ asking the user to confirm) | Not covered by the quickstart page we read; not implemented |
 
 ## Account linking: how OAuth works here

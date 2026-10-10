@@ -28,7 +28,8 @@
     "dev:web": "npm -w @second-opinion/web run dev",
     "e2e": "playwright test",
     "eval": "tsx eval/run.ts",
-    "backtest": "tsx scripts/backtest.ts"
+    "backtest": "tsx scripts/backtest.ts",
+    "build:card": "node scripts/build-card.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",

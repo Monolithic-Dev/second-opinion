@@ -11,6 +11,7 @@ import { registerPlaceHold } from './tools/placeHold';
 import { registerRequestFamilyApproval } from './tools/requestFamilyApproval';
 import { registerResolveApproval } from './tools/resolveApproval';
 import { registerTrustedPayees } from './tools/trustedPayees';
+import { registerCard } from './ui/register';
 
 export const SERVER_NAME = 'second-opinion';
 export const SERVER_VERSION = '0.1.0';
@@ -37,5 +38,6 @@ export function buildServer(deps: Deps): McpServer {
   registerListNotifications(server, deps);
   registerPolicyTools(server, deps);
   registerHouseholdInsights(server, deps);
+  registerCard(server);
   return server;
 }
