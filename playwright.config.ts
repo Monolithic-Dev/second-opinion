@@ -19,6 +19,7 @@ export default defineConfig({
     url: `http://127.0.0.1:${SIM_PORT}/healthz`,
     reuseExistingServer: !process.env.CI,
     timeout: 60_000,
-    env: { SIM_PORT: String(SIM_PORT), MCP_PORT: String(MCP_PORT), DB_PATH: './data/e2e.db', OUTBOX_DIR: './data/e2e-outbox', HOST: '127.0.0.1', LOGIN_RATE_LIMIT_PER_MIN: '1000', FIXED_NOW: '2026-10-09T17:00:00.000Z' },
+    env: { SIM_PORT: String(SIM_PORT), MCP_PORT: String(MCP_PORT), DB_PATH: './data/e2e.db', OUTBOX_DIR: './data/e2e-outbox', HOST: '127.0.0.1', LOGIN_RATE_LIMIT_PER_MIN: '1000', // Midday (Chicago) of today's UTC date: stable time of day, and holds do not look expired next to the real clock.
+    FIXED_NOW: `${new Date().toISOString().slice(0, 10)}T17:00:00.000Z` },
   },
 });
