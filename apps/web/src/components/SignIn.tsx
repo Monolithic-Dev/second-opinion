@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import type { Person } from '../types';
 import { ErrorNote } from './parts';
+import { IconLock } from './icons';
 
 /**
  * Family sign-in. The demo PINs are shown on purpose: they are documented demo credentials, and the server refuses them in
@@ -36,7 +37,21 @@ export function SignIn({ approvers }: { approvers: Person[] }) {
       }}
     >
       <div className="row" style={{ gap: 'var(--space-2)' }}>
-        <span aria-hidden="true" style={{ fontSize: '1.25rem' }}>🔐</span>
+        <div
+          style={{
+            width: 32,
+            height: 32,
+            borderRadius: 'var(--radius-sm)',
+            background: 'var(--brand-muted)',
+            color: 'var(--brand)',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+          }}
+        >
+          <IconLock size={18} />
+        </div>
         <div>
           <strong style={{ fontSize: 'var(--text-base)', display: 'block' }}>Approver Authentication</strong>
           <p className="muted small" style={{ margin: 0 }}>

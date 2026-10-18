@@ -4,6 +4,7 @@ import { useSpeech } from '../hooks/useSpeech';
 import type { Card, TurnResult } from '../types';
 import { RiskCard } from './RiskCard';
 import { ErrorNote, TraceView } from './parts';
+import { IconArrowRight, IconMic, IconVolume } from './icons';
 
 export interface Message {
   id: number;
@@ -15,13 +16,13 @@ export interface Message {
 
 export const HERO_TEXT = 'The bank says I have to buy five $200 gift cards today or my account is frozen.';
 
-export const SCENARIOS: Array<{ label: string; text: string; icon: string }> = [
-  { label: 'Buy gift cards (a scam)', text: HERO_TEXT, icon: '🚨' },
-  { label: 'Pay the pharmacy $24', text: 'Pay Greenleaf Pharmacy $24', icon: '💊' },
-  { label: 'Is this text a scam?', text: 'I got a text saying my package is held and I must pay $2 to release it. Is this a scam?', icon: '📦' },
-  { label: 'Pay my neighbour $50', text: 'Send $50 to my neighbour', icon: '🤝' },
-  { label: "What's pending?", text: "What's pending?", icon: '📋' },
-  { label: 'Try to approve it myself', text: 'approve it', icon: '🛡️' },
+export const SCENARIOS: Array<{ label: string; text: string }> = [
+  { label: 'Buy gift cards (a scam)', text: HERO_TEXT },
+  { label: 'Pay the pharmacy $24', text: 'Pay Greenleaf Pharmacy $24' },
+  { label: 'Is this text a scam?', text: 'I got a text saying my package is held and I must pay $2 to release it. Is this a scam?' },
+  { label: 'Pay my neighbour $50', text: 'Send $50 to my neighbour' },
+  { label: "What's pending?", text: "What's pending?" },
+  { label: 'Try to approve it myself', text: 'approve it' },
 ];
 
 interface Props {
@@ -81,37 +82,39 @@ export function ElderDevice({ messages, onMessages, onHeld, readAloud }: Props) 
         <span
           aria-hidden="true"
           style={{
-            fontSize: '1.4rem',
             width: 38,
             height: 38,
-            borderRadius: '50%',
+            borderRadius: 10,
             background: 'var(--brand-soft)',
+            border: '1px solid var(--brand-border)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             color: 'var(--brand)',
-            boxShadow: '0 0 12px var(--brand-glow)',
+            flexShrink: 0,
           }}
         >
-          🔊
+          <IconVolume size={18} aria-hidden="true" />
         </span>
         <div className="grow">
           <div className="row" style={{ gap: 'var(--space-2)' }}>
             <h2 id="elder-title" style={{ margin: 0, fontSize: 'var(--text-lg)' }}>
               Dorothy's Echo
             </h2>
-            <span
-              className="badge ok"
-              style={{ fontSize: '0.72rem', padding: '2px 8px' }}
-            >
+            <span className="badge ok" style={{ fontSize: '0.72rem', padding: '2px 8px' }}>
               Alexa+ Active
             </span>
           </div>
           <span className="muted small">Simulated Alexa+ in the kitchen · Hands-free voice assistant</span>
         </div>
-        <div className="row" aria-hidden="true" style={{ gap: 6, opacity: 0.7 }}>
-          <span style={{ fontSize: '0.85rem' }}>📶</span>
-          <span style={{ fontSize: '0.85rem' }}>🔋 100%</span>
+        {/* Signal / battery indicators — text only, no emoji */}
+        <div
+          className="row"
+          aria-hidden="true"
+          style={{ gap: 6, opacity: 0.6, fontSize: '0.78rem', fontWeight: 600, fontFamily: 'var(--mono)' }}
+        >
+          <span>Wi-Fi</span>
+          <span>100%</span>
         </div>
       </div>
 
@@ -152,8 +155,8 @@ export function ElderDevice({ messages, onMessages, onHeld, readAloud }: Props) 
 
       <div className="device-body caption-size" role="log" aria-live="polite" aria-label="Conversation">
         {messages.length === 0 && (
-          <div className="bubble note" style={{ padding: 'var(--space-4)' }}>
-            <span aria-hidden="true" style={{ fontSize: '1.8rem', display: 'block', marginBottom: 8 }}>🎙️</span>
+          <div className="bubble note" style={{ padding: 'var(--space-4)', display: 'grid', justifyItems: 'center', gap: 8 }}>
+            <IconMic size={28} aria-hidden="true" style={{ color: 'var(--muted)', opacity: 0.5 }} />
             Press the microphone, type, or tap an example below.
           </div>
         )}
@@ -194,7 +197,6 @@ export function ElderDevice({ messages, onMessages, onHeld, readAloud }: Props) 
               disabled={busy}
               onClick={() => void send(s.text)}
             >
-              <span aria-hidden="true">{s.icon}</span>
               {s.label}
             </button>
           ))}
@@ -209,7 +211,7 @@ export function ElderDevice({ messages, onMessages, onHeld, readAloud }: Props) 
               disabled={busy}
               onClick={() => speech.listen((t) => void send(t))}
             >
-              🎤
+              <IconMic size={20} aria-hidden="true" />
             </button>
           )}
           <label className="grow" style={{ minWidth: 0 }}>
@@ -231,14 +233,12 @@ export function ElderDevice({ messages, onMessages, onHeld, readAloud }: Props) 
             type="submit"
             className="btn primary"
             disabled={busy || !text.trim()}
-            style={{ borderRadius: 'var(--radius-full)', padding: '10px 22px' }}
+            style={{ borderRadius: 'var(--radius-full)', padding: '10px 22px', gap: 8 }}
           >
-            {busy ? (
-              'Checking…'
-            ) : (
+            {busy ? 'Checking…' : (
               <>
                 <span>Send</span>
-                <span aria-hidden="true">→</span>
+                <IconArrowRight size={14} aria-hidden="true" />
               </>
             )}
           </button>

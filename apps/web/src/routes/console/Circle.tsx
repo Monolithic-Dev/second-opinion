@@ -3,14 +3,36 @@ import { ApiError, api } from '../../api';
 import { Badge, EmptyState, ErrorNote, Spinner } from '../../components/parts';
 import { useAppState } from '../../hooks/useAppState';
 import type { Payee } from '../../types';
+import {
+  IconUser,
+  IconShield,
+  IconPill,
+  IconZap,
+  IconUsers,
+  IconBuilding,
+} from '../../components/icons';
 
-const KINDS: Array<{ value: Payee['kind']; label: string; icon: string }> = [
-  { value: 'pharmacy', label: 'Pharmacy', icon: '💊' },
-  { value: 'utility', label: 'Utility', icon: '⚡' },
-  { value: 'family', label: 'Family', icon: '👨‍👩‍👦' },
-  { value: 'merchant', label: 'Shop', icon: '🛍️' },
-  { value: 'other', label: 'Other', icon: '🏢' },
+const KINDS: Array<{ value: Payee['kind']; label: string }> = [
+  { value: 'pharmacy', label: 'Pharmacy' },
+  { value: 'utility', label: 'Utility' },
+  { value: 'family', label: 'Family' },
+  { value: 'merchant', label: 'Merchant / Shop' },
+  { value: 'other', label: 'Other' },
 ];
+
+function KindIcon({ kind }: { kind: Payee['kind'] }) {
+  const size = 16;
+  switch (kind) {
+    case 'pharmacy':
+      return <IconPill size={size} style={{ color: 'var(--brand)' }} />;
+    case 'utility':
+      return <IconZap size={size} style={{ color: 'var(--warn)' }} />;
+    case 'family':
+      return <IconUsers size={size} style={{ color: 'var(--ok)' }} />;
+    default:
+      return <IconBuilding size={size} style={{ color: 'var(--muted)' }} />;
+  }
+}
 
 export function Circle() {
   const { state, refresh } = useAppState();
@@ -79,10 +101,9 @@ export function Circle() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '1.1rem',
                   }}
                 >
-                  {p.role === 'elder' ? '👵' : '🛡️'}
+                  {p.role === 'elder' ? <IconUser size={18} /> : <IconShield size={18} />}
                 </div>
                 <strong className="grow" style={{ fontSize: 'var(--text-base)' }}>
                   {p.name}
@@ -135,8 +156,8 @@ export function Circle() {
                         {p.name}
                       </td>
                       <td>
-                        <span className="row" style={{ gap: 6 }}>
-                          <span aria-hidden="true">{kInfo?.icon ?? '🏢'}</span>
+                        <span className="row" style={{ gap: 8, alignItems: 'center' }}>
+                          <KindIcon kind={p.kind} />
                           <span>{kInfo?.label ?? p.kind}</span>
                         </span>
                       </td>
@@ -189,7 +210,7 @@ export function Circle() {
             <select value={kind} onChange={(e) => setKind(e.target.value as Payee['kind'])}>
               {KINDS.map((k) => (
                 <option key={k.value} value={k.value}>
-                  {k.icon} {k.label}
+                  {k.label}
                 </option>
               ))}
             </select>

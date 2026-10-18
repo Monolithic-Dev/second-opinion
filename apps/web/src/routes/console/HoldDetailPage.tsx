@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router-dom';
 import { api } from '../../api';
 import { ErrorNote, QuorumMeter, Spinner, StatusBadge } from '../../components/parts';
 import { VoteButtons } from '../../components/VoteButtons';
+import { IconAlertTriangle } from '../../components/icons';
 import { formatDateTime, formatMoney, timeLeft } from '../../format';
 import { useAppState } from '../../hooks/useAppState';
 import { useAuth } from '../../hooks/useAuth';
@@ -128,9 +129,10 @@ export function HoldDetailPage() {
                   padding: '8px 12px',
                   borderRadius: 'var(--radius-xs)',
                   gap: 6,
+                  alignItems: 'center',
                 }}
               >
-                <span aria-hidden="true">⚠️</span>
+                <IconAlertTriangle size={15} style={{ color: 'var(--warn)' }} />
                 <span>Escalated to the next approver after waiting.</span>
               </div>
             )}

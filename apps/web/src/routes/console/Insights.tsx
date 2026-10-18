@@ -4,6 +4,7 @@ import { ChecksPerDay, RedFlagBars } from '../../components/charts';
 import { ErrorNote, Spinner } from '../../components/parts';
 import { formatDuration, formatMoney } from '../../format';
 import { useLive } from '../../hooks/useLive';
+import { IconShieldCheck, IconScale, IconZap } from '../../components/icons';
 
 const RANGES = [7, 30, 90] as const;
 
@@ -59,7 +60,7 @@ export function InsightsPage() {
             <div className="card tile good">
               <div className="row" style={{ justifyContent: 'space-between' }}>
                 <div className="muted small" style={{ fontWeight: 600 }}>Protected</div>
-                <span aria-hidden="true" style={{ fontSize: '1.1rem' }}>🛡️</span>
+                <div style={{ color: 'var(--ok)' }}><IconShieldCheck size={20} /></div>
               </div>
               <div className="value">{formatMoney(data.protectedCents)}</div>
               <div className="small muted">cumulative dollars prevented from loss</div>
@@ -68,7 +69,7 @@ export function InsightsPage() {
             <div className="card tile">
               <div className="row" style={{ justifyContent: 'space-between' }}>
                 <div className="muted small" style={{ fontWeight: 600 }}>Decided</div>
-                <span aria-hidden="true" style={{ fontSize: '1.1rem' }}>⚖️</span>
+                <div style={{ color: 'var(--brand)' }}><IconScale size={20} /></div>
               </div>
               <div className="value">{decided}</div>
               <div className="small muted">
@@ -79,7 +80,7 @@ export function InsightsPage() {
             <div className="card tile">
               <div className="row" style={{ justifyContent: 'space-between' }}>
                 <div className="muted small" style={{ fontWeight: 600 }}>Median time to decide</div>
-                <span aria-hidden="true" style={{ fontSize: '1.1rem' }}>⚡</span>
+                <div style={{ color: 'var(--info)' }}><IconZap size={20} /></div>
               </div>
               <div className="value">{formatDuration(data.medianResponseSec)}</div>
               <div className="small muted">typical approver response speed</div>

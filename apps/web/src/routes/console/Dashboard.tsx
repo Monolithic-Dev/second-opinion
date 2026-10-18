@@ -5,6 +5,7 @@ import { EmptyState, ErrorNote, Spinner, StatusBadge } from '../../components/pa
 import { formatDuration, formatMoney, timeAgo } from '../../format';
 import { useAppState } from '../../hooks/useAppState';
 import { useLive } from '../../hooks/useLive';
+import { IconShieldCheck, IconClock, IconSearch, IconZap, IconAlertTriangle, IconCheckCircle } from '../../components/icons';
 
 export function Dashboard() {
   const { state } = useAppState();
@@ -25,14 +26,15 @@ export function Dashboard() {
             Real-time protection status, active review queue, and 30-day threat metrics
           </p>
         </div>
-        <span className="badge info" style={{ fontSize: '0.75rem' }}>
-          🛡️ Guard Active
-        </span>
+        <div className="status-pill ok" style={{ fontSize: '0.75rem', padding: '4px 10px' }}>
+          <span className="pulse-dot" />
+          Guard Active
+        </div>
       </div>
 
       {pending.length > 0 ? (
         <div className="banner warn" role="status" style={{ borderLeft: '6px solid var(--warn)' }}>
-          <span aria-hidden="true" style={{ fontSize: '1.25rem' }}>!</span>
+          <IconAlertTriangle size={20} style={{ color: 'var(--warn)', flexShrink: 0 }} />
           <span className="grow">
             {pending.length} {pending.length === 1 ? 'request needs' : 'requests need'} your decision
           </span>
@@ -42,7 +44,7 @@ export function Dashboard() {
         </div>
       ) : (
         <div className="banner ok" role="status" style={{ borderLeft: '6px solid var(--ok)' }}>
-          <span aria-hidden="true" style={{ fontSize: '1.25rem' }}>✓</span>
+          <IconCheckCircle size={20} style={{ color: 'var(--ok)', flexShrink: 0 }} />
           <span>{elder} is protected. Nothing needs your attention.</span>
         </div>
       )}
@@ -51,7 +53,7 @@ export function Dashboard() {
         <div className="card tile good">
           <div className="row" style={{ justifyContent: 'space-between' }}>
             <div className="muted small" style={{ fontWeight: 600 }}>Protected, last 30 days</div>
-            <span aria-hidden="true" style={{ fontSize: '1.1rem' }}>🛡️</span>
+            <div style={{ color: 'var(--ok)' }}><IconShieldCheck size={20} /></div>
           </div>
           <div className="value">{i ? formatMoney(i.protectedCents) : '—'}</div>
           <div className="small muted">in requests cancelled or left blocked</div>
@@ -60,7 +62,7 @@ export function Dashboard() {
         <div className="card tile">
           <div className="row" style={{ justifyContent: 'space-between' }}>
             <div className="muted small" style={{ fontWeight: 600 }}>Waiting for a decision</div>
-            <span aria-hidden="true" style={{ fontSize: '1.1rem' }}>⏳</span>
+            <div style={{ color: pending.length > 0 ? 'var(--warn)' : 'var(--muted)' }}><IconClock size={20} /></div>
           </div>
           <div className="value" style={{ color: pending.length > 0 ? 'var(--warn)' : 'var(--text)' }}>
             {pending.length}
@@ -71,7 +73,7 @@ export function Dashboard() {
         <div className="card tile">
           <div className="row" style={{ justifyContent: 'space-between' }}>
             <div className="muted small" style={{ fontWeight: 600 }}>Requests checked</div>
-            <span aria-hidden="true" style={{ fontSize: '1.1rem' }}>🔍</span>
+            <div style={{ color: 'var(--brand)' }}><IconSearch size={20} /></div>
           </div>
           <div className="value">{i ? checks : '—'}</div>
           <div className="small muted">total checks processed</div>
@@ -80,7 +82,7 @@ export function Dashboard() {
         <div className="card tile">
           <div className="row" style={{ justifyContent: 'space-between' }}>
             <div className="muted small" style={{ fontWeight: 600 }}>Median time to decide</div>
-            <span aria-hidden="true" style={{ fontSize: '1.1rem' }}>⚡</span>
+            <div style={{ color: 'var(--info)' }}><IconZap size={20} /></div>
           </div>
           <div className="value">{i ? formatDuration(i.medianResponseSec) : '—'}</div>
           <div className="small muted">average caregiver turnaround</div>

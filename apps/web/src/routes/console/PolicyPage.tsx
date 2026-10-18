@@ -3,6 +3,7 @@ import { ApiError, api } from '../../api';
 import { Badge, ErrorNote, Spinner } from '../../components/parts';
 import { useAppState } from '../../hooks/useAppState';
 import { buildPatch, DEFAULT_POLICY, TIMEZONES, toForm, validateForm, type PolicyForm } from '../../lib/policyForm';
+import { IconCreditCard, IconMoon, IconUsers, IconAlertTriangle } from '../../components/icons';
 
 function Field({ label, hint, error, children }: { label: string; hint?: string; error?: string | undefined; children: ReactNode }) {
   return (
@@ -79,9 +80,10 @@ export function PolicyPage() {
           borderRadius: 'var(--radius-sm)',
           border: '1px solid var(--border)',
           gap: 'var(--space-2)',
+          alignItems: 'center',
         }}
       >
-        <span aria-hidden="true" style={{ fontSize: '1.1rem' }}>ℹ️</span>
+        <IconAlertTriangle size={16} style={{ color: 'var(--info)', flexShrink: 0 }} />
         <span className="muted">
           These rules add extra checks around the scam detector. They can make things stricter, but they never allow something the detector paused as a scam.
         </span>
@@ -89,7 +91,10 @@ export function PolicyPage() {
 
       <fieldset className="card stack" style={{ gap: 'var(--space-3)' }}>
         <legend>
-          <h2>💳 Payment limits</h2>
+          <h2 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <IconCreditCard size={20} style={{ color: 'var(--brand)' }} />
+            <span>Payment limits</span>
+          </h2>
         </legend>
         <Field label="Single payment limit ($)" hint="Anything above this needs approval." error={errors.maxSingle}>
           <input inputMode="decimal" value={form.maxSingle} onChange={(e) => set('maxSingle', e.target.value)} aria-invalid={Boolean(errors.maxSingle)} />
@@ -104,7 +109,10 @@ export function PolicyPage() {
 
       <fieldset className="card stack" style={{ gap: 'var(--space-3)' }}>
         <legend>
-          <h2>🌙 New payees and quiet hours</h2>
+          <h2 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <IconMoon size={20} style={{ color: 'var(--brand)' }} />
+            <span>New payees and quiet hours</span>
+          </h2>
         </legend>
         <Field label="Wait for a new payee (minutes)" hint="The first payment to someone not on the trusted list needs approval until this has passed." error={errors.newPayeeCooloffMin}>
           <input inputMode="numeric" value={form.newPayeeCooloffMin} onChange={(e) => set('newPayeeCooloffMin', e.target.value)} aria-invalid={Boolean(errors.newPayeeCooloffMin)} />
@@ -137,7 +145,10 @@ export function PolicyPage() {
 
       <fieldset className="card stack" style={{ gap: 'var(--space-3)' }}>
         <legend>
-          <h2>👥 Approvals</h2>
+          <h2 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <IconUsers size={20} style={{ color: 'var(--brand)' }} />
+            <span>Approvals</span>
+          </h2>
         </legend>
         <Field label="Approvals needed" error={errors.quorum}>
           <select value={form.quorum} onChange={(e) => set('quorum', e.target.value as '1' | '2')}>

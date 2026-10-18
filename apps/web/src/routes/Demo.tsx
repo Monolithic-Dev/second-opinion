@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ApiError, api } from '../api';
 import { ElderDevice, newMessage, type Message } from '../components/ElderDevice';
 import { FamilyPhone } from '../components/FamilyPhone';
+import { IconRefresh, IconShieldCheck, IconVolume, IconVolumeOff } from '../components/icons';
 import { ErrorNote } from '../components/parts';
 import { useAppState } from '../hooks/useAppState';
 import { useSpeech } from '../hooks/useSpeech';
@@ -62,39 +63,63 @@ export function Demo() {
   return (
     <main className="container">
       <div
-        className="row"
         style={{
           marginBottom: 'var(--space-5)',
           paddingBottom: 'var(--space-4)',
           borderBottom: '1px solid var(--border)',
-          alignItems: 'center',
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'space-between',
           gap: 'var(--space-4)',
+          flexWrap: 'wrap',
         }}
       >
-        <div className="grow">
-          <div className="row" style={{ gap: 'var(--space-2)', marginBottom: 'var(--space-1)' }}>
+        <div style={{ flex: '1 1 auto', minWidth: 0 }}>
+          <div className="row" style={{ gap: 'var(--space-2)', marginBottom: 'var(--space-2)' }}>
             <span
-              className="badge ok"
-              style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                fontSize: '0.72rem',
+                fontWeight: 700,
+                letterSpacing: '0.06em',
+                textTransform: 'uppercase',
+                color: 'var(--ok)',
+                background: 'var(--ok-bg)',
+                border: '1px solid var(--ok-border)',
+                borderRadius: 'var(--radius-full)',
+                padding: '3px 10px',
+              }}
             >
-              Live Interactive Simulation
+              <span
+                style={{
+                  width: 6,
+                  height: 6,
+                  borderRadius: '50%',
+                  background: 'var(--ok)',
+                  display: 'inline-block',
+                  boxShadow: '0 0 6px var(--ok-glow)',
+                }}
+              />
+              Live interactive simulation
             </span>
             <span className="small muted">Streamable HTTP MCP · Pure Deterministic Engine</span>
           </div>
-          <h1 style={{ margin: 0, fontSize: 'var(--text-3xl)', letterSpacing: '-0.03em' }}>
-            Hold the payment. Ask the family.
+          <h1 style={{ margin: 0, fontSize: 'var(--text-3xl)', letterSpacing: '-0.035em', lineHeight: 1.1 }}>
+            Hold the payment.<br />Ask the family.
           </h1>
-          <p className="muted" style={{ margin: 'var(--space-1) 0 0', fontSize: 'var(--text-base)', maxWidth: 740 }}>
+          <p className="muted" style={{ margin: 'var(--space-2) 0 0', fontSize: 'var(--text-base)', maxWidth: 640 }}>
             Dorothy's Alexa+ checks every payment request. Risky ones wait for family approval. Simulated devices, synthetic data.
           </p>
         </div>
 
-        <div className="row" style={{ gap: 'var(--space-3)' }}>
+        <div className="row" style={{ gap: 'var(--space-2)', flexShrink: 0 }}>
           <label
             className="row"
             style={{
               display: 'flex',
-              fontWeight: 500,
+              fontWeight: 600,
               fontSize: 'var(--text-sm)',
               background: 'var(--surface)',
               border: '1px solid var(--border)',
@@ -102,6 +127,9 @@ export function Demo() {
               padding: '8px 14px',
               cursor: speech.canSpeak ? 'pointer' : 'not-allowed',
               boxShadow: 'var(--shadow-sm)',
+              gap: 8,
+              color: readAloud ? 'var(--brand)' : 'var(--text)',
+              userSelect: 'none',
             }}
           >
             <input
@@ -111,8 +139,11 @@ export function Demo() {
               onChange={(e) => setReadAloud(e.target.checked)}
               disabled={!speech.canSpeak}
             />
-            <span aria-hidden="true">🔊</span>
-            Read replies aloud
+            {readAloud
+              ? <IconVolume size={14} aria-hidden="true" />
+              : <IconVolumeOff size={14} aria-hidden="true" style={{ color: 'var(--muted)' }} />
+            }
+            Read aloud
           </label>
 
           <button
@@ -120,11 +151,13 @@ export function Demo() {
             className="btn"
             onClick={() => void reset()}
             disabled={resetting}
-            style={{ fontWeight: 600 }}
+            style={{ fontWeight: 600, gap: 8 }}
           >
-            <span aria-hidden="true" style={{ display: 'inline-block', animation: resetting ? 'spin 1s linear infinite' : 'none' }}>
-              🔄
-            </span>
+            <IconRefresh
+              size={14}
+              aria-hidden="true"
+              style={{ animation: resetting ? 'spin 1s linear infinite' : 'none' }}
+            />
             {resetting ? 'Resetting…' : 'Reset demo'}
           </button>
         </div>

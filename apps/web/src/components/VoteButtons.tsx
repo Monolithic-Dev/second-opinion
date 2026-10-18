@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ApiError, api } from '../api';
 import { ErrorNote } from './parts';
+import { IconCheck, IconX, IconClock } from './icons';
 
 interface Props {
   holdId: string;
@@ -54,13 +55,13 @@ export function VoteButtons({ holdId, disabled = false, alreadyVoted = false, on
           className="btn ok grow"
           disabled={off}
           onClick={() => vote('approve')}
-          style={{ letterSpacing: '0.01em' }}
+          style={{ letterSpacing: '0.01em', gap: '8px' }}
         >
           {busy === 'approve' ? (
             'Saving…'
           ) : (
             <>
-              <span aria-hidden="true" style={{ fontSize: '1.05rem', fontWeight: 800 }}>✓</span>
+              <IconCheck size={16} />
               Approve
             </>
           )}
@@ -70,13 +71,13 @@ export function VoteButtons({ holdId, disabled = false, alreadyVoted = false, on
           className="btn danger grow"
           disabled={off}
           onClick={() => vote('deny')}
-          style={{ letterSpacing: '0.01em' }}
+          style={{ letterSpacing: '0.01em', gap: '8px' }}
         >
           {busy === 'deny' ? (
             'Saving…'
           ) : (
             <>
-              <span aria-hidden="true" style={{ fontSize: '1.05rem', fontWeight: 800 }}>✕</span>
+              <IconX size={16} />
               Deny
             </>
           )}
@@ -91,9 +92,10 @@ export function VoteButtons({ holdId, disabled = false, alreadyVoted = false, on
             borderRadius: 'var(--radius-xs)',
             border: '1px solid var(--border)',
             gap: 'var(--space-2)',
+            alignItems: 'center',
           }}
         >
-          <span aria-hidden="true">⏳</span>
+          <IconClock size={15} style={{ color: 'var(--info)' }} />
           <span>You voted. Waiting for the other approver.</span>
         </div>
       )}
