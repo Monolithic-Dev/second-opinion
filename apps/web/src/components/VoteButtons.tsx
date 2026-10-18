@@ -35,17 +35,68 @@ export function VoteButtons({ holdId, disabled = false, alreadyVoted = false, on
     <div className="stack" style={{ marginTop: 'var(--space-3)' }}>
       <label>
         <span className="sr-only">Note (optional)</span>
-        <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Add a note (optional)" maxLength={300} disabled={off} />
+        <input
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
+          placeholder="Add a note (optional)"
+          maxLength={300}
+          disabled={off}
+          style={{
+            background: 'var(--surface-2)',
+            borderColor: 'var(--border)',
+            fontSize: 'var(--text-sm)',
+          }}
+        />
       </label>
-      <div className="row">
-        <button type="button" className="btn ok grow" disabled={off} onClick={() => vote('approve')}>
-          {busy === 'approve' ? 'Saving…' : 'Approve'}
+      <div className="row" style={{ gap: 'var(--space-3)' }}>
+        <button
+          type="button"
+          className="btn ok grow"
+          disabled={off}
+          onClick={() => vote('approve')}
+          style={{ letterSpacing: '0.01em' }}
+        >
+          {busy === 'approve' ? (
+            'Saving…'
+          ) : (
+            <>
+              <span aria-hidden="true" style={{ fontSize: '1.05rem', fontWeight: 800 }}>✓</span>
+              Approve
+            </>
+          )}
         </button>
-        <button type="button" className="btn danger grow" disabled={off} onClick={() => vote('deny')}>
-          {busy === 'deny' ? 'Saving…' : 'Deny'}
+        <button
+          type="button"
+          className="btn danger grow"
+          disabled={off}
+          onClick={() => vote('deny')}
+          style={{ letterSpacing: '0.01em' }}
+        >
+          {busy === 'deny' ? (
+            'Saving…'
+          ) : (
+            <>
+              <span aria-hidden="true" style={{ fontSize: '1.05rem', fontWeight: 800 }}>✕</span>
+              Deny
+            </>
+          )}
         </button>
       </div>
-      {alreadyVoted && <p className="small muted">You voted. Waiting for the other approver.</p>}
+      {alreadyVoted && (
+        <div
+          className="row small muted"
+          style={{
+            background: 'var(--surface-2)',
+            padding: '8px 12px',
+            borderRadius: 'var(--radius-xs)',
+            border: '1px solid var(--border)',
+            gap: 'var(--space-2)',
+          }}
+        >
+          <span aria-hidden="true">⏳</span>
+          <span>You voted. Waiting for the other approver.</span>
+        </div>
+      )}
       {error && <ErrorNote message={error} />}
     </div>
   );

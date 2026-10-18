@@ -22,21 +22,70 @@ export function SignIn({ approvers }: { approvers: Person[] }) {
   }
 
   return (
-    <form onSubmit={submit} className="stack" aria-label="Family sign-in">
-      <p className="muted small">Sign in as a family member to review requests.</p>
+    <form
+      onSubmit={submit}
+      className="stack"
+      aria-label="Family sign-in"
+      style={{
+        background: 'var(--surface)',
+        padding: 'var(--space-4)',
+        borderRadius: 'var(--radius)',
+        border: '1px solid var(--border)',
+        boxShadow: 'var(--shadow-sm)',
+        gap: 'var(--space-3)',
+      }}
+    >
+      <div className="row" style={{ gap: 'var(--space-2)' }}>
+        <span aria-hidden="true" style={{ fontSize: '1.25rem' }}>🔐</span>
+        <div>
+          <strong style={{ fontSize: 'var(--text-base)', display: 'block' }}>Approver Authentication</strong>
+          <p className="muted small" style={{ margin: 0 }}>
+            Sign in as a family member to review requests.
+          </p>
+        </div>
+      </div>
+
       <label>
         Who are you?
-        <select value={personId} onChange={(e) => setPersonId(e.target.value)}>
-          {approvers.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+        <select
+          value={personId}
+          onChange={(e) => setPersonId(e.target.value)}
+          style={{ fontWeight: 600 }}
+        >
+          {approvers.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.name} {p.approverRank ? `(Approver #${p.approverRank})` : ''}
+            </option>
+          ))}
         </select>
       </label>
+
       <label>
         PIN
-        <input type="password" inputMode="numeric" autoComplete="current-password" value={pin} onChange={(e) => setPin(e.target.value)} maxLength={32} required />
+        <input
+          type="password"
+          inputMode="numeric"
+          autoComplete="current-password"
+          value={pin}
+          onChange={(e) => setPin(e.target.value)}
+          maxLength={32}
+          required
+          placeholder="••••"
+          style={{ letterSpacing: '0.2em', fontSize: '1.2rem', fontFamily: 'var(--mono)' }}
+        />
         <span className="field-hint">Demo PINs: Priya 1234, Arjun 5678</span>
       </label>
+
       {error && <ErrorNote message={error} />}
-      <button className="btn primary" type="submit" disabled={busy || !personId || !pin}>{busy ? 'Signing in…' : 'Sign in'}</button>
+
+      <button
+        className="btn primary"
+        type="submit"
+        disabled={busy || !personId || !pin}
+        style={{ marginTop: 'var(--space-1)' }}
+      >
+        {busy ? 'Signing in…' : 'Sign in'}
+      </button>
     </form>
   );
 }
