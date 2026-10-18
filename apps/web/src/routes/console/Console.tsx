@@ -16,8 +16,14 @@ export function Console() {
   if (!personId || !me) {
     return (
       <main className="container">
-        <div className="card" style={{ maxWidth: 440, margin: '0 auto' }}>
-          <h1>Family console</h1>
+        <div className="card" style={{ maxWidth: 460, margin: 'var(--space-6) auto', padding: 'var(--space-5)' }}>
+          <div className="row" style={{ gap: 'var(--space-2)', marginBottom: 'var(--space-3)' }}>
+            <span aria-hidden="true" style={{ fontSize: '1.8rem' }}>🛡️</span>
+            <div>
+              <h1 style={{ margin: 0, fontSize: 'var(--text-xl)' }}>Family console</h1>
+              <p className="muted small" style={{ margin: 0 }}>Protecting Dorothy's Alexa+ transactions</p>
+            </div>
+          </div>
           <SignIn approvers={state.people.filter((p) => p.canApprove)} />
         </div>
       </main>
@@ -25,20 +31,121 @@ export function Console() {
   }
 
   const pending = state.holds.filter((h) => h.status === 'pending').length;
+  const initials = me.name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase();
+
   return (
     <div className="container">
       <div className="shell">
         <nav className="side" aria-label="Family console">
-          <NavLink to="/family" end>Overview</NavLink>
-          <NavLink to="/family/holds">Requests{pending > 0 && <span className="badge warn" aria-label={`${pending} waiting`}>{pending}</span>}</NavLink>
-          <NavLink to="/family/circle">Family and payees</NavLink>
-          <NavLink to="/family/policy">Rules</NavLink>
-          <NavLink to="/family/insights">Insights</NavLink>
-          <NavLink to="/family/inbox">Notifications</NavLink>
-          <div className="small muted" style={{ padding: '8px 14px' }}>Signed in as <strong>{me.name}</strong></div>
-          <button type="button" className="btn ghost" onClick={() => void logout()}>Sign out</button>
+          <div style={{ padding: '8px 14px 12px', borderBottom: '1px solid var(--border)', marginBottom: 6 }}>
+            <span style={{ fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--muted)', letterSpacing: '0.05em' }}>
+              Household Guard
+            </span>
+            <div style={{ fontWeight: 700, fontSize: 'var(--text-base)', color: 'var(--text)' }}>
+              Dorothy's Family
+            </div>
+          </div>
+
+          <NavLink to="/family" end>
+            <span className="row" style={{ gap: 8 }}>
+              <span aria-hidden="true">📊</span>
+              Overview
+            </span>
+          </NavLink>
+
+          <NavLink to="/family/holds">
+            <span className="row" style={{ gap: 8 }}>
+              <span aria-hidden="true">🛡️</span>
+              Requests
+            </span>
+            {pending > 0 && (
+              <span className="badge warn" aria-label={`${pending} waiting`}>
+                {pending}
+              </span>
+            )}
+          </NavLink>
+
+          <NavLink to="/family/circle">
+            <span className="row" style={{ gap: 8 }}>
+              <span aria-hidden="true">👥</span>
+              Family and payees
+            </span>
+          </NavLink>
+
+          <NavLink to="/family/policy">
+            <span className="row" style={{ gap: 8 }}>
+              <span aria-hidden="true">⚙️</span>
+              Rules
+            </span>
+          </NavLink>
+
+          <NavLink to="/family/insights">
+            <span className="row" style={{ gap: 8 }}>
+              <span aria-hidden="true">📈</span>
+              Insights
+            </span>
+          </NavLink>
+
+          <NavLink to="/family/inbox">
+            <span className="row" style={{ gap: 8 }}>
+              <span aria-hidden="true">🔔</span>
+              Notifications
+            </span>
+          </NavLink>
+
+          <div
+            style={{
+              marginTop: 'var(--space-3)',
+              padding: '12px 14px',
+              borderTop: '1px solid var(--border)',
+              display: 'grid',
+              gap: 8,
+            }}
+          >
+            <div className="row" style={{ gap: 10 }}>
+              <div
+                aria-hidden="true"
+                style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: '50%',
+                  background: 'linear-gradient(135deg, var(--brand) 0%, var(--brand-hover) 100%)',
+                  color: '#fff',
+                  fontWeight: 700,
+                  fontSize: '0.85rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                {initials}
+              </div>
+              <div className="grow small" style={{ lineHeight: 1.25 }}>
+                <div className="muted" style={{ fontSize: '0.75rem' }}>
+                  Signed in as
+                </div>
+                <strong>{me.name}</strong>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              className="btn ghost small"
+              onClick={() => void logout()}
+              style={{ width: '100%', justifyContent: 'flex-start', padding: '6px 8px', minHeight: 32 }}
+            >
+              <span aria-hidden="true">🚪</span>
+              Sign out
+            </button>
+          </div>
         </nav>
-        <main id="console-main" aria-label="Console content"><Outlet /></main>
+        <main id="console-main" aria-label="Console content">
+          <Outlet />
+        </main>
       </div>
     </div>
   );
