@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { STATUS_LABEL } from '../format';
 import type { HoldStatus, TraceEntry } from '../types';
+import { IconShieldCheck, IconXCircle } from './icons';
 
 export function Badge({ tone, children }: { tone: 'ok' | 'warn' | 'danger' | 'info' | 'neutral'; children: ReactNode }) {
   return (
@@ -49,20 +50,19 @@ export function EmptyState({ title, children }: { title: string; children?: Reac
       <div
         aria-hidden="true"
         style={{
-          width: 48,
-          height: 48,
+          width: 44,
+          height: 44,
           borderRadius: '50%',
           background: 'var(--surface-2)',
           border: '1px solid var(--border)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: '1.4rem',
           marginBottom: 'var(--space-1)',
           color: 'var(--muted)',
         }}
       >
-        🛡️
+        <IconShieldCheck size={20} aria-hidden="true" />
       </div>
       <p style={{ margin: 0 }}>
         <strong>{title}</strong>
@@ -87,6 +87,7 @@ export function TraceView({ trace, traceId }: { trace: TraceEntry[]; traceId?: s
                 borderRadius: '50%',
                 background: t.ok ? 'var(--ok)' : 'var(--danger)',
                 display: 'inline-block',
+                flexShrink: 0,
               }}
             />
             <strong style={{ letterSpacing: '-0.01em' }}>{t.tool}</strong>
@@ -135,18 +136,23 @@ export function Spinner({ label = 'Loading' }: { label?: string }) {
 
 export function ErrorNote({ message }: { message: string }) {
   return (
-    <p
-      className="field-error"
+    <div
       role="alert"
+      className="row"
       style={{
         margin: 0,
         background: 'var(--danger-bg)',
         border: '1px solid var(--danger-border)',
         borderRadius: 'var(--radius-sm)',
         padding: '10px 14px',
+        gap: 'var(--space-2)',
+        color: 'var(--danger)',
+        fontWeight: 600,
+        fontSize: 'var(--text-sm)',
       }}
     >
+      <IconXCircle size={16} aria-hidden="true" style={{ flexShrink: 0 }} />
       {message}
-    </p>
+    </div>
   );
 }

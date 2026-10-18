@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Badge, EmptyState, Spinner } from '../../components/parts';
 import { timeAgo } from '../../format';
 import { useAppState } from '../../hooks/useAppState';
+import { IconMonitor, IconSmartphone, IconMail } from '../../components/icons';
 
 const KIND = {
   hold_requested: 'New request',
@@ -15,11 +16,16 @@ const CHANNEL = {
   email_html: 'Email (file)',
 } as const;
 
-const CHANNEL_ICON = {
-  console: '💻',
-  db: '📱',
-  email_html: '✉️',
-} as const;
+function ChannelIcon({ channel }: { channel: keyof typeof CHANNEL }) {
+  switch (channel) {
+    case 'console':
+      return <IconMonitor size={15} style={{ color: 'var(--muted)' }} />;
+    case 'db':
+      return <IconSmartphone size={15} style={{ color: 'var(--brand)' }} />;
+    case 'email_html':
+      return <IconMail size={15} style={{ color: 'var(--info)' }} />;
+  }
+}
 
 const TONE = {
   queued: 'warn',
@@ -79,8 +85,8 @@ export function Inbox() {
                     </Link>
                   </td>
                   <td>
-                    <span className="row small" style={{ gap: 6 }}>
-                      <span aria-hidden="true">{CHANNEL_ICON[n.channel]}</span>
+                    <span className="row small" style={{ gap: 6, alignItems: 'center' }}>
+                      <ChannelIcon channel={n.channel} />
                       <span>{CHANNEL[n.channel]}</span>
                     </span>
                   </td>
