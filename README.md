@@ -250,7 +250,17 @@ SQLite via Node's built-in `node:sqlite` (no native module to compile). Four for
 A **real MCP client** with a deterministic intent router (pay or buy, scam question, trust a payee, status, family decision). It fails closed on any error, signs family sessions with an HMAC cookie plus a CSRF header, streams live events over SSE, and forwards the trace id to the server. The demo is exactly this component driving the real server.
 
 ### Web app (`apps/web`)
-React 19 and Vite, about 96 kB gzipped: the live demo screen and the Family Console. Accessible (axe-checked on every page), responsive down to phone width, live updates without reloads.
+React 19 and Vite. The live demo screen and the Family Console, rebuilt with an **enterprise-grade design system**:
+
+- **Design tokens** ([`tokens.css`](apps/web/src/styles/tokens.css)): a full CSS custom-property palette covering light and dark themes — refined slate surfaces for light mode, deep obsidian/navy for dark mode. WCAG AA-certified colour pairs for brand, status (ok/warn/danger/info), glass surfaces, elevation shadows, 8pt spacing grid, fluid font scale, and spring-curve transition tokens.
+- **Typography**: [Plus Jakarta Sans](https://fonts.google.com/specimen/Plus+Jakarta+Sans) (variable 300–800) for UI text; [JetBrains Mono](https://www.jetbrains.com/lp/mono/) for trace output and PIN fields. Loaded via Google Fonts with `font-display: swap`.
+- **Glassmorphism header** with `backdrop-filter: blur(16px)`, sticky positioning, and a live health-status pill (MCP server + SSE connection).
+- **Micro-animations**: `bubble-enter` for chat messages, `risk-enter` for red-flag cards, `pulse-ring` for the active microphone button, `toast-in` for system notifications, `translateY` lift on card/button hover — all governed by `prefers-reduced-motion`.
+- **Hardware simulations**: Echo Show device frame (with Alexa light-ring bar) and a smartphone frame (with a Dynamic Island pill) for the live demo.
+- **Status badges** and **quorum segments** with glow effects.
+- **Gradient progress bars**, animated bar fills (600 ms spring), and timeline nodes.
+- **Fully responsive** down to 320 px; sidebar reflows to a horizontal scroll strip on mobile.
+- Accessible (axe-checked on every page, every interactive element ≥ 44 px).
 
 ### Guard SDK (`packages/guard-sdk`) and merchant example
 Any MCP tool that moves money can be guarded in a few lines. It checks first, holds when risky, blocks when the rules say so, and **refuses to run** if the guard cannot be reached. A held order runs only after a family approval, and never twice.
@@ -348,7 +358,7 @@ second-opinion/
   apps/
     mcp-server/      MCP server: tools, OAuth, MCP App card, HTTP guards, jobs, metrics
     simulator/       Alexa+ stand-in: MCP client, intent router, family sessions, live events
-    web/             React app: live demo + Family Console
+    web/             React app: live demo + Family Console (enterprise design system)
   packages/
     shared/          Types, errors, ids, clock
     engine/          Risk engine: rules, playbooks, behavior, fusion, versioned rule sets
