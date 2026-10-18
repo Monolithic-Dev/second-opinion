@@ -38,6 +38,21 @@ test('live demo screens', async ({ page }) => {
 
   await page.getByRole('button', { name: 'Buy gift cards (a scam)' }).click();
   await expect(page.getByRole('log').getByText(/I've paused this\./)).toBeVisible();
+
+  // Sign in as Priya on the phone to display the hold card with Approve / Deny
+  const form = page.getByRole('form', { name: 'Family sign-in' });
+  await form.getByLabel('Who are you?').selectOption('p_priya');
+  await form.getByLabel(/^PIN/).fill('1234');
+  await form.getByRole('button', { name: 'Sign in' }).click();
+  await expect(page.getByText("Priya's phone")).toBeVisible();
+  await expect(page.getByText('Held: possible scam')).toBeVisible();
+  await page.screenshot({ path: `${OUT}/demo-held.png` });
+
+  // Priya denies the scam request
+  await page.getByRole('button', { name: 'Deny' }).click();
+  await expect(page.getByRole('log').getByText(/Priya declined that request/)).toBeVisible();
+  await page.screenshot({ path: `${OUT}/demo-denied.png` });
+
   await page.getByText('Developer trace: the real MCP calls').click();
   const trace = page.getByRole('list', { name: 'MCP tool calls' });
   await expect(trace).toBeVisible();
@@ -56,9 +71,17 @@ test('family console screens', async ({ page, request }) => {
 
   await page.goto('/family');
   await signIn(page, 'Priya');
+  await expect(page.getByRole('heading', { name: 'Overview' })).toBeVisible();
+  await page.screenshot({ path: `${OUT}/console-overview.png` });
+
   await page.goto('/family/holds');
   await expect(page.getByRole('heading', { name: /Requests/i }).first()).toBeVisible();
   await page.screenshot({ path: `${OUT}/console-requests.png` });
+
+  // Detail screen for the held request
+  await page.getByRole('link', { name: /bank says I have to buy/i }).first().click();
+  await expect(page.getByRole('heading', { name: /Your decision|Decision/i })).toBeVisible();
+  await page.screenshot({ path: `${OUT}/console-detail.png` });
 
   for (const [path, file] of [['/family/circle', 'console-circle'], ['/family/policy', 'console-rules'], ['/family/insights', 'console-insights'], ['/family/inbox', 'console-inbox']] as const) {
     await page.goto(path);
