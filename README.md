@@ -4,6 +4,8 @@
 
 Built for the **Build, Ship, Shape: Amazon Developer Hackathon 2026**: Alexa+ track, plus the Open Source and AWS Builder mini challenges.
 
+![Second Opinion Enterprise Dashboard and Landing Hero](docs/assets/landing-hero.png)
+
 ![A gift-card request is paused on Dorothy's Echo and the family phone shows the red flags](docs/assets/demo-held.png)
 
 ## Contents
@@ -11,6 +13,7 @@ Built for the **Build, Ship, Shape: Amazon Developer Hackathon 2026**: Alexa+ tr
 2. [The problem](#the-problem)
 3. [Run it](#run-it)
 4. [Walkthrough with screenshots](#walkthrough-with-screenshots)
+
 5. [How it works, end to end](#how-it-works-end-to-end)
 6. [What is built](#what-is-built)
 7. [Safety and security design](#safety-and-security-design)
@@ -48,10 +51,13 @@ npm run demo          # builds the web app on first run, then serves everything 
 
 | URL | What |
 |---|---|
+| http://localhost:3000/ | Enterprise landing page, defense-in-depth architecture & stats |
 | http://localhost:3000/demo | Dorothy's simulated Echo and Priya's phone, side by side |
 | http://localhost:3000/family | Family console (PINs: Priya `1234`, Arjun `5678`, demo credentials) |
+| http://localhost:3000/family/profile | Caregiver profile, avatar color palettes, and alert dispatch rules |
 | http://localhost:3001/mcp | The MCP server (Streamable HTTP, bearer token from `.env`, default `dev-token`) |
 | http://localhost:3001/metrics | Prometheus metrics (same bearer token) |
+
 
 **Docker:** `export MCP_AUTH_TOKEN=<24+ chars> SESSION_SECRET=<long random> FAMILY_PINS=p_priya:4821,p_arjun:7390 && docker compose up --build`. Production mode refuses default secrets.
 
@@ -124,10 +130,15 @@ A full caregiver view for the people who protect Dorothy.
 
 ![Notifications](docs/assets/console-inbox.png)
 
-### 8. It works on a phone
-Both the demo and the console are responsive and accessibility-checked (axe, on every page).
+**Caregiver Profile & Customization**: personal identity credentials, avatar color palettes, emergency contact routing (push, SMS, email), urgency thresholds, and quiet-hour override settings.
+
+![Caregiver Profile and Customization](docs/assets/console-profile.png)
+
+### 8. It works on a phone (and supports Dark/Light Themes)
+Both the demo and the console are fully responsive, feature seamless Dark/Light theme switching with CSS variables and `localStorage` persistence, and are accessibility-checked (axe on every route).
 
 <img src="docs/assets/demo-phone.png" alt="The demo at phone width" width="320">
+
 
 ### 9. The Alexa+ screen card (MCP Apps)
 Tools return a visual card (an MCP App) that hosts such as Alexa+ can render on a screen. It is authored for Alexa's 768 by 480 canvas, uses large high-contrast text, works in dark mode, and says plainly that Alexa cannot approve. Voice-only devices still get the full text.

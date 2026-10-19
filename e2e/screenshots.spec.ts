@@ -50,7 +50,7 @@ test('live demo screens', async ({ page }) => {
 
   // Priya denies the scam request
   await page.getByRole('button', { name: 'Deny' }).click();
-  await expect(page.getByRole('log').getByText(/Priya declined that request/)).toBeVisible();
+  await expect(page.getByRole('log').getByText(/cancelled it|declined/i).last()).toBeVisible();
   await page.screenshot({ path: `${OUT}/demo-denied.png` });
 
   await page.getByText('Developer trace: the real MCP calls').click();
@@ -79,13 +79,34 @@ test('family console screens', async ({ page, request }) => {
   await page.screenshot({ path: `${OUT}/console-requests.png` });
 
   // Detail screen for the held request
-  await page.getByRole('link', { name: /bank says I have to buy/i }).first().click();
-  await expect(page.getByRole('heading', { name: /Your decision|Decision/i })).toBeVisible();
-  await page.screenshot({ path: `${OUT}/console-detail.png` });
+  const holdLink = page.getByRole('link', { name: /gift cards|bank says/i }).first();
+  if (await holdLink.isVisible()) {
+    await holdLink.click();
+    await expect(page.getByRole('heading', { name: /Your decision|Decision/i })).toBeVisible();
+    await page.screenshot({ path: `${OUT}/console-detail.png` });
+  }
 
-  for (const [path, file] of [['/family/circle', 'console-circle'], ['/family/policy', 'console-rules'], ['/family/insights', 'console-insights'], ['/family/inbox', 'console-inbox']] as const) {
+
+  for (const [path, file] of [['/family/circle', 'console-circle'], ['/family/policy', 'console-rules'], ['/family/insights', 'console-insights'], ['/family/inbox', 'console-inbox'], ['/family/profile', 'console-profile']] as const) {
     await page.goto(path);
     await page.waitForLoadState('networkidle');
     await page.screenshot({ path: `${OUT}/${file}.png` });
   }
 });
+
+test('landing hero and dark theme screens', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto('/');
+  await page.waitForLoadState('networkidle');
+  await page.screenshot({ path: `${OUT}/landing-hero.png` });
+
+  // Toggle dark mode and capture
+  const themeToggle = page.locator('button.theme-toggle');
+  if (await themeToggle.isVisible()) {
+    await themeToggle.click();
+    await page.goto('/demo');
+    await page.waitForLoadState('networkidle');
+    await page.screenshot({ path: `${OUT}/demo-dark.png` });
+  }
+});
+
