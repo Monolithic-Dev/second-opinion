@@ -92,16 +92,17 @@ function HealthPill() {
       <span style={pillStyle(mcp, 'mcp')}>
         <IconServer size={11} aria-hidden="true" />
         <StatusDot ok={mcp} />
-        {mcp === null ? 'Connecting…' : mcp ? 'MCP online' : 'MCP offline'}
+        {mcp === null ? 'Checking…' : mcp ? 'MCP server connected' : 'MCP server unreachable'}
       </span>
       <span style={pillStyle(live ? true : null, 'live')}>
         <IconActivity size={11} aria-hidden="true" />
         <StatusDot ok={live ? true : null} />
-        {live ? 'Live' : 'Idle'}
+        {live ? 'Live' : 'Offline'}
       </span>
     </div>
   );
 }
+
 
 /* ---------------------------------------------------------------
    SVG Logo — Premium shield + checkmark
@@ -196,9 +197,10 @@ export function Layout({ children }: { children: ReactNode }) {
         {/* Top navigation */}
         <nav className="nav" aria-label="Main navigation">
           <NavLink to="/" end>Overview</NavLink>
-          <NavLink to="/demo">Simulator</NavLink>
-          <NavLink to="/family">Family Console</NavLink>
+          <NavLink to="/demo">Live demo</NavLink>
+          <NavLink to="/family">Family console</NavLink>
         </nav>
+
 
         {/* Right-side actions */}
         <div className="header-actions">

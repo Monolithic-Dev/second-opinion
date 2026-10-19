@@ -24,11 +24,12 @@
   /* Text */
   --text:             #0d1117;
   --text-2:           #1c2333;
-  --muted:            #5a6a8a;
-  --muted-light:      #7a8aaa;
+  --muted:            #3d4b68;
+  --muted-light:      #526282;
   --border:           #dde1f0;
   --border-strong:    #c4cae0;
   --border-subtle:    #eef0f8;
+
 
   /* Brand — Indigo / Electric Blue */
   --brand:            #4361ee;
