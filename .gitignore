@@ -46,6 +46,8 @@ playwright-report/
 test-results/
 coverage/
 .nyc_output/
+scratch_audio/
+*.webm
 
 # ── Benchmark ─────────────────────────────────────────────────
 .bench/
