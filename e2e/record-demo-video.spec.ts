@@ -8,6 +8,7 @@ test.use({
 });
 
 test.setTimeout(240_000); // 4 minutes
+test.skip(!process.env.RECORD_VIDEO, 'only runs when RECORD_VIDEO is set');
 
 const H = { 'x-requested-with': 'so' };
 const VIDEO_DEST = 'docs/assets/demo-video-for-audio.webm';
