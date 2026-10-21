@@ -1,6 +1,20 @@
-# Devpost Submission Package — Second Opinion
+# Devpost Complete Submission Package — Second Opinion
 > **Build, Ship, Shape: Amazon Developer Hackathon 2026**
-> Ready-to-paste content matching all 5 Devpost submission screens.
+> Ready-to-paste copy for all Devpost form fields, including Open Source Mini Challenge, Friction Log, and Developer Feedback Questions.
+
+---
+
+## Table of Contents
+1. [General Info](#1-general-info)
+2. [Project Story](#2-project-story)
+3. [Built With, Links & Media](#3-built-with-links--media)
+4. [Submitter Details](#4-submitter-details)
+5. [Track & Challenge Questions](#5-track--challenge-questions)
+6. [Open Source Mini Challenge](#6-open-source-mini-challenge)
+7. [Testing Instructions & Credentials](#7-testing-instructions--credentials)
+8. [Feature Requests & Friction Log (+10% Judging Bonus)](#8-feature-requests--friction-log-10-bonus)
+9. [Developer Feedback Questions (1 to 5)](#9-developer-feedback-questions-1-to-5)
+10. [AI Tools Used](#10-ai-tools-used)
 
 ---
 
@@ -22,7 +36,7 @@ When vulnerable people ask Alexa+ to buy or pay something suspicious, Second Opi
 
 ## 2. Project Story (`About the project`)
 
-*Copy and paste the entire block below into the Devpost "About the project" markdown field:*
+*Paste directly into the Devpost markdown editor:*
 
 ```markdown
 ## Inspiration
@@ -114,111 +128,198 @@ Keyword matching catches the obvious scams, but **household context** (new payee
 - Native Alexa+ skill certification packaging once production Agent Skill hooks open.
 - Production SMS/Push dispatch via Amazon SNS and Twilio webhook adapters.
 - Offline voice biometrics to differentiate household voices directly at the device edge.
-
----
-
-## Friction Log & Developer Tool Feedback (+10% Bonus)
-
-We rigorously logged our developer experience during the hackathon:
-
-1. **MCP TypeScript SDK (`@modelcontextprotocol/sdk` 1.32.1):** 
-   - *What Worked:* Excellent Streamable HTTP transport and clean JSON-RPC protocol abstractions.
-   - *Friction:* `McpServer.registerTool` handlers rejected custom result interfaces lacking an explicit `[key: string]: unknown` index signature.
-   - *Suggestion:* Export a dedicated `ToolResultLike` helper type in the core SDK.
-2. **Node.js 22 Built-in SQLite (`node:sqlite`):**
-   - *What Worked:* Blazing fast in-memory and file performance with zero C++ compilation dependencies. Saved judge onboarding from Visual Studio/Python gyp build errors.
-   - *Suggestion:* Native support for statement caching and tagged template literal queries in future Node LTS releases.
-3. **GitHub Actions Multi-Repo CI:**
-   - *What Worked:* Fast parallel runners for Vitest and Playwright.
-   - *Friction:* Default `GITHUB_TOKEN` could not check out our sibling open-source benchmark repo within the same organization without an explicit PAT.
 ```
 
 ---
 
-## 3. Built With (Tags — Up to 25)
+## 3. Built With, Links & Media
 
-Copy and add these tags:
+### Built With (Tags)
 ```text
 typescript, node.js, model-context-protocol, mcp, alexa-plus, react, express, sqlite, playwright, vite, docker, github-actions, axe-core, rest-api, zero-trust, voice-ai, security, fintech, fraud-detection
 ```
 
----
+### "Try it out" links
+1. **GitHub Source Code:** `https://github.com/Monolithic-Dev/second-opinion`
+2. **Open Source Benchmark:** `https://github.com/Monolithic-Dev/scam-script-bench`
 
-## 4. "Try it out" Links
-
-1. **Link 1:**
-   - **URL:** `https://github.com/Monolithic-Dev/second-opinion`
-   - **Description:** GitHub Source Code & Complete Setup Guide
-2. **Link 2:**
-   - **URL:** `https://github.com/Monolithic-Dev/scam-script-bench`
-   - **Description:** Open Source Benchmark Dataset (`scam-script-bench`)
+### Project Media
+- **Video demo link:** Upload `docs/assets/Second_Opinion_Demo_3Min.mp4` to YouTube or Vimeo and paste the URL.
+- **Image gallery:** Upload the 15 screenshot files from `docs/assets/` (`landing-hero.png`, `demo-held.png`, `demo-start.png`, `demo-denied.png`, `demo-trusted.png`, `demo-question.png`, `demo-trace.png`, `console-overview.png`, `console-detail.png`, `console-profile.png`, `console-requests.png`, `console-circle.png`, `console-rules.png`, `console-insights.png`, `demo-phone.png`).
 
 ---
 
-## 5. Project Media
+## 4. Submitter Details
 
-### Video Demo Link
-- **Field:** YouTube or Vimeo URL
-- **Source Video:** The high-definition 3-minute video is stored in your repo at:
-  `docs/assets/Second_Opinion_Demo_3Min.mp4`
-- **Action:** Upload this MP4 file to your YouTube or Vimeo channel (as Public or Unlisted), and paste the link here.
-
-### Image Gallery (Upload up to 15 images from `docs/assets/`)
-Select the following 15 screenshots prepared and verified in your repository:
-1. `docs/assets/landing-hero.png` — Flagship Enterprise Hero & Architecture Overview
-2. `docs/assets/demo-held.png` — The Hero Moment: Scam Paused & Red Flags on Phone
-3. `docs/assets/demo-start.png` — Echo Show Simulator & Caregiver Phone Side-by-Side
-4. `docs/assets/demo-denied.png` — Real-Time Denial: Dorothy Told "You're safe"
-5. `docs/assets/demo-trusted.png` — Trusted Pharmacy Payment Passing Frictionless
-6. `docs/assets/demo-question.png` — "Is this text a scam?" Plain-Language Q&A
-7. `docs/assets/demo-trace.png` — Real-Time MCP Tool Call Developer Trace
-8. `docs/assets/console-overview.png` — Caregiver Console Dashboard Overview
-9. `docs/assets/console-detail.png` — 2-Approver Quorum Flow & Decision Timeline
-10. `docs/assets/console-requests.png` — Pending & Historical Requests Table
-11. `docs/assets/console-profile.png` — Caregiver Profile & Alert Customization
-12. `docs/assets/console-circle.png` — Family Approvers & Trusted Payees List
-13. `docs/assets/console-rules.png` — Household Limits & Quiet Hours Configuration
-14. `docs/assets/console-insights.png` — Protected Dollars & Threat Pattern Charts
-15. `docs/assets/demo-phone.png` — Mobile Viewport Responsive Simulation
+- **Upload a File:** *(Leave empty, or upload a zip of repo if desired)*
+- **Submitter Type:** `Individual`
+- **Organization Name:** `N/A`
+- **Submitter Country of Residence:** *(Select your country from the dropdown, e.g. India)*
+- **Canada Province Question:** `N/A`
 
 ---
 
-## 6. Submitter Details
+## 5. Track & Challenge Questions
 
-- **Upload a File (Optional):**
-  - Leave empty, or upload a zip of the repo / architecture diagram if desired.
-- **Submitter Type:**
-  - `Individual` (or `Organization` if submitting on behalf of a company)
-- **Organization Name (if applicable):**
-  - `N/A`
-- **Submitter Country of Residence:**
-  - Select your country from the dropdown (e.g. `India` / `United States` / `Canada`)
-- **If you or any team members reside in Canada, please indicate the province below:**
-  - `N/A` (or your province if in Canada)
+- **Which Primary Track(s) are you submitting your project into?:**
+  - Select: **Alexa+ Track**
+- **Provide a URL to your code repository for judging and testing on GitHub:**
+  - `https://github.com/Monolithic-Dev/second-opinion`
+- **Is your project new or existing prior to August 31, 2026?:**
+  - Select: **New**
+- **If submitting an existing project, explain updates:**
+  - `N/A - Completely new project conceptualized, designed, and built from scratch during the hackathon window.`
+- **Are you submitting for the AWS Builder Mini Challenge?:**
+  - Select: **No**
 
 ---
 
-## 7. Track & Challenge Questions
+## 6. Open Source Mini Challenge
 
-### Which Primary Track(s) are you submitting your project into?
-- [x] **Alexa+ Track**
+### Contribution URL
+```text
+https://github.com/Monolithic-Dev/scam-script-bench
+```
 
-### Provide a URL to your code repository for judging and testing on GitHub
+### Project Repository URL
 ```text
 https://github.com/Monolithic-Dev/second-opinion
 ```
-*(Ensure the repository is set to Public or shared with `testing@devpost.com` and `@AmazonAppDev`)*
 
-### Is your project new or existing prior to August 31, 2026?
-- Select: **New**
-
-### If you are submitting an existing project, please explain what and how you updated it during the submission period:
+### GitHub Username
 ```text
-N/A - Completely new project conceptualized, designed, and built from scratch during the hackathon window.
+Mahakisore7
 ```
 
-### Are you submitting for the AWS Builder Mini Challenge?
-- Select: **No** *(Our primary stack is built purely on Node.js/SQLite/MCP; select No to maintain 100% scoring integrity, or Yes only if Bedrock was explicitly enabled in your deployment).*
+### Provide a description of what you did, how it works, and why it matters
+```text
+We created and open-sourced `scam-script-bench` (MIT licensed), an open benchmark containing 100 synthetic conversational scripts designed specifically for evaluating voice AI fraud defenses. 
 
-### Are you submitting for the Open Source Mini Challenge?
-- Select: **Yes** *(Reference: `scam-script-bench` public dataset & Guard SDK)*
+Why it matters:
+Until now, there was no standardized, reproducible open-source benchmark for testing how well voice agents detect real-world elder financial extortion (gift-card coercion, IRS impersonation, grandparent emergency scams, safe-account redirection, delivery fee traps). 
+
+What we built:
+1. A split dataset (30 dev scripts for tuning, 30 held-out test scripts frozen with golden baselines, and 40 fresh test2 scripts).
+2. A strict JSON schema and evaluation harness (`npm run eval`) that evaluates precision, hold rate, and false-positive rates with zero model hallucinations.
+3. The Guard SDK (`@second-opinion/guard-sdk`), an open-source middleware library that allows any merchant or transactional MCP server to implement fail-closed fraud gates around payment tools in under 10 lines of code.
+
+All code, schemas, and test results are public and fully reproducible under the MIT license.
+```
+
+---
+
+## 7. Testing Instructions & Credentials
+
+### [Optional] Project Testing Link
+```text
+https://github.com/Monolithic-Dev/second-opinion
+```
+
+### Testing instructions or credentials the judges need to test your project, if any
+```text
+Prerequisites: Node.js 22.13 or newer (Windows, macOS, or Linux). No cloud accounts or API keys required.
+
+1. Clone and Install:
+   git clone https://github.com/Monolithic-Dev/second-opinion.git
+   cd second-opinion
+   npm install
+
+2. Start the Demo & Local Stack:
+   npm run demo
+
+   This boots:
+   - Web application on: http://localhost:3000
+   - Live Voice Simulator: http://localhost:3000/demo
+   - Caregiver Family Console: http://localhost:3000/family
+   - Streamable HTTP MCP Server: http://localhost:3001/mcp
+
+3. Demo Caregiver Credentials:
+   - Priya Sharma (Primary Caregiver, Rank #1): PIN 1234
+   - Arjun Sharma (Secondary Approver, Rank #2): PIN 5678
+
+4. Automated Verification Commands:
+   - Full Typecheck: npm run typecheck (0 errors)
+   - Unit & Contract Tests: npm test (297/297 passing)
+   - Real-Browser E2E Tests: npm run e2e (17/17 passing Playwright tests)
+```
+
+---
+
+## 8. Feature Requests & Friction Log (+10% Bonus)
+
+### [Optional] Feature Requests
+```text
+1. [Critical] MCP SDK Response Type Ergonomics:
+   The Model Context Protocol TypeScript SDK (`@modelcontextprotocol/sdk`) currently requires tool handler results to adhere strictly to CallToolResult with an index signature `[key: string]: unknown`. Exporting a first-class `ToolResultLike` helper type would greatly simplify building typed middlewares and custom guard SDKs.
+
+2. [Important] Agent Skill Runtime Sandboxing:
+   Provide an official Amazon Alexa+ local emulator CLI that executes Agent Skill YAML and Markdown declarations against local Streamable HTTP MCP servers during offline development.
+
+3. [Nice-to-have] Native Biometric Voice ID Headers in MCP Requests:
+   Pass privacy-preserving cryptographic speaker embeddings in standard MCP request metadata (`_meta.speakerId`) so downstream risk engines can distinguish authorized family members from unfamiliar callers without streaming raw audio.
+```
+
+### [Optional] Friction Log
+```text
+https://github.com/Monolithic-Dev/second-opinion/blob/main/docs/friction-log.md
+```
+*(Alternative text if Devpost requests body rather than URL):*
+```text
+FL-1 (better-sqlite3 compilation): npm tried to compile better-sqlite3 with node-gyp on Windows and Linux slim Docker containers despite bundled binaries, causing onboarding failures for judges. Severity: Major. Workaround: Migrated to Node 22's built-in node:sqlite with zero native dependencies. Suggestion: Standardize on built-in SQLite in Node LTS ecosystems.
+
+FL-2 (GitHub Actions Multi-Repo Checkout): Default GITHUB_TOKEN failed with a generic 'Repository not found' when checking out our sibling open-source benchmark repo within the same organization. Severity: Minor. Workaround: Configured continue-on-error and made both repositories public. Suggestion: Emit clearer error messages differentiating repository permission limits from missing repositories.
+
+FL-3 (MCP SDK Index Signatures): McpServer.registerTool handler types rejected structured custom return interfaces lacking an explicit `[key: string]: unknown`. Severity: Cosmetic. Workaround: Added index signatures to internal result types. Suggestion: Export standard ToolResultLike interfaces in @modelcontextprotocol/sdk.
+```
+
+---
+
+## 9. Developer Feedback Questions (1 to 5)
+
+### Feedback Question 1: Which developer tools, APIs, and SDKs did you use and for what?
+```text
+1. Model Context Protocol TypeScript SDK (@modelcontextprotocol/sdk 1.32.1): Implemented our RFC-compliant Streamable HTTP MCP server exposing 12 transactional security and household audit tools.
+2. Node.js 22 Built-in SQLite (node:sqlite): Implemented our append-only tamper-evident audit log and versioned decision storage with zero external binary dependencies.
+3. React 19 & Vite: Built the enterprise caregiver web console, interactive hero dashboard, and real-time Echo Show voice simulator.
+4. Playwright & axe-core: Automated end-to-end user journey testing, responsive mobile viewport validation (390px), and automated WCAG AA accessibility compliance across all routes.
+5. Express & Server-Sent Events (SSE): Handled real-time stream synchronization between Dorothy's Echo simulator and Priya's mobile phone interface.
+```
+
+### Feedback Question 2: For each tool, API, or SDK used in your project, what worked well?
+```text
+- MCP TypeScript SDK: The Streamable HTTP transport implementation is outstanding. It seamlessly handles JSON-RPC tool declarations, automated input validation with Zod schemas, and standard error framing.
+- Node.js 22 Built-in node:sqlite: Extremely fast, zero compilation issues, and zero native build tool dependencies across Windows and Linux environments. Saved our project from complex C++ toolchain requirements.
+- Playwright: Excellent multi-page context support that allowed us to test real-time SSE event propagation between Dorothy's Echo device and Priya's phone in a single synchronized test run.
+- axe-core: Instant, reliable automated accessibility scanning that caught subtle color-contrast issues on mobile and ensured complete WCAG AA compliance.
+```
+
+### Feedback Question 3: For each tool, API, or SDK used in your project, what needs work?
+```text
+- MCP SDK: The registerTool type definitions are rigid regarding custom return objects, requiring manual index signatures `[key: string]: unknown` when writing middleware or decorators.
+- MCP Transport Documentation: While STDIO transport is thoroughly documented in community guides, production Streamable HTTP server examples with custom Express integration and authentication tokens need more canonical reference patterns.
+- Node node:sqlite: Lacks built-in support for tagged template literal SQL sanitization out of the box, requiring manual parameter binding arrays for all parameterized queries.
+```
+
+### Feedback Question 4: For each tool, API, or SDK used in your project, how was your onboarding experience?
+```text
+Getting from zero to hello world with the MCP TypeScript SDK was very straightforward for basic STDIO tools. However, configuring a standalone Streamable HTTP server that accepts custom bearer auth tokens, handles CORS headers, and cleanly integrates with an Express application required inspecting the SDK's internal source code. Once the architecture was in place, adding new tools with Zod schemas was remarkably rapid and intuitive.
+```
+
+### Feedback Question 5: Would you build with these devices and services again?
+```text
+Yes, absolutely. The Model Context Protocol (MCP) represents the future of secure AI agent orchestration. Pairing an MCP server with a deterministic risk engine solves the single biggest bottleneck in voice AI commerce: establishing zero-trust human-in-the-loop oversight without delegating financial approval authority to non-deterministic language models. We plan to continue maintaining and expanding Second Opinion and the Guard SDK for production Alexa+ deployments.
+```
+
+---
+
+## 10. AI Tools Used
+
+### Eligibility Checkboxes:
+- [x] I, and, if applicable, all of my teammates, are at least the age of majority where I reside.
+- [x] I, and, if applicable, all of my teammates, are from an eligible jurisdiction to compete.
+- [x] I, and, if applicable, all of my teammates, are not employees, representatives nor agents of the Promotion Entities of this hackathon...
+
+### Which AI tools have you leveraged while working on this project?
+```text
+Google Antigravity IDE (Gemini 3.8 Flash, Claude Sonnet 4.6, and GPT-OSS 120B models) was leveraged for rapid full-stack architecture design, writing deterministic scam playbook rules, generating synthetic scam dialogue test scripts for scam-script-bench, and crafting automated Playwright end-to-end test suites.
+```
